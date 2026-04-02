@@ -236,9 +236,22 @@
       "type": "STEP_FINISHED"
     },
     {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Now switching to navigation — Tabs let the user browse categories without a page reload."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
       "delayMs": 300,
       "type": "STEP_STARTED",
-      "text": "Rendering portfolio controls"
+      "text": "Rendering category navigation"
     },
     {
       "delayMs": 400,
@@ -317,6 +330,24 @@
     {
       "delayMs": 200,
       "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Adding interactive controls — CheckBox for toggles, Slider for ranges, Button for actions. The agent chose these because filtering needs user input."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering filter controls"
     },
     {
       "delayMs": 400,
@@ -435,7 +466,20 @@
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_CONTENT",
-      "text": "Five tool calls, five different layouts: Card, Row+Image, List, Tabs, and interactive controls (CheckBox, Slider, Button). All from the same A2UI catalog."
+      "text": "Summary: 5 tool calls rendered 5 distinct layouts using 11 component types from the A2UI standard catalog."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Card for overview, Image+Row for detail, List for enumeration, Tabs for navigation, CheckBox+Slider+Button for interaction. Same catalog, different intent."
     },
     {
       "delayMs": 50,

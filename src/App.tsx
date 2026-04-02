@@ -20,7 +20,6 @@ function Dashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <CatalogViewer />
           <button
             onClick={play}
             disabled={isPlaying}
@@ -34,6 +33,7 @@ function Dashboard() {
           >
             Restart
           </button>
+          <CatalogViewer />
         </div>
       </header>
       <div className="flex flex-1 min-h-0">
