@@ -352,7 +352,7 @@
     {
       "delayMs": 400,
       "type": "TOOL_CALL_START",
-      "text": "renderFilterControls()",
+      "text": "renderCheckBoxFilters()",
       "a2uiMessages": [
         {
           "surfaceUpdate": {
@@ -374,7 +374,7 @@
                 "id": "filter-card",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider", "filter-btn-row"] }
+                    "children": { "explicitList": ["filter-title", "filter-row-1"] }
                   }
                 }
               },
@@ -416,6 +416,36 @@
                     "value": { "literal": false }
                   }
                 }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderSlider(min-stars)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-slider-label",
+                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
               },
               {
                 "id": "filter-slider",
@@ -424,12 +454,38 @@
                     "value": { "literal": 5 }
                   }
                 }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderButton(applyFilters)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider", "filter-btn-row"] }
+                  }
+                }
               },
               {
                 "id": "filter-btn-row",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["filter-btn-apply"] }
+                    "children": { "explicitList": ["filter-btn-apply", "filter-btn-reset"] }
                   }
                 }
               },
@@ -437,14 +493,27 @@
                 "id": "filter-btn-apply",
                 "component": {
                   "Button": {
-                    "child": "filter-btn-label",
+                    "child": "filter-btn-apply-label",
                     "action": { "type": "action", "name": "applyFilters" }
                   }
                 }
               },
               {
-                "id": "filter-btn-label",
+                "id": "filter-btn-apply-label",
                 "component": { "Text": { "text": { "literal": "Apply Filters" }, "usageHint": "body" } }
+              },
+              {
+                "id": "filter-btn-reset",
+                "component": {
+                  "Button": {
+                    "child": "filter-btn-reset-label",
+                    "action": { "type": "action", "name": "resetFilters" }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-reset-label",
+                "component": { "Text": { "text": { "literal": "Reset" }, "usageHint": "body" } }
               }
             ]
           }
@@ -466,7 +535,7 @@
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_CONTENT",
-      "text": "Summary: 5 tool calls rendered 5 distinct layouts using 11 component types from the A2UI standard catalog."
+      "text": "Summary: 7 tool calls rendered distinct layouts using 11 component types from the A2UI standard catalog."
     },
     {
       "delayMs": 50,
