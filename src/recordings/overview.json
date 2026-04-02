@@ -232,21 +232,214 @@
       "type": "TOOL_CALL_END"
     },
     {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering portfolio controls"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderPortfolioTabs()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-3",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "tabs-section",
+                "component": {
+                  "Tabs": {
+                    "tabItems": [
+                      { "title": { "literal": "AI / ML" }, "child": "tab-ai" },
+                      { "title": { "literal": "DevTools" }, "child": "tab-devtools" },
+                      { "title": { "literal": "Templates" }, "child": "tab-templates" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "tab-ai",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-ai-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-ai-text",
+                "component": { "Text": { "text": { "literal": "Agents-eval, ai-agents-research, RAPID-spec-forge, SimpleAgents" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-devtools",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-devtools-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-devtools-text",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, claude-code-utils-plugin, dotfiles, rtk" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-templates",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-templates-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-templates-text",
+                "component": { "Text": { "text": { "literal": "ralph-loop-cc-tdd-wt-vibe-kanban-template" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilterControls()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section", "divider-4", "filter-card"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-4",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider", "filter-btn-row"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-active",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Active only" },
+                    "value": { "literal": true }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-python",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Python repos" },
+                    "value": { "literal": false }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-forks",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Include forks" },
+                    "value": { "literal": false }
+                  }
+                }
+              },
+              {
+                "id": "filter-slider",
+                "component": {
+                  "Slider": {
+                    "value": { "literal": 5 }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-row",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-btn-apply"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-apply",
+                "component": {
+                  "Button": {
+                    "child": "filter-btn-label",
+                    "action": { "type": "action", "name": "applyFilters" }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-label",
+                "component": { "Text": { "text": { "literal": "Apply Filters" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
       "delayMs": 300,
       "type": "TEXT_MESSAGE_START"
     },
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_CONTENT",
-      "text": "Three different layouts — Card for overview, Row+Image for detail, List for enumerating plugins. Same catalog, different compositions."
+      "text": "Five tool calls, five different layouts: Card, Row+Image, List, Tabs, and interactive controls (CheckBox, Slider, Button). All from the same A2UI catalog."
     },
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_END"
-    },
-    {
-      "delayMs": 200,
-      "type": "STEP_FINISHED"
     },
     {
       "delayMs": 100,
