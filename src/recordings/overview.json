@@ -196,30 +196,73 @@
               {
                 "id": "cc-list",
                 "component": {
-                  "List": {
-                    "items": [
-                      { "title": { "literal": "python-dev" }, "child": "cc-list-item-1" },
-                      { "title": { "literal": "commit-helper" }, "child": "cc-list-item-2" },
-                      { "title": { "literal": "market-research" }, "child": "cc-list-item-3" },
-                      { "title": { "literal": "embedded-dev" }, "child": "cc-list-item-4" }
-                    ]
+                  "Column": {
+                    "children": { "explicitList": ["cc-item-1", "cc-item-2", "cc-item-3", "cc-item-4"] }
                   }
                 }
               },
               {
-                "id": "cc-list-item-1",
+                "id": "cc-item-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-1-name", "cc-item-1-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-1-name",
+                "component": { "Text": { "text": { "literal": "python-dev" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-1-desc",
                 "component": { "Text": { "text": { "literal": "TDD + uv + ruff — 3 skills" }, "usageHint": "caption" } }
               },
               {
-                "id": "cc-list-item-2",
+                "id": "cc-item-2",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-2-name", "cc-item-2-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-2-name",
+                "component": { "Text": { "text": { "literal": "commit-helper" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-2-desc",
                 "component": { "Text": { "text": { "literal": "Conventional commits + GPG" }, "usageHint": "caption" } }
               },
               {
-                "id": "cc-list-item-3",
+                "id": "cc-item-3",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-3-name", "cc-item-3-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-3-name",
+                "component": { "Text": { "text": { "literal": "market-research" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-3-desc",
                 "component": { "Text": { "text": { "literal": "GTM pipeline — 8 skills" }, "usageHint": "caption" } }
               },
               {
-                "id": "cc-list-item-4",
+                "id": "cc-item-4",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-4-name", "cc-item-4-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-4-name",
+                "component": { "Text": { "text": { "literal": "embedded-dev" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-4-desc",
                 "component": { "Text": { "text": { "literal": "ESP-IDF, KiCad, CE/FCC — 4 skills" }, "usageHint": "caption" } }
               }
             ]

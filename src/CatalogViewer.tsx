@@ -14,7 +14,7 @@ const CATALOG: CatalogEntry[] = [
   { name: "Row", description: "Horizontal layout with flex distribution", usedInDemo: true },
   { name: "Column", description: "Vertical layout with flex distribution", usedInDemo: true },
   { name: "Card", description: "Elevated container for grouping content", usedInDemo: true },
-  { name: "List", description: "Ordered items with title + child content", usedInDemo: true },
+  { name: "List", description: "Ordered items with title + child content", usedInDemo: false },
   { name: "Button", description: "Clickable action trigger", usedInDemo: true },
   { name: "TextField", description: "Text input with label and validation", usedInDemo: false },
   { name: "CheckBox", description: "Boolean toggle with label", usedInDemo: true },

@@ -86,9 +86,13 @@ export function useReplayEngine(recording: Recording): ReplayState {
         setEventLog((prev) => [...prev, entry]);
 
         if (event.a2uiMessages) {
-          processMessages(
-            event.a2uiMessages as Parameters<typeof processMessages>[0]
-          );
+          try {
+            processMessages(
+              event.a2uiMessages as Parameters<typeof processMessages>[0]
+            );
+          } catch (e) {
+            console.warn("A2UI processMessages error:", e);
+          }
         }
 
         playEvents(events, index + 1, startTime);
