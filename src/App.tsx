@@ -10,6 +10,9 @@ function Dashboard() {
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-between px-4 py-3 bg-surface-alt border-b border-gray-700">
         <h1 className="text-lg font-semibold text-accent">agenthud</h1>
+        <p className="text-xs text-text-secondary">
+          AG-UI + A2UI prototype — agent decides which components to render
+        </p>
         <div className="flex gap-2">
           <button
             onClick={play}
@@ -28,10 +31,34 @@ function Dashboard() {
       </header>
       <div className="flex flex-1 min-h-0">
         <main className="flex-1 overflow-y-auto p-4">
+          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-700">
+            <span className="text-xs font-semibold text-accent uppercase tracking-wide">A2UI Surface</span>
+            <span className="text-xs text-text-secondary">
+              — components selected by agent intent from standard catalog
+            </span>
+          </div>
           <A2UISurface />
+          {!isPlaying && eventLog.length === 0 && (
+            <div className="mt-8 text-center text-text-secondary text-sm">
+              <p>Press <strong className="text-accent">Play</strong> to replay a pre-recorded agent session.</p>
+              <p className="mt-2 text-xs">
+                The agent chooses Card, Text, Row components based on the query context.
+                <br />
+                Different questions produce different component compositions.
+              </p>
+            </div>
+          )}
         </main>
-        <aside className="w-80 border-l border-gray-700">
-          <EventStream events={eventLog} />
+        <aside className="w-96 border-l border-gray-700 flex flex-col">
+          <div className="flex items-center gap-2 px-2 py-2 border-b border-gray-700">
+            <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">AG-UI Events</span>
+            <span className="text-xs text-text-secondary">
+              — protocol stream driving the surface
+            </span>
+          </div>
+          <div className="flex-1 min-h-0">
+            <EventStream events={eventLog} />
+          </div>
         </aside>
       </div>
     </div>
