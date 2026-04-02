@@ -97,7 +97,7 @@
     {
       "delayMs": 400,
       "type": "TOOL_CALL_START",
-      "text": "renderRepoCard(polyforge-orchestrator)",
+      "text": "renderRepoDetail(polyforge-orchestrator)",
       "a2uiMessages": [
         {
           "surfaceUpdate": {
@@ -107,41 +107,45 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "card-polyforge"] }
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row"] }
                   }
                 }
               },
               {
-                "id": "card-polyforge",
+                "id": "divider-1",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "pf-row",
                 "component": {
-                  "Card": {
-                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-langs"] }
+                  "Row": {
+                    "children": { "explicitList": ["pf-avatar", "pf-info"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-avatar",
+                "component": { "Image": { "url": { "literal": "https://github.com/qte77.png" }, "usageHint": "avatar" } }
+              },
+              {
+                "id": "pf-info",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-caption"] }
                   }
                 }
               },
               {
                 "id": "pf-title",
-                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h2" } }
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
               },
               {
                 "id": "pf-desc",
-                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase" }, "usageHint": "body" } }
+                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase. Manages 8 repos via repos.conf, runs Claude Code in parallel." }, "usageHint": "body" } }
               },
               {
-                "id": "pf-langs",
-                "component": {
-                  "Row": {
-                    "children": { "explicitList": ["pf-l1", "pf-l2"] }
-                  }
-                }
-              },
-              {
-                "id": "pf-l1",
-                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
-              },
-              {
-                "id": "pf-l2",
-                "component": { "Text": { "text": { "literal": "Make" }, "usageHint": "caption" } }
+                "id": "pf-caption",
+                "component": { "Text": { "text": { "literal": "Bash / Make / Devcontainer" }, "usageHint": "caption" } }
               }
             ]
           }
@@ -155,7 +159,7 @@
     {
       "delayMs": 400,
       "type": "TOOL_CALL_START",
-      "text": "renderRepoCard(claude-code-utils-plugin)",
+      "text": "renderPluginList(claude-code-utils-plugin)",
       "a2uiMessages": [
         {
           "surfaceUpdate": {
@@ -165,15 +169,19 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "card-polyforge", "card-cc-utils"] }
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section"] }
                   }
                 }
               },
               {
-                "id": "card-cc-utils",
+                "id": "divider-2",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "cc-section",
                 "component": {
-                  "Card": {
-                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-langs"] }
+                  "Column": {
+                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-list"] }
                   }
                 }
               },
@@ -183,23 +191,36 @@
               },
               {
                 "id": "cc-desc",
-                "component": { "Text": { "text": { "literal": "Claude Code plugin marketplace — 15 plugins, 31+ skills" }, "usageHint": "body" } }
+                "component": { "Text": { "text": { "literal": "Plugin marketplace — 15 plugins, 31+ skills for Claude Code" }, "usageHint": "body" } }
               },
               {
-                "id": "cc-langs",
+                "id": "cc-list",
                 "component": {
-                  "Row": {
-                    "children": { "explicitList": ["cc-l1", "cc-l2"] }
+                  "List": {
+                    "items": [
+                      { "title": { "literal": "python-dev" }, "child": "cc-list-item-1" },
+                      { "title": { "literal": "commit-helper" }, "child": "cc-list-item-2" },
+                      { "title": { "literal": "market-research" }, "child": "cc-list-item-3" },
+                      { "title": { "literal": "embedded-dev" }, "child": "cc-list-item-4" }
+                    ]
                   }
                 }
               },
               {
-                "id": "cc-l1",
-                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+                "id": "cc-list-item-1",
+                "component": { "Text": { "text": { "literal": "TDD + uv + ruff — 3 skills" }, "usageHint": "caption" } }
               },
               {
-                "id": "cc-l2",
-                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
+                "id": "cc-list-item-2",
+                "component": { "Text": { "text": { "literal": "Conventional commits + GPG" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-list-item-3",
+                "component": { "Text": { "text": { "literal": "GTM pipeline — 8 skills" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-list-item-4",
+                "component": { "Text": { "text": { "literal": "ESP-IDF, KiCad, CE/FCC — 4 skills" }, "usageHint": "caption" } }
               }
             ]
           }
@@ -217,7 +238,7 @@
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_CONTENT",
-      "text": "Found 8 active repositories across AI agents, developer tooling, and templates."
+      "text": "Three different layouts — Card for overview, Row+Image for detail, List for enumerating plugins. Same catalog, different compositions."
     },
     {
       "delayMs": 50,
