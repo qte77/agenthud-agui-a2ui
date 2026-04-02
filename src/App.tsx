@@ -1,4 +1,5 @@
 import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
+import { CatalogViewer } from "./CatalogViewer";
 import { EventStream } from "./EventStream";
 import { useReplayEngine } from "./useReplayEngine";
 import recording from "./recordings/overview.json";
@@ -14,6 +15,7 @@ function Dashboard() {
           AG-UI + A2UI prototype — agent decides which components to render
         </p>
         <div className="flex gap-2">
+          <CatalogViewer />
           <button
             onClick={play}
             disabled={isPlaying}
