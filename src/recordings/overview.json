@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "title": "qte77 GitHub Portfolio Tour",
+    "description": "Pre-baked AG-UI event recording showcasing key repositories from the qte77 GitHub account."
+  },
+  "events": [
+    {
+      "delayMs": 0,
+      "type": "RUN_STARTED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Exploring the qte77 GitHub portfolio..."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 500,
+      "type": "STEP_STARTED",
+      "text": "Fetching repository data"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(Agents-eval)",
+      "a2uiMessages": [
+        {
+          "beginRendering": {
+            "surfaceId": "main",
+            "root": "root"
+          }
+        },
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval"] }
+                  }
+                }
+              },
+              {
+                "id": "card-agents-eval",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["ae-title", "ae-desc", "ae-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-title",
+                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "ae-desc",
+                "component": { "Text": { "text": { "literal": "Multi-agent evaluation framework — PydanticAI, Streamlit GUI, 3-tier metrics" }, "usageHint": "body" } }
+              },
+              {
+                "id": "ae-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["ae-l1", "ae-l2", "ae-l3"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l2",
+                "component": { "Text": { "text": { "literal": "PydanticAI" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l3",
+                "component": { "Text": { "text": { "literal": "Streamlit" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(polyforge-orchestrator)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-polyforge"] }
+                  }
+                }
+              },
+              {
+                "id": "card-polyforge",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-title",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "pf-desc",
+                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase" }, "usageHint": "body" } }
+              },
+              {
+                "id": "pf-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["pf-l1", "pf-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-l1",
+                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "pf-l2",
+                "component": { "Text": { "text": { "literal": "Make" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(claude-code-utils-plugin)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-polyforge", "card-cc-utils"] }
+                  }
+                }
+              },
+              {
+                "id": "card-cc-utils",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-title",
+                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "cc-desc",
+                "component": { "Text": { "text": { "literal": "Claude Code plugin marketplace — 15 plugins, 31+ skills" }, "usageHint": "body" } }
+              },
+              {
+                "id": "cc-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-l1", "cc-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-l1",
+                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-l2",
+                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Found 8 active repositories across AI agents, developer tooling, and templates."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 100,
+      "type": "RUN_FINISHED"
+    }
+  ]
+}
