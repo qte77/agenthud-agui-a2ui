@@ -11,9 +11,14 @@ function Dashboard() {
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-between px-4 py-3 bg-surface-alt border-b border-gray-700">
         <h1 className="text-lg font-semibold text-accent">agenthud</h1>
-        <p className="text-xs text-text-secondary">
-          AG-UI + A2UI prototype — agent decides which components to render
-        </p>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-300">
+            Replay
+          </span>
+          <p className="text-xs text-text-secondary">
+            Pre-recorded AG-UI sequence — live agent mode planned
+          </p>
+        </div>
         <div className="flex gap-2">
           <CatalogViewer />
           <button
@@ -44,9 +49,11 @@ function Dashboard() {
             <div className="mt-8 text-center text-text-secondary text-sm">
               <p>Press <strong className="text-accent">Play</strong> to replay a pre-recorded agent session.</p>
               <p className="mt-2 text-xs">
-                The agent chooses Card, Text, Row components based on the query context.
+                This is a pre-defined sequence showing how an agent would compose
                 <br />
-                Different questions produce different component compositions.
+                different A2UI components based on context. In a live session,
+                <br />
+                the agent decides the layout at runtime via the AG-UI protocol.
               </p>
             </div>
           )}
