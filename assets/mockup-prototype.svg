@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="system-ui, -apple-system, sans-serif">
+  <!-- Background -->
+  <rect width="1200" height="700" fill="#0f172a"/>
+
+  <!-- Header bar -->
+  <rect x="0" y="0" width="1200" height="48" fill="#1e293b"/>
+  <line x1="0" y1="48" x2="1200" y2="48" stroke="#374151" stroke-width="1"/>
+  <text x="16" y="30" fill="#38bdf8" font-size="18" font-weight="600">agenthud</text>
+  <!-- Play button -->
+  <rect x="1020" y="10" width="60" height="28" rx="4" fill="#38bdf8" opacity="0.4"/>
+  <text x="1035" y="29" fill="#111827" font-size="13" font-weight="500">Play</text>
+  <!-- Restart button -->
+  <rect x="1090" y="10" width="70" height="28" rx="4" fill="#374151"/>
+  <text x="1098" y="29" fill="#e5e7eb" font-size="13">Restart</text>
+
+  <!-- Left panel: A2UI Surface -->
+  <rect x="0" y="48" width="880" height="652" fill="#0f172a"/>
+
+  <!-- Card 1: Agents-eval -->
+  <rect x="16" y="64" width="848" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="32" y="96" fill="#e2e8f0" font-size="20" font-weight="600">Agents-eval</text>
+  <text x="32" y="120" fill="#94a3b8" font-size="14">Multi-agent evaluation framework -- PydanticAI, Streamlit GUI, 3-tier metrics</text>
+  <!-- Language badges -->
+  <rect x="32" y="136" width="60" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="42" y="151" fill="#7dd3fc" font-size="11">Python</text>
+  <rect x="100" y="136" width="76" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="110" y="151" fill="#7dd3fc" font-size="11">PydanticAI</text>
+  <rect x="184" y="136" width="68" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="194" y="151" fill="#7dd3fc" font-size="11">Streamlit</text>
+
+  <!-- Card 2: polyforge-orchestrator -->
+  <rect x="16" y="190" width="848" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="32" y="222" fill="#e2e8f0" font-size="20" font-weight="600">polyforge-orchestrator</text>
+  <text x="32" y="246" fill="#94a3b8" font-size="14">Parallel AI coding agent orchestration across polyrepo codebase</text>
+  <!-- Language badges -->
+  <rect x="32" y="262" width="48" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="42" y="277" fill="#7dd3fc" font-size="11">Bash</text>
+  <rect x="88" y="262" width="48" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="98" y="277" fill="#7dd3fc" font-size="11">Make</text>
+
+  <!-- Card 3: claude-code-utils-plugin -->
+  <rect x="16" y="316" width="848" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="32" y="348" fill="#e2e8f0" font-size="20" font-weight="600">claude-code-utils-plugin</text>
+  <text x="32" y="372" fill="#94a3b8" font-size="14">Claude Code plugin marketplace -- 15 plugins, 31+ skills</text>
+  <!-- Language badges -->
+  <rect x="32" y="388" width="72" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="42" y="403" fill="#7dd3fc" font-size="11">Markdown</text>
+  <rect x="112" y="388" width="48" height="22" rx="4" fill="#1e3a5f"/>
+  <text x="122" y="403" fill="#7dd3fc" font-size="11">Bash</text>
+
+  <!-- Divider between panels -->
+  <line x1="880" y1="48" x2="880" y2="700" stroke="#374151" stroke-width="1"/>
+
+  <!-- Right panel: EventStream sidebar -->
+  <rect x="880" y="48" width="320" height="652" fill="#111827"/>
+
+  <!-- Event entries (monospace) -->
+  <text x="892" y="76" fill="#6b7280" font-size="11" font-family="monospace">  0.00s</text>
+  <rect x="948" y="64" width="90" height="18" rx="3" fill="#15803d"/>
+  <text x="956" y="77" fill="#bbf7d0" font-size="10" font-family="monospace" font-weight="600">RUN_STARTED</text>
+
+  <text x="892" y="100" fill="#6b7280" font-size="11" font-family="monospace">  0.30s</text>
+  <rect x="948" y="88" width="130" height="18" rx="3" fill="#1d4ed8"/>
+  <text x="956" y="101" fill="#bfdbfe" font-size="10" font-family="monospace" font-weight="600">TEXT_MESSAGE_START</text>
+
+  <text x="892" y="124" fill="#6b7280" font-size="11" font-family="monospace">  0.35s</text>
+  <rect x="948" y="112" width="146" height="18" rx="3" fill="#1d4ed8"/>
+  <text x="956" y="125" fill="#bfdbfe" font-size="10" font-family="monospace" font-weight="600">TEXT_MESSAGE_CONTENT</text>
+  <text x="892" y="142" fill="#cbd5e1" font-size="10" font-family="monospace">         Exploring the qte77 GitHub portfolio...</text>
+
+  <text x="892" y="164" fill="#6b7280" font-size="11" font-family="monospace">  0.40s</text>
+  <rect x="948" y="152" width="126" height="18" rx="3" fill="#1d4ed8"/>
+  <text x="956" y="165" fill="#bfdbfe" font-size="10" font-family="monospace" font-weight="600">TEXT_MESSAGE_END</text>
+
+  <text x="892" y="188" fill="#6b7280" font-size="11" font-family="monospace">  0.90s</text>
+  <rect x="948" y="176" width="96" height="18" rx="3" fill="#4b5563"/>
+  <text x="956" y="189" fill="#d1d5db" font-size="10" font-family="monospace" font-weight="600">STEP_STARTED</text>
+
+  <text x="892" y="212" fill="#6b7280" font-size="11" font-family="monospace">  1.20s</text>
+  <rect x="948" y="200" width="112" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="213" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_START</text>
+  <text x="892" y="230" fill="#cbd5e1" font-size="10" font-family="monospace">         renderRepoCard(Agents-eval)</text>
+
+  <text x="892" y="252" fill="#6b7280" font-size="11" font-family="monospace">  1.40s</text>
+  <rect x="948" y="240" width="102" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="253" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_END</text>
+
+  <text x="892" y="276" fill="#6b7280" font-size="11" font-family="monospace">  1.80s</text>
+  <rect x="948" y="264" width="112" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="277" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_START</text>
+  <text x="892" y="294" fill="#cbd5e1" font-size="10" font-family="monospace">         renderRepoCard(polyforge-orchestrator)</text>
+
+  <text x="892" y="316" fill="#6b7280" font-size="11" font-family="monospace">  2.00s</text>
+  <rect x="948" y="304" width="102" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="317" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_END</text>
+
+  <text x="892" y="340" fill="#6b7280" font-size="11" font-family="monospace">  2.40s</text>
+  <rect x="948" y="328" width="112" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="341" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_START</text>
+  <text x="892" y="358" fill="#cbd5e1" font-size="10" font-family="monospace">         renderRepoCard(cc-utils-plugin)</text>
+
+  <text x="892" y="380" fill="#6b7280" font-size="11" font-family="monospace">  2.60s</text>
+  <rect x="948" y="368" width="102" height="18" rx="3" fill="#b45309"/>
+  <text x="956" y="381" fill="#fde68a" font-size="10" font-family="monospace" font-weight="600">TOOL_CALL_END</text>
+
+  <text x="892" y="404" fill="#6b7280" font-size="11" font-family="monospace">  2.90s</text>
+  <rect x="948" y="392" width="146" height="18" rx="3" fill="#1d4ed8"/>
+  <text x="956" y="405" fill="#bfdbfe" font-size="10" font-family="monospace" font-weight="600">TEXT_MESSAGE_CONTENT</text>
+  <text x="892" y="422" fill="#cbd5e1" font-size="10" font-family="monospace">         Found 8 active repositories...</text>
+
+  <text x="892" y="444" fill="#6b7280" font-size="11" font-family="monospace">  3.20s</text>
+  <rect x="948" y="432" width="96" height="18" rx="3" fill="#4b5563"/>
+  <text x="956" y="445" fill="#d1d5db" font-size="10" font-family="monospace" font-weight="600">STEP_FINISHED</text>
+
+  <text x="892" y="468" fill="#6b7280" font-size="11" font-family="monospace">  3.30s</text>
+  <rect x="948" y="456" width="96" height="18" rx="3" fill="#15803d"/>
+  <text x="956" y="469" fill="#bbf7d0" font-size="10" font-family="monospace" font-weight="600">RUN_FINISHED</text>
+
+  <!-- Labels -->
+  <text x="400" y="680" fill="#475569" font-size="12" text-anchor="middle">A2UI Surface (rendered by @a2ui/react)</text>
+  <text x="1040" y="680" fill="#475569" font-size="12" text-anchor="middle">AG-UI EventStream</text>
+</svg>
