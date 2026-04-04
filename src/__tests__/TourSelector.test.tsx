@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import TourSelector from "../TourSelector";
+import { TourSelector } from "../TourSelector";
 
 describe("TourSelector", () => {
   const tours = [
