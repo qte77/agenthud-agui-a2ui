@@ -1,0 +1,282 @@
+{
+  "meta": {
+    "title": "Developer Tools Tour",
+    "description": "Explore qte77 developer tooling and orchestration"
+  },
+  "events": [
+    {
+      "delayMs": 0,
+      "type": "RUN_STARTED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Exploring developer tools across the qte77 portfolio..."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 500,
+      "type": "STEP_STARTED",
+      "text": "Fetching devtool repositories",
+      "segment": "tools-overview"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderDevToolCards()",
+      "a2uiMessages": [
+        {
+          "beginRendering": {
+            "surfaceId": "main",
+            "root": "root"
+          }
+        },
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-polyforge", "card-ccutils", "card-dotfiles"] }
+                  }
+                }
+              },
+              {
+                "id": "card-polyforge",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-title",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "pf-desc",
+                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase. Manages 8 repos via repos.conf." }, "usageHint": "body" } }
+              },
+              {
+                "id": "pf-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["pf-l1", "pf-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-l1",
+                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "pf-l2",
+                "component": { "Text": { "text": { "literal": "Make" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "card-ccutils",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-title",
+                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "cc-desc",
+                "component": { "Text": { "text": { "literal": "Plugin marketplace — 15 plugins, 31+ skills for Claude Code workflows." }, "usageHint": "body" } }
+              },
+              {
+                "id": "cc-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-l1", "cc-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-l1",
+                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-l2",
+                "component": { "Text": { "text": { "literal": "Bash" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "card-dotfiles",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["df-title", "df-desc", "df-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "df-title",
+                "component": { "Text": { "text": { "literal": "dotfiles" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "df-desc",
+                "component": { "Text": { "text": { "literal": "Personal dev environment — shell config, aliases, tool defaults." }, "usageHint": "body" } }
+              },
+              {
+                "id": "df-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["df-l1", "df-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "df-l1",
+                "component": { "Text": { "text": { "literal": "Shell" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "df-l2",
+                "component": { "Text": { "text": { "literal": "Config" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering category tabs",
+      "segment": "tools-tabs"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderToolCategoryTabs()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-polyforge", "card-ccutils", "card-dotfiles", "tabs-divider", "tabs-section"] }
+                  }
+                }
+              },
+              {
+                "id": "tabs-divider",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "tabs-section",
+                "component": {
+                  "Tabs": {
+                    "tabItems": [
+                      { "title": { "literal": "Orchestration" }, "child": "tab-orch" },
+                      { "title": { "literal": "Plugins" }, "child": "tab-plugins" },
+                      { "title": { "literal": "Config" }, "child": "tab-config" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "tab-orch",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-orch-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-orch-text",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, rtk" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-plugins",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-plugins-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-plugins-text",
+                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin, agenthud-agui-a2ui" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-config",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-config-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-config-text",
+                "component": { "Text": { "text": { "literal": "dotfiles, devcontainer templates" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Developer tools overview complete. Three repos shown as cards, three category tabs for browsing by concern."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 100,
+      "type": "RUN_FINISHED"
+    }
+  ],
+  "tree": {
+    "root": {
+      "prompt": "Explore developer tools?",
+      "choices": [
+        { "label": "Show tool repos", "hint": "Card, Row, Text", "segment": "tools-overview", "next": "after-tools-overview" }
+      ]
+    },
+    "after-tools-overview": {
+      "prompt": "Browse by category?",
+      "choices": [
+        { "label": "View categories", "hint": "Tabs, Column, Text", "segment": "tools-tabs", "next": null }
+      ]
+    }
+  }
+}

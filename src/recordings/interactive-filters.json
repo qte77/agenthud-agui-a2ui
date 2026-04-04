@@ -1,0 +1,313 @@
+{
+  "meta": {
+    "title": "Interactive Filters Tour",
+    "description": "Explore interactive A2UI components: CheckBox, Slider, Button"
+  },
+  "events": [
+    {
+      "delayMs": 0,
+      "type": "RUN_STARTED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Building interactive filter controls for repository search..."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 500,
+      "type": "STEP_STARTED",
+      "text": "Setting up filter checkboxes",
+      "segment": "filter-setup"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilterCheckboxes()",
+      "a2uiMessages": [
+        {
+          "beginRendering": {
+            "surfaceId": "main",
+            "root": "root"
+          }
+        },
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["filter-card"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cb-active", "cb-python", "cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "cb-active",
+                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+              },
+              {
+                "id": "cb-python",
+                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "cb-forks",
+                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Adding range slider",
+      "segment": "filter-range"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilterSlider()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["filter-card"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "slider-label", "slider"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cb-active", "cb-python", "cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "cb-active",
+                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+              },
+              {
+                "id": "cb-python",
+                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "cb-forks",
+                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "slider-label",
+                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "slider",
+                "component": { "Slider": { "label": { "literal": "Stars" }, "value": { "literal": 5 }, "min": { "literal": 0 }, "max": { "literal": 100 } } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Adding action buttons",
+      "segment": "filter-apply"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilterActions()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["filter-card"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "slider-label", "slider", "action-row"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cb-active", "cb-python", "cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "cb-active",
+                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+              },
+              {
+                "id": "cb-python",
+                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "cb-forks",
+                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "slider-label",
+                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "slider",
+                "component": { "Slider": { "label": { "literal": "Stars" }, "value": { "literal": 5 }, "min": { "literal": 0 }, "max": { "literal": 100 } } }
+              },
+              {
+                "id": "action-row",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["btn-apply", "btn-reset"] }
+                  }
+                }
+              },
+              {
+                "id": "btn-apply-label",
+                "component": { "Text": { "text": { "literal": "Apply Filters" }, "usageHint": "body" } }
+              },
+              {
+                "id": "btn-apply",
+                "component": { "Button": { "child": "btn-apply-label", "action": { "type": "action", "name": "applyFilters" } } }
+              },
+              {
+                "id": "btn-reset-label",
+                "component": { "Text": { "text": { "literal": "Reset" }, "usageHint": "body" } }
+              },
+              {
+                "id": "btn-reset",
+                "component": { "Button": { "child": "btn-reset-label", "action": { "type": "action", "name": "resetFilters" } } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Filter panel complete. Three checkboxes for quick toggles, a star-count slider, and Apply/Reset action buttons."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 100,
+      "type": "RUN_FINISHED"
+    }
+  ],
+  "tree": {
+    "root": {
+      "prompt": "Build a filter?",
+      "choices": [
+        { "label": "Set up checkboxes", "hint": "Card, CheckBox", "segment": "filter-setup", "next": "after-setup" }
+      ]
+    },
+    "after-setup": {
+      "prompt": "Add more controls?",
+      "choices": [
+        { "label": "Add range slider", "hint": "Slider, Text", "segment": "filter-range", "next": "after-range" },
+        { "label": "Apply now", "hint": "Button", "segment": "filter-apply", "next": null }
+      ]
+    },
+    "after-range": {
+      "prompt": "Ready to apply?",
+      "choices": [
+        { "label": "Add action buttons", "hint": "Button", "segment": "filter-apply", "next": null }
+      ]
+    }
+  }
+}
