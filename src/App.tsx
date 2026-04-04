@@ -1,11 +1,23 @@
+import { useMemo, useState } from "react";
 import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
 import { CatalogViewer } from "./CatalogViewer";
 import { EventStream } from "./EventStream";
 import { useReplayEngine } from "./useReplayEngine";
-import recording from "./recordings/overview.json";
+import { fullRecording, segments, getSegmentEvents } from "./recordings";
 
 function Dashboard() {
-  const { isPlaying, eventLog, play, restart } = useReplayEngine(recording);
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+
+  const filteredRecording = useMemo(
+    () => ({
+      meta: fullRecording.meta,
+      events: getSegmentEvents(fullRecording, selectedSegment),
+    }),
+    [selectedSegment]
+  );
+
+  const { isPlaying, eventLog, play, restart } =
+    useReplayEngine(filteredRecording);
 
   return (
     <div className="h-screen flex flex-col">
@@ -19,7 +31,23 @@ function Dashboard() {
             Pre-recorded AG-UI sequence — live agent mode planned
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <select
+            value={selectedSegment ?? ""}
+            onChange={(e) => {
+              const val = e.target.value || null;
+              setSelectedSegment(val);
+              restart();
+            }}
+            className="bg-gray-800 text-gray-200 text-sm rounded px-2 py-1 border border-gray-600"
+          >
+            <option value="">All segments</option>
+            {segments.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label} ({s.componentHint})
+              </option>
+            ))}
+          </select>
           <button
             onClick={play}
             disabled={isPlaying}
@@ -39,7 +67,9 @@ function Dashboard() {
       <div className="flex flex-1 min-h-0">
         <main className="flex-1 overflow-y-auto p-4">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-700">
-            <span className="text-xs font-semibold text-accent uppercase tracking-wide">A2UI Surface</span>
+            <span className="text-xs font-semibold text-accent uppercase tracking-wide">
+              A2UI Surface
+            </span>
             <span className="text-xs text-text-secondary">
               — components selected by agent intent from standard catalog
             </span>
@@ -47,20 +77,24 @@ function Dashboard() {
           <A2UISurface />
           {!isPlaying && eventLog.length === 0 && (
             <div className="mt-8 text-center text-text-secondary text-sm">
-              <p>Press <strong className="text-accent">Play</strong> to replay a pre-recorded agent session.</p>
+              <p>
+                Select a segment and press{" "}
+                <strong className="text-accent">Play</strong> to see different
+                A2UI components rendered based on intent.
+              </p>
               <p className="mt-2 text-xs">
-                This is a pre-defined sequence showing how an agent would compose
+                Each segment uses different components from the same catalog.
                 <br />
-                different A2UI components based on context. In a live session,
-                <br />
-                the agent decides the layout at runtime via the AG-UI protocol.
+                &quot;All&quot; plays the full sequence.
               </p>
             </div>
           )}
         </main>
         <aside className="w-96 border-l border-gray-700 flex flex-col">
           <div className="flex items-center gap-2 px-2 py-2 border-b border-gray-700">
-            <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">AG-UI Events</span>
+            <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">
+              AG-UI Events
+            </span>
             <span className="text-xs text-text-secondary">
               — protocol stream driving the surface
             </span>

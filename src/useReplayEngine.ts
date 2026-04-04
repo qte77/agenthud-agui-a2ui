@@ -1,35 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import type { EventLogEntry } from "./EventStream";
+import type { RecordingEvent, Recording } from "./recordings";
 
-interface A2UIComponent {
-  id: string;
-  component?: Record<string, unknown>;
-}
-
-interface A2UIMessage {
-  beginRendering?: unknown;
-  surfaceUpdate?: { components?: A2UIComponent[] };
-  [key: string]: unknown;
-}
-
-interface RecordingEvent {
-  delayMs: number;
-  type: string;
-  text?: string;
-  a2uiMessages?: A2UIMessage[];
-  [key: string]: unknown;
-}
-
-function extractA2UIInfo(messages: A2UIMessage[]): {
+function extractA2UIInfo(messages: object[]): {
   count: number;
   types: string[];
 } {
   const types = new Set<string>();
   let count = 0;
-  for (const msg of messages) {
-    if (msg.surfaceUpdate?.components) {
-      for (const comp of msg.surfaceUpdate.components) {
+  for (const msg of messages as Array<Record<string, unknown>>) {
+    const update = msg.surfaceUpdate as
+      | { components?: Array<{ component?: Record<string, unknown> }> }
+      | undefined;
+    if (update?.components) {
+      for (const comp of update.components) {
         count++;
         if (comp.component) {
           const type = Object.keys(comp.component)[0];
@@ -42,11 +27,6 @@ function extractA2UIInfo(messages: A2UIMessage[]): {
     }
   }
   return { count, types: [...types] };
-}
-
-interface Recording {
-  meta: { title: string; description: string };
-  events: RecordingEvent[];
 }
 
 interface ReplayState {
