@@ -1,0 +1,924 @@
+{
+  "meta": {
+    "title": "qte77 GitHub Portfolio Tour",
+    "description": "Pre-baked AG-UI event recording showcasing key repositories from the qte77 GitHub account."
+  },
+  "events": [
+    {
+      "delayMs": 0,
+      "type": "RUN_STARTED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Exploring the qte77 GitHub portfolio..."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 500,
+      "type": "STEP_STARTED",
+      "text": "Fetching repository data",
+      "segment": "overview"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(Agents-eval)",
+      "a2uiMessages": [
+        {
+          "beginRendering": {
+            "surfaceId": "main",
+            "root": "root"
+          }
+        },
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval"] }
+                  }
+                }
+              },
+              {
+                "id": "card-agents-eval",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["ae-title", "ae-desc", "ae-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-title",
+                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "ae-desc",
+                "component": { "Text": { "text": { "literal": "Multi-agent evaluation framework — PydanticAI, Streamlit GUI, 3-tier metrics" }, "usageHint": "body" } }
+              },
+              {
+                "id": "ae-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["ae-l1", "ae-l2", "ae-l3"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l2",
+                "component": { "Text": { "text": { "literal": "PydanticAI" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l3",
+                "component": { "Text": { "text": { "literal": "Streamlit" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(RAPID-spec-forge)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-rapid"] }
+                  }
+                }
+              },
+              {
+                "id": "card-rapid",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rapid-title", "rapid-desc", "rapid-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "rapid-title",
+                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "rapid-desc",
+                "component": { "Text": { "text": { "literal": "Requirements-to-Agent Pipeline — BRD, PRD, FRP generation for small teams" }, "usageHint": "body" } }
+              },
+              {
+                "id": "rapid-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["rapid-l1", "rapid-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "rapid-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "rapid-l2",
+                "component": { "Text": { "text": { "literal": "Templates" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(ai-agents-research)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-rapid", "card-research"] }
+                  }
+                }
+              },
+              {
+                "id": "card-research",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["research-title", "research-desc", "research-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "research-title",
+                "component": { "Text": { "text": { "literal": "ai-agents-research" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "research-desc",
+                "component": { "Text": { "text": { "literal": "Deep-dive research on Claude Code internals, agent orchestration, and comparative analysis" }, "usageHint": "body" } }
+              },
+              {
+                "id": "research-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["research-l1", "research-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "research-l1",
+                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "research-l2",
+                "component": { "Text": { "text": { "literal": "Research" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Rendering repo detail",
+      "segment": "detail"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoDetail(polyforge-orchestrator)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-1",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "pf-row",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["pf-avatar", "pf-info"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-avatar",
+                "component": { "Image": { "url": { "literal": "https://github.com/qte77.png" }, "usageHint": "avatar" } }
+              },
+              {
+                "id": "pf-info",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-caption"] }
+                  }
+                }
+              },
+              {
+                "id": "pf-title",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "pf-desc",
+                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase. Manages 8 repos via repos.conf, runs Claude Code in parallel." }, "usageHint": "body" } }
+              },
+              {
+                "id": "pf-caption",
+                "component": { "Text": { "text": { "literal": "Bash / Make / Devcontainer" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Rendering plugin list",
+      "segment": "plugins"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderPluginList(claude-code-utils-plugin)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-2",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "cc-section",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-list"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-title",
+                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "cc-desc",
+                "component": { "Text": { "text": { "literal": "Plugin marketplace — 15 plugins, 31+ skills for Claude Code" }, "usageHint": "body" } }
+              },
+              {
+                "id": "cc-list",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["cc-item-1", "cc-item-2", "cc-item-3", "cc-item-4"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-1-name", "cc-item-1-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-1-name",
+                "component": { "Text": { "text": { "literal": "python-dev" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-1-desc",
+                "component": { "Text": { "text": { "literal": "TDD + uv + ruff — 3 skills" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-item-2",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-2-name", "cc-item-2-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-2-name",
+                "component": { "Text": { "text": { "literal": "commit-helper" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-2-desc",
+                "component": { "Text": { "text": { "literal": "Conventional commits + GPG" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-item-3",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-3-name", "cc-item-3-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-3-name",
+                "component": { "Text": { "text": { "literal": "market-research" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-3-desc",
+                "component": { "Text": { "text": { "literal": "GTM pipeline — 8 skills" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "cc-item-4",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["cc-item-4-name", "cc-item-4-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "cc-item-4-name",
+                "component": { "Text": { "text": { "literal": "embedded-dev" }, "usageHint": "h5" } }
+              },
+              {
+                "id": "cc-item-4-desc",
+                "component": { "Text": { "text": { "literal": "ESP-IDF, KiCad, CE/FCC — 4 skills" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Now switching to navigation — Tabs let the user browse categories without a page reload."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering category navigation",
+      "segment": "navigation"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderPortfolioTabs()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-3",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "tabs-section",
+                "component": {
+                  "Tabs": {
+                    "tabItems": [
+                      { "title": { "literal": "AI / ML" }, "child": "tab-ai" },
+                      { "title": { "literal": "DevTools" }, "child": "tab-devtools" },
+                      { "title": { "literal": "Templates" }, "child": "tab-templates" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "tab-ai",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-ai-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-ai-text",
+                "component": { "Text": { "text": { "literal": "Agents-eval, ai-agents-research, RAPID-spec-forge, SimpleAgents" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-devtools",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-devtools-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-devtools-text",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, claude-code-utils-plugin, dotfiles, rtk" }, "usageHint": "body" } }
+              },
+              {
+                "id": "tab-templates",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["tab-templates-text"] }
+                  }
+                }
+              },
+              {
+                "id": "tab-templates-text",
+                "component": { "Text": { "text": { "literal": "ralph-loop-cc-tdd-wt-vibe-kanban-template" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Adding interactive controls — CheckBox for toggles, Slider for ranges, Button for actions. The agent chose these because filtering needs user input."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering checkbox filters",
+      "segment": "filters-checkboxes"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderCheckBoxFilters()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section", "divider-4", "filter-card"] }
+                  }
+                }
+              },
+              {
+                "id": "divider-4",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-active",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Active only" },
+                    "value": { "literal": true }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-python",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Python repos" },
+                    "value": { "literal": false }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-forks",
+                "component": {
+                  "CheckBox": {
+                    "label": { "literal": "Include forks" },
+                    "value": { "literal": false }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Adding slider control",
+      "segment": "filters-slider"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderSlider(min-stars)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-slider-label",
+                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "filter-slider",
+                "component": {
+                  "Slider": {
+                    "value": { "literal": 5 }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Adding action buttons",
+      "segment": "filters-buttons"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderButton(applyFilters)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "filter-card",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider", "filter-btn-row"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-row",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-btn-apply", "filter-btn-reset"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-apply",
+                "component": {
+                  "Button": {
+                    "child": "filter-btn-apply-label",
+                    "action": { "type": "action", "name": "applyFilters" }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-apply-label",
+                "component": { "Text": { "text": { "literal": "Apply Filters" }, "usageHint": "body" } }
+              },
+              {
+                "id": "filter-btn-reset",
+                "component": {
+                  "Button": {
+                    "child": "filter-btn-reset-label",
+                    "action": { "type": "action", "name": "resetFilters" }
+                  }
+                }
+              },
+              {
+                "id": "filter-btn-reset-label",
+                "component": { "Text": { "text": { "literal": "Reset" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Showing filtered results",
+      "segment": "results"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilteredResults()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["results-header", "results-divider", "results-card-1", "results-card-2", "results-card-3"] }
+                  }
+                }
+              },
+              {
+                "id": "results-header",
+                "component": { "Text": { "text": { "literal": "3 repositories match your filters" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "results-divider",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "results-card-1",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc1-title", "rc1-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc1-title",
+                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc1-desc",
+                "component": { "Text": { "text": { "literal": "Multi-agent evaluation — Python, PydanticAI, Streamlit" }, "usageHint": "body" } }
+              },
+              {
+                "id": "results-card-2",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc2-title", "rc2-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc2-title",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc2-desc",
+                "component": { "Text": { "text": { "literal": "Parallel agent orchestration — Bash, Make, Devcontainer" }, "usageHint": "body" } }
+              },
+              {
+                "id": "results-card-3",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc3-title", "rc3-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc3-title",
+                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc3-desc",
+                "component": { "Text": { "text": { "literal": "Requirements pipeline — Python, Templates, BRD/PRD/FRP" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Summary: Multiple tool calls rendered distinct layouts using 11 component types from the A2UI standard catalog."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Card for overview, Image+Row for detail, List for enumeration, Tabs for navigation, CheckBox+Slider+Button for interaction. Same catalog, different intent."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 100,
+      "type": "RUN_FINISHED"
+    }
+  ],
+  "tree": {
+    "root": {
+      "prompt": "What would you like to explore?",
+      "choices": [
+        { "label": "Show me repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Browse by category", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
+        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-overview": {
+      "prompt": "Want to go deeper?",
+      "choices": [
+        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
+      ]
+    },
+    "after-detail": {
+      "prompt": "Explore further?",
+      "choices": [
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-plugins": {
+      "prompt": "What else?",
+      "choices": [
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
+        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-navigation": {
+      "prompt": "Dive into a category?",
+      "choices": [
+        { "label": "Show repo details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-checkboxes": {
+      "prompt": "Refine the filter?",
+      "choices": [
+        { "label": "Adjust range", "hint": "Slider", "segment": "filters-slider", "next": "after-slider" },
+        { "label": "Apply now", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+      ]
+    },
+    "after-slider": {
+      "prompt": "Ready to apply?",
+      "choices": [
+        { "label": "Apply filters", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+      ]
+    },
+    "after-apply": {
+      "prompt": "Filters applied. See results?",
+      "choices": [
+        { "label": "Show results", "hint": "Card, Text, Divider", "segment": "results", "next": "after-results" },
+        { "label": "Adjust filters", "hint": "CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-results": {
+      "prompt": "Explore the matches?",
+      "choices": [
+        { "label": "View all repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
+      ]
+    }
+  }
+}
