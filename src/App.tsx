@@ -12,12 +12,19 @@ import {
 
 type Mode = "idle" | "tree" | "all";
 
+interface HistoryEntry {
+  prompt: string;
+  chosen: string;
+  hint: string;
+}
+
 function Dashboard() {
   const [mode, setMode] = useState<Mode>("idle");
   const [currentNode, setCurrentNode] = useState("root");
   const [currentSegmentId, setCurrentSegmentId] = useState<string | null>(null);
   const [showChoices, setShowChoices] = useState(true);
   const [path, setPath] = useState<string[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const needsPlayRef = useRef(false);
 
   const filteredRecording = useMemo(() => {
@@ -47,7 +54,14 @@ function Dashboard() {
   const treeNode = decisionTree[currentNode];
   const isLeaf = mode === "tree" && !isPlaying && showChoices && !treeNode;
 
-  function handleChoice(choice: TreeChoice) {
+  function handleChoice(choice: TreeChoice, fromNode?: string) {
+    const node = fromNode ? decisionTree[fromNode] : decisionTree[currentNode];
+    if (node) {
+      setHistory((prev) => [
+        ...prev,
+        { prompt: node.prompt, chosen: choice.label, hint: choice.hint },
+      ]);
+    }
     setShowChoices(false);
     setCurrentSegmentId(choice.segment);
     setPath((prev) => [...prev, choice.label]);
@@ -71,6 +85,7 @@ function Dashboard() {
     setCurrentNode("root");
     setCurrentSegmentId(null);
     setPath([]);
+    setHistory([]);
     setShowChoices(true);
   }
 
@@ -131,7 +146,7 @@ function Dashboard() {
                     key={c.segment}
                     onClick={() => {
                       setMode("tree");
-                      handleChoice(c);
+                      handleChoice(c, "root");
                     }}
                     className="p-3 rounded-lg border border-gray-700 hover:border-accent text-left transition-colors"
                   >
@@ -151,9 +166,22 @@ function Dashboard() {
             </div>
           )}
 
+          {/* Decision history */}
+          {history.length > 0 && (
+            <div className="mt-4 space-y-1">
+              {history.map((h, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-text-secondary">
+                  <span className="text-gray-600">{h.prompt}</span>
+                  <span className="text-accent font-medium">{h.chosen}</span>
+                  <span className="text-gray-600">({h.hint})</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Tree mode: show next choices after segment completes */}
           {mode === "tree" && !isPlaying && showChoices && treeNode && (
-            <div className="mt-6 border-t border-gray-700 pt-4">
+            <div className="mt-4 border-t border-gray-700 pt-4">
               <p className="text-text-secondary text-sm mb-3">
                 {treeNode.prompt}
               </p>
