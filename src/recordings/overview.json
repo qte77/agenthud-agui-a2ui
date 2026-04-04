@@ -636,6 +636,30 @@
                 }
               },
               {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-active",
+                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+              },
+              {
+                "id": "filter-cb-python",
+                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "filter-cb-forks",
+                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+              },
+              {
                 "id": "filter-slider-label",
                 "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
               },
@@ -682,6 +706,38 @@
                     "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider", "filter-btn-row"] }
                   }
                 }
+              },
+              {
+                "id": "filter-title",
+                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "filter-row-1",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                  }
+                }
+              },
+              {
+                "id": "filter-cb-active",
+                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+              },
+              {
+                "id": "filter-cb-python",
+                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "filter-cb-forks",
+                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+              },
+              {
+                "id": "filter-slider-label",
+                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "filter-slider",
+                "component": { "Slider": { "value": { "literal": 5 } } }
               },
               {
                 "id": "filter-btn-row",
