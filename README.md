@@ -1,5 +1,12 @@
 # agenthud-agui-a2ui
 
+[![License](https://img.shields.io/badge/license-Apache%202.0-58f4c2.svg)](LICENSE)
+![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)
+[![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
+[![CodeFactor](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui/badge)](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui)
+[![Link Checker](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/links-fail-fast.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/links-fail-fast.yaml)
+[![Dependabot](https://img.shields.io/badge/dependabot-enabled-58f4c2.svg?logo=dependabot)](https://github.com/qte77/agenthud-agui-a2ui/security/dependabot)
+
 > **Prototype** — This is a feasibility prototype, not a production application.
 
 AG-UI event replay + A2UI component rendering in a static Vite/React app.
