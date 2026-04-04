@@ -624,5 +624,36 @@
       "delayMs": 100,
       "type": "RUN_FINISHED"
     }
-  ]
+  ],
+  "tree": {
+    "root": {
+      "prompt": "What would you like to explore?",
+      "choices": [
+        { "label": "Show me repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Browse by category", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
+        { "label": "Filter repos", "hint": "CheckBox, Slider, Button", "segment": "filters", "next": null }
+      ]
+    },
+    "after-overview": {
+      "prompt": "Want to go deeper?",
+      "choices": [
+        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": null }
+      ]
+    },
+    "after-navigation": {
+      "prompt": "Explore a category?",
+      "choices": [
+        { "label": "Show repo details", "hint": "Image, Column", "segment": "detail", "next": null },
+        { "label": "Filter repos", "hint": "CheckBox, Slider", "segment": "filters", "next": null }
+      ]
+    },
+    "after-detail": {
+      "prompt": "What next?",
+      "choices": [
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": null },
+        { "label": "Filter repos", "hint": "CheckBox, Slider", "segment": "filters", "next": null }
+      ]
+    }
+  }
 }
