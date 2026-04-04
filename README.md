@@ -54,7 +54,7 @@ root (3 choices)
 - polyforge-orchestrator — Parallel agent orchestration
 - claude-code-utils-plugin — Plugin marketplace (15 plugins)
 
-## Components used (11 of 18)
+## Components used (10 of 18)
 
 Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + results view.
 

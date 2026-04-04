@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - AG-UI event replay engine (`useReplayEngine` hook) with setTimeout-based timing
 - EventStream sidebar with color-coded AG-UI event badges and timestamps
 - A2UI component context shown per TOOL_CALL (component types + count)
-- Pre-baked recording with 10 segments using 11 of 18 A2UI catalog components
+- Pre-baked recording with 10 segments using 10 of 18 A2UI catalog components
   - Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button
 - Decision tree navigation with 10 nodes and branching paths
   - Each choice plays a segment with different A2UI component compositions

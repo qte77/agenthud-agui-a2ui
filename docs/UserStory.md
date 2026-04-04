@@ -39,8 +39,10 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] EventStream shows component types and count per TOOL_CALL_START (e.g., "8 components: Card, Text, Row")
 - [ ] At least 10 of 18 standard catalog components used across the recording
 - [ ] Components include both layout (Column, Row, Card, Tabs) and interactive (CheckBox, Slider, Button)
+- [ ] Decision tree navigation: user choices drive which components render
+- [ ] Components accumulate across choices (append mode)
 
-**Status:** Done (11 of 18 components, 7 tool calls)
+**Status:** Done (10 of 18 components, 10 segments, decision tree with 10 nodes)
 
 ---
 
