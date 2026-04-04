@@ -30,6 +30,8 @@ jobs:
           --no-progress
           --cache
           --max-cache-age 1d
+          --exclude-path index.html
+          --exclude 'github.com/.*/security/dependabot'
           '**/*.md'
           '**/*.html'
         fail: true
