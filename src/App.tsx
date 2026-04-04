@@ -25,7 +25,7 @@ function Dashboard() {
   const [showChoices, setShowChoices] = useState(true);
   const [path, setPath] = useState<string[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const needsPlayRef = useRef(false);
+  const [playTrigger, setPlayTrigger] = useState(0);
   const appendRef = useRef(false);
 
   const filteredRecording = useMemo(() => {
@@ -34,28 +34,35 @@ function Dashboard() {
       return {
         meta: fullRecording.meta,
         events: getSegmentEvents(fullRecording, currentSegmentId, {
-          append: path.length > 0,
+          append: appendRef.current,
         }),
       };
     }
     return { meta: fullRecording.meta, events: [] };
-  }, [mode, currentSegmentId, path.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, currentSegmentId, playTrigger]);
 
   const { isPlaying, eventLog, play, restart } = useReplayEngine(
     filteredRecording,
     useCallback(() => setShowChoices(true), [])
   );
 
-  // Auto-play when segment changes in tree mode
+  // Auto-play after state settles (new recording available)
   useEffect(() => {
-    if (needsPlayRef.current && !isPlaying && mode === "tree" && currentSegmentId) {
-      needsPlayRef.current = false;
+    if (playTrigger > 0 && !isPlaying && filteredRecording.events.length > 0) {
       play({ append: appendRef.current });
     }
-  }, [currentSegmentId, isPlaying, mode, play]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playTrigger, play]);
 
   const treeNode = decisionTree[currentNode];
   const isLeaf = mode === "tree" && !isPlaying && showChoices && !treeNode;
+
+  function triggerPlay(append: boolean) {
+    appendRef.current = append;
+    setShowChoices(false);
+    setPlayTrigger((n) => n + 1);
+  }
 
   function handleChoice(choice: TreeChoice, fromNode?: string) {
     const node = fromNode ? decisionTree[fromNode] : decisionTree[currentNode];
@@ -65,22 +72,21 @@ function Dashboard() {
         { prompt: node.prompt, chosen: choice.label, hint: choice.hint },
       ]);
     }
-    setShowChoices(false);
-    appendRef.current = path.length > 0;
+    const isAppend = path.length > 0;
     setCurrentSegmentId(choice.segment);
     setPath((prev) => [...prev, choice.label]);
     setCurrentNode(choice.next ?? "__leaf__");
-    needsPlayRef.current = true;
+    triggerPlay(isAppend);
   }
 
   function handlePlayAll() {
+    restart();
     setMode("all");
     setCurrentSegmentId(null);
     setCurrentNode("root");
     setPath([]);
-    setShowChoices(false);
-    needsPlayRef.current = false;
-    setTimeout(() => play(), 0);
+    setHistory([]);
+    triggerPlay(false);
   }
 
   function handleStartOver() {
@@ -138,7 +144,6 @@ function Dashboard() {
           </div>
           <A2UISurface />
 
-          {/* Idle: show initial tree choices */}
           {mode === "idle" && (
             <div className="mt-8">
               <p className="text-text-secondary text-sm text-center mb-4">
@@ -170,7 +175,6 @@ function Dashboard() {
             </div>
           )}
 
-          {/* Decision history */}
           {history.length > 0 && (
             <div className="mt-4 space-y-1">
               {history.map((h, i) => (
@@ -183,7 +187,6 @@ function Dashboard() {
             </div>
           )}
 
-          {/* Tree mode: show next choices after segment completes */}
           {mode === "tree" && !isPlaying && showChoices && treeNode && (
             <div className="mt-4 border-t border-gray-700 pt-4">
               <p className="text-text-secondary text-sm mb-3">
@@ -208,7 +211,6 @@ function Dashboard() {
             </div>
           )}
 
-          {/* Leaf: no more choices */}
           {isLeaf && (
             <div className="mt-6 border-t border-gray-700 pt-4 text-center text-text-secondary text-sm">
               <p>Path complete. Try a different route or play the full sequence.</p>
