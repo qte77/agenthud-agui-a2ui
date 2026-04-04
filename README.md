@@ -2,29 +2,52 @@
 
 Feasibility prototype: AG-UI event replay + A2UI component rendering in a static Vite/React app.
 
-Demonstrates how an AI agent composes different UI layouts from the same A2UI standard catalog based on context and intent — without executing arbitrary code.
+Demonstrates how different user intents produce different UI layouts from the same A2UI standard catalog — without executing arbitrary code. Users navigate a decision tree; each choice plays a different segment with distinct component compositions that stack on the surface.
 
 ![Prototype mockup](assets/mockup-prototype.svg)
 
 ## What it shows
 
-- **A2UI Surface** (left panel): Components rendered from declarative JSON via `@a2ui/react`
-- **AG-UI EventStream** (right panel): Protocol events streamed with timing, showing which components each tool call produces
-- **Catalog Viewer**: Modal listing all 18 A2UI standard components, highlighting which ones are used in the demo
+- **Decision tree**: Branching choices drive which A2UI components render. Each path uses different components from the same catalog.
+- **A2UI Surface** (left panel): Components accumulate as users navigate deeper. Rendered from declarative JSON via `@a2ui/react`.
+- **AG-UI EventStream** (right panel): Protocol events streamed with timing, showing which components each tool call produces.
+- **Decision history**: Breadcrumb trail of choices + prompt/hint per decision.
+- **Catalog Viewer**: Modal listing all 18 A2UI standard components with first-party links.
+- **Play All**: Runs the full recording linearly.
 
-The recording replays 7 tool calls, each using a different component composition:
+## Decision tree
 
-| Tool call | Components | Layout pattern |
-|---|---|---|
-| `renderRepoCard` | Card, Row, Text | Compact overview |
-| `renderRepoDetail` | Row, Image, Column, Divider | Detail with avatar |
-| `renderPluginList` | Column, Row, Text | Enumerated items |
-| `renderPortfolioTabs` | Tabs, Column, Text | Category navigation |
-| `renderCheckBoxFilters` | Card, Row, CheckBox | Toggle filters |
-| `renderSlider` | Card, Slider, Text | Range input |
-| `renderButton` | Card, Row, Button | Action triggers |
+```
+root (3 choices)
+├─ Show me repos → Card, Row, Text
+│  ├─ Show details → Image, Column, Divider
+│  ├─ List plugins → Column, Row, Text
+│  └─ Browse categories → Tabs
+├─ Browse by category → Tabs
+│  ├─ Show repo details → Image, Column, Divider
+│  ├─ List plugins → Column, Row
+│  └─ Set up filters → CheckBox
+└─ Filter repos → Card, CheckBox
+   ├─ Adjust range → Slider
+   │  └─ Apply filters → Button
+   │     └─ Show results → Card, Text, Divider
+   └─ Apply now → Button
+      └─ Show results → Card, Text, Divider
+```
 
-11 of 18 standard catalog components used.
+10 tree nodes, no dead ends. Every leaf connects back to other branches.
+
+## Repos shown
+
+- Agents-eval — Multi-agent evaluation framework
+- RAPID-spec-forge — Requirements-to-Agent Pipeline
+- ai-agents-research — Claude Code internals research
+- polyforge-orchestrator — Parallel agent orchestration
+- claude-code-utils-plugin — Plugin marketplace (15 plugins)
+
+## Components used (11 of 18)
+
+Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + results view.
 
 ## Stack
 
@@ -44,7 +67,7 @@ npm install
 npm run dev
 ```
 
-Click **Play** to replay the pre-recorded AG-UI event sequence. Click **Catalog** to view the full A2UI component library.
+Choose a path from the decision tree or press **Play All** for the full sequence. Click **Catalog** to view the A2UI component library.
 
 ## Build
 
@@ -59,7 +82,7 @@ Build output in `dist/` is deployable to GitHub Pages with base path `/agenthud-
 
 | Mode | Status | Description |
 |---|---|---|
-| **Replay** | Current | Pre-baked AG-UI events replayed with timing |
+| **Replay** | Current | Pre-baked AG-UI events with decision tree navigation |
 | GitHub Models | Planned | Live agent via GitHub Models API (OpenAI-compatible) |
 | BYOK | Planned | Visitor provides their own API key |
 
