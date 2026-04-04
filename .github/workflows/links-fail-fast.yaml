@@ -1,0 +1,38 @@
+---
+name: "Link Checker"
+
+on:
+  push:
+  schedule:
+    - cron: '0 12 * * 0'
+  workflow_dispatch:
+
+jobs:
+  linkcheck:
+    name: Check Links
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Restore lychee cache
+      uses: actions/cache@v4
+      with:
+        path: .lycheecache
+        key: cache-lychee-${{ github.sha }}
+        restore-keys: cache-lychee-
+
+    - name: Link Checker
+      uses: lycheeverse/lychee-action@v2
+      with:
+        args: >-
+          --verbose
+          --no-progress
+          --cache
+          --max-cache-age 1d
+          '**/*.md'
+          '**/*.html'
+        fail: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+...
