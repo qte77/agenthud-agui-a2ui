@@ -27,6 +27,7 @@ function Dashboard() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [playTrigger, setPlayTrigger] = useState(0);
   const appendRef = useRef(false);
+  const lastHandledTrigger = useRef(0);
 
   const filteredRecording = useMemo(() => {
     if (mode === "all") return fullRecording;
@@ -49,8 +50,11 @@ function Dashboard() {
 
   // Auto-play after state settles (new recording available)
   useEffect(() => {
-    if (playTrigger > 0 && !isPlaying && filteredRecording.events.length > 0) {
-      play({ append: appendRef.current });
+    if (playTrigger > 0 && playTrigger !== lastHandledTrigger.current && !isPlaying) {
+      lastHandledTrigger.current = playTrigger;
+      if (filteredRecording.events.length > 0) {
+        play({ append: appendRef.current });
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playTrigger, play]);
