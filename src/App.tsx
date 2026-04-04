@@ -1,23 +1,78 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
 import { CatalogViewer } from "./CatalogViewer";
 import { EventStream } from "./EventStream";
 import { useReplayEngine } from "./useReplayEngine";
-import { fullRecording, segments, getSegmentEvents } from "./recordings";
+import {
+  fullRecording,
+  decisionTree,
+  getSegmentEvents,
+  type TreeChoice,
+} from "./recordings";
+
+type Mode = "idle" | "tree" | "all";
 
 function Dashboard() {
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>("idle");
+  const [currentNode, setCurrentNode] = useState("root");
+  const [currentSegmentId, setCurrentSegmentId] = useState<string | null>(null);
+  const [showChoices, setShowChoices] = useState(true);
+  const [path, setPath] = useState<string[]>([]);
+  const needsPlayRef = useRef(false);
 
-  const filteredRecording = useMemo(
-    () => ({
-      meta: fullRecording.meta,
-      events: getSegmentEvents(fullRecording, selectedSegment),
-    }),
-    [selectedSegment]
+  const filteredRecording = useMemo(() => {
+    if (mode === "all") return fullRecording;
+    if (mode === "tree" && currentSegmentId) {
+      return {
+        meta: fullRecording.meta,
+        events: getSegmentEvents(fullRecording, currentSegmentId),
+      };
+    }
+    return { meta: fullRecording.meta, events: [] };
+  }, [mode, currentSegmentId]);
+
+  const { isPlaying, eventLog, play, restart } = useReplayEngine(
+    filteredRecording,
+    useCallback(() => setShowChoices(true), [])
   );
 
-  const { isPlaying, eventLog, play, restart } =
-    useReplayEngine(filteredRecording);
+  // Auto-play when segment changes in tree mode
+  useEffect(() => {
+    if (needsPlayRef.current && !isPlaying && mode === "tree" && currentSegmentId) {
+      needsPlayRef.current = false;
+      play();
+    }
+  }, [currentSegmentId, isPlaying, mode, play]);
+
+  const treeNode = decisionTree[currentNode];
+  const isLeaf = mode === "tree" && !isPlaying && showChoices && !treeNode;
+
+  function handleChoice(choice: TreeChoice) {
+    setShowChoices(false);
+    setCurrentSegmentId(choice.segment);
+    setPath((prev) => [...prev, choice.label]);
+    setCurrentNode(choice.next ?? "__leaf__");
+    needsPlayRef.current = true;
+  }
+
+  function handlePlayAll() {
+    setMode("all");
+    setCurrentSegmentId(null);
+    setCurrentNode("root");
+    setPath([]);
+    setShowChoices(false);
+    needsPlayRef.current = false;
+    setTimeout(() => play(), 0);
+  }
+
+  function handleStartOver() {
+    restart();
+    setMode("idle");
+    setCurrentNode("root");
+    setCurrentSegmentId(null);
+    setPath([]);
+    setShowChoices(true);
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -27,39 +82,27 @@ function Dashboard() {
           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-300">
             Replay
           </span>
-          <p className="text-xs text-text-secondary">
-            Pre-recorded AG-UI sequence — live agent mode planned
-          </p>
+          {path.length > 0 && (
+            <span className="text-xs text-text-secondary">
+              {path.join(" → ")}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          <select
-            value={selectedSegment ?? ""}
-            onChange={(e) => {
-              const val = e.target.value || null;
-              setSelectedSegment(val);
-              restart();
-            }}
-            className="bg-gray-800 text-gray-200 text-sm rounded px-2 py-1 border border-gray-600"
-          >
-            <option value="">All segments</option>
-            {segments.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.label} ({s.componentHint})
-              </option>
-            ))}
-          </select>
+          {mode !== "idle" && (
+            <button
+              onClick={handleStartOver}
+              className="px-3 py-1 rounded bg-gray-700 text-gray-200 text-sm"
+            >
+              Start over
+            </button>
+          )}
           <button
-            onClick={play}
+            onClick={handlePlayAll}
             disabled={isPlaying}
-            className="px-3 py-1 rounded bg-accent text-gray-900 font-medium text-sm disabled:opacity-40"
+            className="px-3 py-1 rounded bg-gray-700 text-gray-200 text-sm disabled:opacity-40"
           >
-            Play
-          </button>
-          <button
-            onClick={restart}
-            className="px-3 py-1 rounded bg-gray-700 text-gray-200 text-sm"
-          >
-            Restart
+            Play All
           </button>
           <CatalogViewer />
         </div>
@@ -71,22 +114,72 @@ function Dashboard() {
               A2UI Surface
             </span>
             <span className="text-xs text-text-secondary">
-              — components selected by agent intent from standard catalog
+              — components selected by user intent from standard catalog
             </span>
           </div>
           <A2UISurface />
-          {!isPlaying && eventLog.length === 0 && (
-            <div className="mt-8 text-center text-text-secondary text-sm">
-              <p>
-                Select a segment and press{" "}
-                <strong className="text-accent">Play</strong> to see different
-                A2UI components rendered based on intent.
+
+          {/* Idle: show initial tree choices */}
+          {mode === "idle" && (
+            <div className="mt-8">
+              <p className="text-text-secondary text-sm text-center mb-4">
+                {decisionTree.root?.prompt ?? "Choose a path"}
               </p>
-              <p className="mt-2 text-xs">
-                Each segment uses different components from the same catalog.
-                <br />
-                &quot;All&quot; plays the full sequence.
+              <div className="grid grid-cols-1 gap-2 max-w-md mx-auto">
+                {decisionTree.root?.choices.map((c) => (
+                  <button
+                    key={c.segment}
+                    onClick={() => {
+                      setMode("tree");
+                      handleChoice(c);
+                    }}
+                    className="p-3 rounded-lg border border-gray-700 hover:border-accent text-left transition-colors"
+                  >
+                    <span className="text-sm font-medium text-accent">
+                      {c.label}
+                    </span>
+                    <span className="text-xs text-text-secondary ml-2">
+                      {c.hint}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-center mt-4 text-xs text-text-secondary">
+                Or press <strong className="text-gray-300">Play All</strong> for
+                the full sequence.
               </p>
+            </div>
+          )}
+
+          {/* Tree mode: show next choices after segment completes */}
+          {mode === "tree" && !isPlaying && showChoices && treeNode && (
+            <div className="mt-6 border-t border-gray-700 pt-4">
+              <p className="text-text-secondary text-sm mb-3">
+                {treeNode.prompt}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {treeNode.choices.map((c) => (
+                  <button
+                    key={c.segment}
+                    onClick={() => handleChoice(c)}
+                    className="px-3 py-2 rounded-lg border border-gray-700 hover:border-accent text-left transition-colors"
+                  >
+                    <span className="text-sm font-medium text-accent">
+                      {c.label}
+                    </span>
+                    <span className="text-xs text-text-secondary ml-2">
+                      {c.hint}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Leaf: no more choices */}
+          {isLeaf && (
+            <div className="mt-6 border-t border-gray-700 pt-4 text-center text-text-secondary text-sm">
+              <p>Path complete. Try a different route or play the full sequence.</p>
             </div>
           )}
         </main>
