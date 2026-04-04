@@ -96,6 +96,122 @@
       "type": "TOOL_CALL_END"
     },
     {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(RAPID-spec-forge)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-rapid"] }
+                  }
+                }
+              },
+              {
+                "id": "card-rapid",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rapid-title", "rapid-desc", "rapid-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "rapid-title",
+                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "rapid-desc",
+                "component": { "Text": { "text": { "literal": "Requirements-to-Agent Pipeline — BRD, PRD, FRP generation for small teams" }, "usageHint": "body" } }
+              },
+              {
+                "id": "rapid-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["rapid-l1", "rapid-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "rapid-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "rapid-l2",
+                "component": { "Text": { "text": { "literal": "Templates" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderRepoCard(ai-agents-research)",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-rapid", "card-research"] }
+                  }
+                }
+              },
+              {
+                "id": "card-research",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["research-title", "research-desc", "research-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "research-title",
+                "component": { "Text": { "text": { "literal": "ai-agents-research" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "research-desc",
+                "component": { "Text": { "text": { "literal": "Deep-dive research on Claude Code internals, agent orchestration, and comparative analysis" }, "usageHint": "body" } }
+              },
+              {
+                "id": "research-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["research-l1", "research-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "research-l1",
+                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "research-l2",
+                "component": { "Text": { "text": { "literal": "Research" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
       "delayMs": 200,
       "type": "STEP_FINISHED"
     },
@@ -615,13 +731,105 @@
       "type": "STEP_FINISHED"
     },
     {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Showing filtered results",
+      "segment": "results"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderFilteredResults()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["results-header", "results-divider", "results-card-1", "results-card-2", "results-card-3"] }
+                  }
+                }
+              },
+              {
+                "id": "results-header",
+                "component": { "Text": { "text": { "literal": "3 repositories match your filters" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "results-divider",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "results-card-1",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc1-title", "rc1-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc1-title",
+                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc1-desc",
+                "component": { "Text": { "text": { "literal": "Multi-agent evaluation — Python, PydanticAI, Streamlit" }, "usageHint": "body" } }
+              },
+              {
+                "id": "results-card-2",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc2-title", "rc2-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc2-title",
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc2-desc",
+                "component": { "Text": { "text": { "literal": "Parallel agent orchestration — Bash, Make, Devcontainer" }, "usageHint": "body" } }
+              },
+              {
+                "id": "results-card-3",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rc3-title", "rc3-desc"] }
+                  }
+                }
+              },
+              {
+                "id": "rc3-title",
+                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "rc3-desc",
+                "component": { "Text": { "text": { "literal": "Requirements pipeline — Python, Templates, BRD/PRD/FRP" }, "usageHint": "body" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
       "delayMs": 300,
       "type": "TEXT_MESSAGE_START"
     },
     {
       "delayMs": 50,
       "type": "TEXT_MESSAGE_CONTENT",
-      "text": "Summary: 7 tool calls rendered distinct layouts using 11 component types from the A2UI standard catalog."
+      "text": "Summary: Multiple tool calls rendered distinct layouts using 11 component types from the A2UI standard catalog."
     },
     {
       "delayMs": 50,
@@ -698,9 +906,17 @@
       ]
     },
     "after-apply": {
-      "prompt": "What next?",
+      "prompt": "Filters applied. See results?",
       "choices": [
-        { "label": "View repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Show results", "hint": "Card, Text, Divider", "segment": "results", "next": "after-results" },
+        { "label": "Adjust filters", "hint": "CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-results": {
+      "prompt": "Explore the matches?",
+      "choices": [
+        { "label": "View all repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
         { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
       ]
     }
