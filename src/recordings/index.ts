@@ -9,9 +9,24 @@ export interface RecordingEvent {
   [key: string]: unknown;
 }
 
+export interface TreeChoice {
+  label: string;
+  hint: string;
+  segment: string;
+  next: string | null;
+}
+
+export interface TreeNode {
+  prompt: string;
+  choices: TreeChoice[];
+}
+
+export type DecisionTree = Record<string, TreeNode>;
+
 export interface Recording {
   meta: { title: string; description: string };
   events: RecordingEvent[];
+  tree?: DecisionTree;
 }
 
 export interface Segment {
@@ -56,8 +71,9 @@ function extractSegments(rec: Recording): Segment[] {
   }));
 }
 
-export const fullRecording = recording as Recording;
+export const fullRecording = recording as unknown as Recording;
 export const segments = extractSegments(fullRecording);
+export const decisionTree = fullRecording.tree ?? {};
 
 /** Filter recording events to only those in the given segment */
 export function getSegmentEvents(
