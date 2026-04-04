@@ -1,0 +1,275 @@
+{
+  "meta": {
+    "title": "AI Projects Tour",
+    "description": "Deep dive into qte77 AI and ML repositories"
+  },
+  "events": [
+    {
+      "delayMs": 0,
+      "type": "RUN_STARTED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "Exploring AI and machine learning projects across the qte77 portfolio..."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 500,
+      "type": "STEP_STARTED",
+      "text": "Fetching AI repositories",
+      "segment": "ai-overview"
+    },
+    {
+      "delayMs": 300,
+      "type": "TOOL_CALL_START",
+      "text": "renderAIProjectCards()",
+      "a2uiMessages": [
+        {
+          "beginRendering": {
+            "surfaceId": "main",
+            "root": "root"
+          }
+        },
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-ai-agents", "card-rapid"] }
+                  }
+                }
+              },
+              {
+                "id": "card-agents-eval",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["ae-title", "ae-desc", "ae-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-title",
+                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "ae-desc",
+                "component": { "Text": { "text": { "literal": "Evaluation framework for AI agents — benchmarks, scoring, and comparison dashboards via Streamlit." }, "usageHint": "body" } }
+              },
+              {
+                "id": "ae-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["ae-l1", "ae-l2", "ae-l3"] }
+                  }
+                }
+              },
+              {
+                "id": "ae-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l2",
+                "component": { "Text": { "text": { "literal": "PydanticAI" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "ae-l3",
+                "component": { "Text": { "text": { "literal": "Streamlit" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "card-ai-agents",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["aa-title", "aa-desc", "aa-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "aa-title",
+                "component": { "Text": { "text": { "literal": "ai-agents-research" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "aa-desc",
+                "component": { "Text": { "text": { "literal": "Curated research notes on AI agent architectures, tool use, and multi-agent coordination patterns." }, "usageHint": "body" } }
+              },
+              {
+                "id": "aa-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["aa-l1", "aa-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "aa-l1",
+                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "aa-l2",
+                "component": { "Text": { "text": { "literal": "Research" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "card-rapid",
+                "component": {
+                  "Card": {
+                    "children": { "explicitList": ["rp-title", "rp-desc", "rp-langs"] }
+                  }
+                }
+              },
+              {
+                "id": "rp-title",
+                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h2" } }
+              },
+              {
+                "id": "rp-desc",
+                "component": { "Text": { "text": { "literal": "Template-driven specification generator for rapid AI project scaffolding and documentation." }, "usageHint": "body" } }
+              },
+              {
+                "id": "rp-langs",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["rp-l1", "rp-l2"] }
+                  }
+                }
+              },
+              {
+                "id": "rp-l1",
+                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+              },
+              {
+                "id": "rp-l2",
+                "component": { "Text": { "text": { "literal": "Templates" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "STEP_STARTED",
+      "text": "Rendering Agents-eval detail view",
+      "segment": "ai-detail"
+    },
+    {
+      "delayMs": 400,
+      "type": "TOOL_CALL_START",
+      "text": "renderAgentsEvalDetail()",
+      "a2uiMessages": [
+        {
+          "surfaceUpdate": {
+            "surfaceId": "main",
+            "components": [
+              {
+                "id": "root",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["card-agents-eval", "card-ai-agents", "card-rapid", "detail-divider", "detail-row"] }
+                  }
+                }
+              },
+              {
+                "id": "detail-divider",
+                "component": { "Divider": {} }
+              },
+              {
+                "id": "detail-row",
+                "component": {
+                  "Row": {
+                    "children": { "explicitList": ["detail-avatar", "detail-col"] }
+                  }
+                }
+              },
+              {
+                "id": "detail-avatar",
+                "component": {
+                  "Image": {
+                    "url": { "literal": "https://github.com/qte77.png" },
+                    "alt": { "literal": "qte77 avatar" }
+                  }
+                }
+              },
+              {
+                "id": "detail-col",
+                "component": {
+                  "Column": {
+                    "children": { "explicitList": ["detail-heading", "detail-body", "detail-caption"] }
+                  }
+                }
+              },
+              {
+                "id": "detail-heading",
+                "component": { "Text": { "text": { "literal": "Agents-eval Deep Dive" }, "usageHint": "h3" } }
+              },
+              {
+                "id": "detail-body",
+                "component": { "Text": { "text": { "literal": "PydanticAI-powered agent evaluation pipeline with structured output validation. Runs benchmark suites against multiple LLM providers and renders comparative dashboards in Streamlit." }, "usageHint": "body" } }
+              },
+              {
+                "id": "detail-caption",
+                "component": { "Text": { "text": { "literal": "Status: Active development · Last updated: 2025" }, "usageHint": "caption" } }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "delayMs": 200,
+      "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 300,
+      "type": "TEXT_MESSAGE_START"
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_CONTENT",
+      "text": "AI projects overview complete. Three repos shown as cards with an Agents-eval deep dive including avatar and status details."
+    },
+    {
+      "delayMs": 50,
+      "type": "TEXT_MESSAGE_END"
+    },
+    {
+      "delayMs": 100,
+      "type": "RUN_FINISHED"
+    }
+  ],
+  "tree": {
+    "root": {
+      "prompt": "Explore AI projects?",
+      "choices": [
+        { "label": "Show AI repos", "hint": "Card, Row, Text", "segment": "ai-overview", "next": "after-ai-overview" }
+      ]
+    },
+    "after-ai-overview": {
+      "prompt": "Go deeper?",
+      "choices": [
+        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "ai-detail", "next": null }
+      ]
+    }
+  }
+}

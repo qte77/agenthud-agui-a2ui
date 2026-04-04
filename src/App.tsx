@@ -3,14 +3,16 @@ import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
 import { CatalogViewer } from "./CatalogViewer";
 import { EventStream } from "./EventStream";
 import { useReplayEngine } from "./useReplayEngine";
+import { TourSelector } from "./TourSelector";
 import {
-  fullRecording,
-  decisionTree,
+  tours,
   getSegmentEvents,
   type TreeChoice,
+  type Recording,
+  type DecisionTree,
 } from "./recordings";
 
-type Mode = "idle" | "tree" | "all";
+type Mode = "tour-select" | "idle" | "tree" | "all";
 
 interface HistoryEntry {
   prompt: string;
@@ -19,7 +21,8 @@ interface HistoryEntry {
 }
 
 function Dashboard() {
-  const [mode, setMode] = useState<Mode>("idle");
+  const [mode, setMode] = useState<Mode>("tour-select");
+  const [activeRecording, setActiveRecording] = useState<Recording>(tours[0].recording);
   const [currentNode, setCurrentNode] = useState("root");
   const [currentSegmentId, setCurrentSegmentId] = useState<string | null>(null);
   const [showChoices, setShowChoices] = useState(true);
@@ -29,19 +32,21 @@ function Dashboard() {
   const appendRef = useRef(false);
   const lastHandledTrigger = useRef(0);
 
+  const activeTree: DecisionTree = activeRecording.tree ?? {};
+
   const filteredRecording = useMemo(() => {
-    if (mode === "all") return fullRecording;
+    if (mode === "all") return activeRecording;
     if (mode === "tree" && currentSegmentId) {
       return {
-        meta: fullRecording.meta,
-        events: getSegmentEvents(fullRecording, currentSegmentId, {
+        meta: activeRecording.meta,
+        events: getSegmentEvents(activeRecording, currentSegmentId, {
           append: appendRef.current,
         }),
       };
     }
-    return { meta: fullRecording.meta, events: [] };
+    return { meta: activeRecording.meta, events: [] };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, currentSegmentId, playTrigger]);
+  }, [mode, currentSegmentId, playTrigger, activeRecording]);
 
   const { isPlaying, eventLog, play, restart } = useReplayEngine(
     filteredRecording,
@@ -59,7 +64,7 @@ function Dashboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playTrigger, play]);
 
-  const treeNode = decisionTree[currentNode];
+  const treeNode = activeTree[currentNode];
   const isLeaf = mode === "tree" && !isPlaying && showChoices && !treeNode;
 
   function triggerPlay(append: boolean) {
@@ -69,7 +74,7 @@ function Dashboard() {
   }
 
   function handleChoice(choice: TreeChoice, fromNode?: string) {
-    const node = fromNode ? decisionTree[fromNode] : decisionTree[currentNode];
+    const node = fromNode ? activeTree[fromNode] : activeTree[currentNode];
     if (node) {
       setHistory((prev) => [
         ...prev,
@@ -93,9 +98,22 @@ function Dashboard() {
     triggerPlay(false);
   }
 
+  function handleSelectTour(tourId: string) {
+    const tour = tours.find((t) => t.id === tourId);
+    if (!tour) return;
+    restart();
+    setActiveRecording(tour.recording);
+    setMode("idle");
+    setCurrentNode("root");
+    setCurrentSegmentId(null);
+    setPath([]);
+    setHistory([]);
+    setShowChoices(true);
+  }
+
   function handleStartOver() {
     restart();
-    setMode("idle");
+    setMode("tour-select");
     setCurrentNode("root");
     setCurrentSegmentId(null);
     setPath([]);
@@ -118,7 +136,7 @@ function Dashboard() {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {mode !== "idle" && (
+          {mode !== "tour-select" && (
             <button
               onClick={handleStartOver}
               className="px-3 py-1 rounded bg-gray-700 text-gray-200 text-sm"
@@ -148,13 +166,25 @@ function Dashboard() {
           </div>
           <A2UISurface />
 
+          {mode === "tour-select" && (
+            <div className="mt-8">
+              <p className="text-text-secondary text-sm text-center mb-4">
+                Choose a tour to explore different A2UI component compositions.
+              </p>
+              <TourSelector
+                tours={tours.map((t) => ({ id: t.id, label: t.label, description: t.description }))}
+                onSelect={handleSelectTour}
+              />
+            </div>
+          )}
+
           {mode === "idle" && (
             <div className="mt-8">
               <p className="text-text-secondary text-sm text-center mb-4">
-                {decisionTree.root?.prompt ?? "Choose a path"}
+                {activeTree.root?.prompt ?? "Choose a path"}
               </p>
               <div className="grid grid-cols-1 gap-2 max-w-md mx-auto">
-                {decisionTree.root?.choices.map((c) => (
+                {activeTree.root?.choices.map((c) => (
                   <button
                     key={c.segment}
                     onClick={() => {

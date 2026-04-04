@@ -26,11 +26,19 @@ describe("App", () => {
     expect(screen.getByText("Replay")).toBeInTheDocument();
   });
 
-  it("idle mode shows 3 initial choice buttons", () => {
+  it("tour-select mode shows tour options on initial render", () => {
     render(<App />);
+    expect(screen.getByText("Full Portfolio")).toBeInTheDocument();
+    expect(screen.getByText("AI Projects")).toBeInTheDocument();
+    expect(screen.getByText("Developer Tools")).toBeInTheDocument();
+    expect(screen.getByText("Interactive Filters")).toBeInTheDocument();
+  });
+
+  it("selecting a tour shows decision tree choices", () => {
+    render(<App />);
+    fireEvent.click(screen.getByText("Full Portfolio"));
     expect(screen.getByText("Show me repos")).toBeInTheDocument();
-    expect(screen.getByText("Browse by category")).toBeInTheDocument();
-    expect(screen.getByText("Filter repos")).toBeInTheDocument();
+    expect(screen.queryByText("Full Portfolio")).not.toBeInTheDocument();
   });
 
   it("shows Play All button", () => {
@@ -43,27 +51,20 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: /Catalog/i })).toBeInTheDocument();
   });
 
-  it("clicking a choice hides idle choices", () => {
+  it("Start over returns to tour selection", () => {
     render(<App />);
-    fireEvent.click(screen.getByText("Show me repos"));
-    expect(screen.queryByText("Browse by category")).not.toBeInTheDocument();
-    expect(screen.queryByText("Filter repos")).not.toBeInTheDocument();
-  });
-
-  it("Start over button appears after choosing", () => {
-    render(<App />);
-    // Start over should not be visible in idle mode
-    expect(screen.queryByRole("button", { name: /Start over/i })).not.toBeInTheDocument();
-    // Click a choice to enter tree mode
-    fireEvent.click(screen.getByText("Show me repos"));
+    // Select a tour
+    fireEvent.click(screen.getByText("Full Portfolio"));
     expect(screen.getByRole("button", { name: /Start over/i })).toBeInTheDocument();
+    // Start over returns to tour select
+    fireEvent.click(screen.getByRole("button", { name: /Start over/i }));
+    expect(screen.getByText("Full Portfolio")).toBeInTheDocument();
   });
 
   it("Catalog button opens modal with component list", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /Catalog/i }));
     expect(screen.getByText("A2UI Standard Component Catalog")).toBeInTheDocument();
-    // Verify some catalog entries are visible
     expect(screen.getByText("Text")).toBeInTheDocument();
     expect(screen.getByText("Card")).toBeInTheDocument();
     expect(screen.getByText("Slider")).toBeInTheDocument();
