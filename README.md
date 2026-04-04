@@ -1,6 +1,8 @@
 # agenthud-agui-a2ui
 
-Feasibility prototype: AG-UI event replay + A2UI component rendering in a static Vite/React app.
+> **Prototype** — This is a feasibility prototype, not a production application.
+
+AG-UI event replay + A2UI component rendering in a static Vite/React app.
 
 Demonstrates how different user intents produce different UI layouts from the same A2UI standard catalog — without executing arbitrary code. Users navigate a decision tree; each choice plays a different segment with distinct component compositions that stack on the surface.
 
