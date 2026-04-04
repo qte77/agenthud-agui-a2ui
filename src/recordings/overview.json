@@ -24,7 +24,8 @@
     {
       "delayMs": 500,
       "type": "STEP_STARTED",
-      "text": "Fetching repository data"
+      "text": "Fetching repository data",
+      "segment": "overview"
     },
     {
       "delayMs": 300,
@@ -95,6 +96,16 @@
       "type": "TOOL_CALL_END"
     },
     {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Rendering repo detail",
+      "segment": "detail"
+    },
+    {
       "delayMs": 400,
       "type": "TOOL_CALL_START",
       "text": "renderRepoDetail(polyforge-orchestrator)",
@@ -155,6 +166,16 @@
     {
       "delayMs": 200,
       "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Rendering plugin list",
+      "segment": "plugins"
     },
     {
       "delayMs": 400,
@@ -294,7 +315,8 @@
     {
       "delayMs": 300,
       "type": "STEP_STARTED",
-      "text": "Rendering category navigation"
+      "text": "Rendering category navigation",
+      "segment": "navigation"
     },
     {
       "delayMs": 400,
@@ -390,7 +412,8 @@
     {
       "delayMs": 300,
       "type": "STEP_STARTED",
-      "text": "Rendering filter controls"
+      "text": "Rendering filter controls",
+      "segment": "filters"
     },
     {
       "delayMs": 400,
