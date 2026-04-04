@@ -1,0 +1,5 @@
+# Root-relative paths that lychee can't resolve in local files
+/favicon.svg
+
+# Dependabot security tab — only accessible after merge to main
+https://github.com/qte77/agenthud-agui-a2ui/security/dependabot
