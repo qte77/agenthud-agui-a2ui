@@ -36,8 +36,13 @@ interface ReplayState {
   restart: () => void;
 }
 
-export function useReplayEngine(recording: Recording): ReplayState {
+export function useReplayEngine(
+  recording: Recording,
+  onComplete?: () => void
+): ReplayState {
   const { processMessages, clearSurfaces } = useA2UIActions();
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
   const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -47,6 +52,7 @@ export function useReplayEngine(recording: Recording): ReplayState {
     (events: RecordingEvent[], index: number, startTime: number) => {
       if (index >= events.length) {
         setIsPlaying(false);
+        onCompleteRef.current?.();
         return;
       }
 
