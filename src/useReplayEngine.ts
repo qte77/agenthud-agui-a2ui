@@ -32,7 +32,7 @@ function extractA2UIInfo(messages: object[]): {
 interface ReplayState {
   isPlaying: boolean;
   eventLog: EventLogEntry[];
-  play: () => void;
+  play: (options?: { append?: boolean }) => void;
   restart: () => void;
 }
 
@@ -87,15 +87,20 @@ export function useReplayEngine(
     [processMessages]
   );
 
-  const play = useCallback(() => {
-    if (isPlaying) return;
-    setIsPlaying(true);
-    setEventLog([]);
-    clearSurfaces();
-    const start = Date.now();
-    startTimeRef.current = start;
-    playEvents(recording.events, 0, start);
-  }, [isPlaying, recording, playEvents, clearSurfaces]);
+  const play = useCallback(
+    (options?: { append?: boolean }) => {
+      if (isPlaying) return;
+      setIsPlaying(true);
+      if (!options?.append) {
+        setEventLog([]);
+        clearSurfaces();
+      }
+      const start = Date.now();
+      startTimeRef.current = start;
+      playEvents(recording.events, 0, start);
+    },
+    [isPlaying, recording, playEvents, clearSurfaces]
+  );
 
   const restart = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);

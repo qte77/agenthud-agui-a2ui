@@ -104,10 +104,12 @@ function patchRootChildren(event: RecordingEvent): RecordingEvent {
   return patched;
 }
 
-/** Filter recording events to only those in the given segment */
+/** Filter recording events to only those in the given segment.
+ *  When append=true, skip root patching (tree mode accumulates). */
 export function getSegmentEvents(
   rec: Recording,
-  segmentId: string | null
+  segmentId: string | null,
+  options?: { append?: boolean }
 ): RecordingEvent[] {
   if (!segmentId) return rec.events;
 
@@ -152,8 +154,7 @@ export function getSegmentEvents(
         }
         foundBeginRendering = true;
       }
-      // Patch root Column children to only include IDs defined in this update
-      filtered.push(patchRootChildren(event));
+      filtered.push(options?.append ? event : patchRootChildren(event));
     }
   }
 

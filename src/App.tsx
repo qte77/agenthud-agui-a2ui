@@ -26,17 +26,20 @@ function Dashboard() {
   const [path, setPath] = useState<string[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const needsPlayRef = useRef(false);
+  const appendRef = useRef(false);
 
   const filteredRecording = useMemo(() => {
     if (mode === "all") return fullRecording;
     if (mode === "tree" && currentSegmentId) {
       return {
         meta: fullRecording.meta,
-        events: getSegmentEvents(fullRecording, currentSegmentId),
+        events: getSegmentEvents(fullRecording, currentSegmentId, {
+          append: path.length > 0,
+        }),
       };
     }
     return { meta: fullRecording.meta, events: [] };
-  }, [mode, currentSegmentId]);
+  }, [mode, currentSegmentId, path.length]);
 
   const { isPlaying, eventLog, play, restart } = useReplayEngine(
     filteredRecording,
@@ -47,7 +50,7 @@ function Dashboard() {
   useEffect(() => {
     if (needsPlayRef.current && !isPlaying && mode === "tree" && currentSegmentId) {
       needsPlayRef.current = false;
-      play();
+      play({ append: appendRef.current });
     }
   }, [currentSegmentId, isPlaying, mode, play]);
 
@@ -63,6 +66,7 @@ function Dashboard() {
       ]);
     }
     setShowChoices(false);
+    appendRef.current = path.length > 0;
     setCurrentSegmentId(choice.segment);
     setPath((prev) => [...prev, choice.label]);
     setCurrentNode(choice.next ?? "__leaf__");
