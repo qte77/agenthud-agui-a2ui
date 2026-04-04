@@ -137,8 +137,8 @@ export function getSegmentEvents(
     }
 
     if (inSegment) {
-      // Ensure beginRendering is included for the surface (skip in append mode)
-      if (!options?.append && event.a2uiMessages && !foundBeginRendering) {
+      // Ensure beginRendering is included for the surface
+      if (event.a2uiMessages && !foundBeginRendering) {
         const hasBegin = (event.a2uiMessages as Array<Record<string, unknown>>).some(
           (m) => m.beginRendering
         );
