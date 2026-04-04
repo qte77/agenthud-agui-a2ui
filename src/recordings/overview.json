@@ -412,8 +412,8 @@
     {
       "delayMs": 300,
       "type": "STEP_STARTED",
-      "text": "Rendering filter controls",
-      "segment": "filters"
+      "text": "Rendering checkbox filters",
+      "segment": "filters-checkboxes"
     },
     {
       "delayMs": 400,
@@ -493,6 +493,16 @@
       "type": "TOOL_CALL_END"
     },
     {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Adding slider control",
+      "segment": "filters-slider"
+    },
+    {
       "delayMs": 300,
       "type": "TOOL_CALL_START",
       "text": "renderSlider(min-stars)",
@@ -529,6 +539,16 @@
     {
       "delayMs": 200,
       "type": "TOOL_CALL_END"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_FINISHED"
+    },
+    {
+      "delayMs": 200,
+      "type": "STEP_STARTED",
+      "text": "Adding action buttons",
+      "segment": "filters-buttons"
     },
     {
       "delayMs": 300,
@@ -631,28 +651,57 @@
       "choices": [
         { "label": "Show me repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
         { "label": "Browse by category", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
-        { "label": "Filter repos", "hint": "CheckBox, Slider, Button", "segment": "filters", "next": null }
+        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
       ]
     },
     "after-overview": {
       "prompt": "Want to go deeper?",
       "choices": [
         { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
-        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": null }
-      ]
-    },
-    "after-navigation": {
-      "prompt": "Explore a category?",
-      "choices": [
-        { "label": "Show repo details", "hint": "Image, Column", "segment": "detail", "next": null },
-        { "label": "Filter repos", "hint": "CheckBox, Slider", "segment": "filters", "next": null }
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
       ]
     },
     "after-detail": {
+      "prompt": "Explore further?",
+      "choices": [
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-plugins": {
+      "prompt": "What else?",
+      "choices": [
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
+        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-navigation": {
+      "prompt": "Dive into a category?",
+      "choices": [
+        { "label": "Show repo details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
+        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
+        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+      ]
+    },
+    "after-checkboxes": {
+      "prompt": "Refine the filter?",
+      "choices": [
+        { "label": "Adjust range", "hint": "Slider", "segment": "filters-slider", "next": "after-slider" },
+        { "label": "Apply now", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+      ]
+    },
+    "after-slider": {
+      "prompt": "Ready to apply?",
+      "choices": [
+        { "label": "Apply filters", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+      ]
+    },
+    "after-apply": {
       "prompt": "What next?",
       "choices": [
-        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": null },
-        { "label": "Filter repos", "hint": "CheckBox, Slider", "segment": "filters", "next": null }
+        { "label": "View repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
+        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
       ]
     }
   }
