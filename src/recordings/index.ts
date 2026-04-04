@@ -75,6 +75,35 @@ export const fullRecording = recording as unknown as Recording;
 export const segments = extractSegments(fullRecording);
 export const decisionTree = fullRecording.tree ?? {};
 
+/**
+ * Patch root Column's explicitList to only reference IDs that exist
+ * in the same surfaceUpdate. Prevents broken references when playing
+ * a single segment that shares the root with other segments.
+ */
+function patchRootChildren(event: RecordingEvent): RecordingEvent {
+  if (!event.a2uiMessages) return event;
+
+  const patched = structuredClone(event);
+  for (const msg of patched.a2uiMessages as Array<Record<string, unknown>>) {
+    const update = msg.surfaceUpdate as
+      | { components?: Array<{ id: string; component?: Record<string, unknown> }> }
+      | undefined;
+    if (!update?.components) continue;
+
+    const definedIds = new Set(update.components.map((c) => c.id));
+    const root = update.components.find((c) => c.id === "root");
+    if (!root?.component) continue;
+
+    const rootType = Object.keys(root.component)[0];
+    const rootProps = root.component[rootType] as Record<string, unknown> | undefined;
+    const children = rootProps?.children as { explicitList?: string[] } | undefined;
+    if (!children?.explicitList) continue;
+
+    children.explicitList = children.explicitList.filter((id) => definedIds.has(id));
+  }
+  return patched;
+}
+
 /** Filter recording events to only those in the given segment */
 export function getSegmentEvents(
   rec: Recording,
@@ -123,7 +152,8 @@ export function getSegmentEvents(
         }
         foundBeginRendering = true;
       }
-      filtered.push(event);
+      // Patch root Column children to only include IDs defined in this update
+      filtered.push(patchRootChildren(event));
     }
   }
 
