@@ -1,4 +1,7 @@
 import recording from "./overview.json";
+import aiProjectsRec from "./ai-projects.json";
+import devToolsRec from "./dev-tools.json";
+import filtersRec from "./interactive-filters.json";
 
 export interface RecordingEvent {
   delayMs: number;
@@ -71,9 +74,23 @@ function extractSegments(rec: Recording): Segment[] {
   }));
 }
 
+export interface Tour {
+  id: string;
+  label: string;
+  description: string;
+  recording: Recording;
+}
+
 export const fullRecording = recording as unknown as Recording;
 export const segments = extractSegments(fullRecording);
 export const decisionTree = fullRecording.tree ?? {};
+
+export const tours: Tour[] = [
+  { id: "overview", label: "Full Portfolio", description: "Complete tour with all segments and decision tree", recording: fullRecording },
+  { id: "ai-projects", label: "AI Projects", description: "Deep dive into AI and ML repositories", recording: aiProjectsRec as unknown as Recording },
+  { id: "dev-tools", label: "Developer Tools", description: "Tooling and orchestration repos", recording: devToolsRec as unknown as Recording },
+  { id: "filters", label: "Interactive Filters", description: "CheckBox, Slider, Button components", recording: filtersRec as unknown as Recording },
+];
 
 /**
  * Patch root Column's explicitList to only reference IDs that exist
