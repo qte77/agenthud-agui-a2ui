@@ -296,7 +296,7 @@
     {
       "delayMs": 400,
       "type": "TOOL_CALL_START",
-      "text": "renderPluginList(claude-code-utils-plugin)",
+      "text": "renderPluginList(claude-code-plugins)",
       "a2uiMessages": [
         {
           "surfaceUpdate": {
@@ -324,7 +324,7 @@
               },
               {
                 "id": "cc-title",
-                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin" }, "usageHint": "h2" } }
+                "component": { "Text": { "text": { "literal": "claude-code-plugins" }, "usageHint": "h2" } }
               },
               {
                 "id": "cc-desc",
@@ -489,7 +489,7 @@
               },
               {
                 "id": "tab-devtools-text",
-                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, claude-code-utils-plugin, dotfiles, rtk" }, "usageHint": "body" } }
+                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, claude-code-plugins, dotfiles, rtk" }, "usageHint": "body" } }
               },
               {
                 "id": "tab-templates",

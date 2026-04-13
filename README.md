@@ -52,7 +52,7 @@ root (3 choices)
 - RAPID-spec-forge — Requirements-to-Agent Pipeline
 - ai-agents-research — Claude Code internals research
 - polyforge-orchestrator — Parallel agent orchestration
-- claude-code-utils-plugin — Plugin marketplace (15 plugins)
+- claude-code-plugins — Plugin marketplace (26 plugins)
 
 ## Components used (10 of 18)
 
