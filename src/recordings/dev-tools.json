@@ -92,7 +92,7 @@
               },
               {
                 "id": "cc-title",
-                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin" }, "usageHint": "h2" } }
+                "component": { "Text": { "text": { "literal": "claude-code-plugins" }, "usageHint": "h2" } }
               },
               {
                 "id": "cc-desc",
@@ -220,7 +220,7 @@
               },
               {
                 "id": "tab-plugins-text",
-                "component": { "Text": { "text": { "literal": "claude-code-utils-plugin, agenthud-agui-a2ui" }, "usageHint": "body" } }
+                "component": { "Text": { "text": { "literal": "claude-code-plugins, agenthud-agui-a2ui" }, "usageHint": "body" } }
               },
               {
                 "id": "tab-config",
