@@ -26,7 +26,7 @@ Demonstrates how different user intents produce different UI layouts from the sa
 
 ## Decision tree
 
-```
+```text
 root (3 choices)
 ├─ Show me repos → Card, Row, Text
 │  ├─ Show details → Image, Column, Divider
@@ -74,7 +74,7 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 ```bash
 npm install
 npm run dev
-```
+```bash
 
 Choose a path from the decision tree or press **Play All** for the full sequence. Click **Catalog** to view the A2UI component library.
 

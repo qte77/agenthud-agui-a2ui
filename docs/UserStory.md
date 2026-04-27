@@ -14,7 +14,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** click Play and watch a pre-recorded agent session unfold with timing delays,
 **so that** I see how an agent progressively builds a UI.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Play button starts the replay; Restart resets the surface and event log
 - [ ] AG-UI events fire with realistic timing delays (50-500ms between events)
@@ -33,7 +33,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** see each tool call use a different set of A2UI components,
 **so that** I understand the agent selects components based on context, not a fixed template.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] At least 5 tool calls in the recording, each with a distinct component mix
 - [ ] EventStream shows component types and count per TOOL_CALL_START (e.g., "8 components: Card, Text, Row")
@@ -52,7 +52,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** open a catalog listing all available A2UI components with descriptions,
 **so that** I understand the full set of building blocks the agent can use.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Catalog button in the header opens a modal
 - [ ] All 18 standard A2UI catalog components listed with descriptions
@@ -70,7 +70,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** see that the current session is a pre-defined replay, not a live agent,
 **so that** I don't confuse it with real-time AI interaction.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Visible "Replay" badge in the header
 - [ ] Empty state text explains this is a pre-defined sequence
@@ -86,7 +86,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** deploy the app to qte77.github.io/agenthud-agui-a2ui via GitHub Actions,
 **so that** visitors can access it without cloning the repo.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] `npm run build` produces a deployable `dist/` with correct base path `/agenthud-agui-a2ui/`
 - [ ] GitHub Actions workflow (`.github/workflows/pages.yml`) builds and deploys on push to main
@@ -104,7 +104,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** interact with a live agent that queries the qte77 GitHub account in real time,
 **so that** the UI is generated dynamically based on my questions, not replayed.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Agent runs ADK-JS (`@google/adk`) in the browser with OpenAI-compatible endpoint
 - [ ] Connects to `https://models.github.ai/inference` using build-time injected token
@@ -124,7 +124,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** provide my own API key to use the live agent,
 **so that** I can try it without depending on the owner's quota.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Input field for visitor to paste their GitHub PAT or OpenAI-compatible key
 - [ ] Key stored in sessionStorage only (never persisted)
@@ -143,7 +143,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** choose between different pre-recorded tours,
 **so that** I can explore different aspects of the qte77 portfolio.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] TourSelector component with at least 3 options (Overview, AI Projects, DevTools)
 - [ ] Each tour uses a different recording JSON from `src/recordings/`
@@ -162,7 +162,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **I want to** enter any GitHub username and explore their portfolio,
 **so that** the tool is useful beyond the qte77 account.
 
-**Acceptance criteria:**
+### Acceptance criteria:
 
 - [ ] Text input for GitHub username
 - [ ] Agent fetches public repos for the given account
