@@ -1,4 +1,5 @@
 import recording from "./overview.json";
+import qte77Avatar from "./qte77-avatar.png";
 import type {
   RecordingEvent,
   Recording,
@@ -59,7 +60,13 @@ export interface Tour {
   recording: Recording;
 }
 
-export const fullRecording = recording as unknown as Recording;
+// Resolve the recording's logical avatar reference (brand neutral variant) to
+// the bundled, base-path-correct asset URL so the demo self-hosts the avatar
+// and makes zero external requests (works under the GitHub Pages base path).
+const AVATAR_TOKEN = "asset:qte77-avatar";
+export const fullRecording = JSON.parse(
+  JSON.stringify(recording).replaceAll(AVATAR_TOKEN, qte77Avatar)
+) as Recording;
 export const segments = extractSegments(fullRecording);
 export const decisionTree = fullRecording.tree ?? {};
 
