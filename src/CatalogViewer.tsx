@@ -41,24 +41,24 @@ export function CatalogViewer() {
     <>
       <button
         onClick={() => setOpen(!open)}
-        className="px-3 py-1 rounded bg-gray-700 text-gray-200 text-sm hover:bg-gray-600"
+        className="px-3 py-1 rounded border border-border bg-surface text-text text-sm transition-colors hover:border-primary"
       >
         {open ? "Hide" : "Catalog"}
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-surface-alt rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] flex flex-col m-4">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
-              <h2 className="text-sm font-semibold text-accent">A2UI Standard Component Catalog</h2>
+          <div className="bg-surface rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] flex flex-col m-4">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <h2 className="text-sm font-semibold text-primary">A2UI Standard Component Catalog</h2>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-400 hover:text-gray-200 text-lg leading-none"
+                className="text-text-muted hover:text-text text-lg leading-none"
               >
                 &times;
               </button>
             </div>
             <div className="overflow-y-auto px-4 py-3 flex-1 space-y-3">
-              <p className="text-xs text-text-secondary">
+              <p className="text-xs text-text-muted">
                 The agent selects from this pre-approved catalog at runtime.
                 No arbitrary code — only declarative JSON referencing these types.
               </p>
@@ -68,21 +68,21 @@ export function CatalogViewer() {
                     <span
                       className={`font-mono text-xs px-1.5 py-0.5 rounded ${
                         c.usedInDemo
-                          ? "bg-accent/20 text-accent font-semibold"
-                          : "bg-gray-800 text-gray-400"
+                          ? "bg-primary/20 text-primary font-semibold"
+                          : "bg-bg text-text-muted"
                       }`}
                     >
                       {c.name}
                     </span>
-                    <span className="text-xs text-text-secondary">{c.description}</span>
+                    <span className="text-xs text-text-muted">{c.description}</span>
                     {c.usedInDemo && (
-                      <span className="text-[10px] text-green-400 ml-auto shrink-0">in demo</span>
+                      <span className="text-[10px] text-data-positive ml-auto shrink-0">in demo</span>
                     )}
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-700 pt-3 mt-3">
-                <p className="text-xs font-semibold text-text-secondary mb-2">First-party references</p>
+              <div className="border-t border-border pt-3 mt-3">
+                <p className="text-xs font-semibold text-text-muted mb-2">First-party references</p>
                 <div className="space-y-1">
                   {LINKS.map((l) => (
                     <a
@@ -90,7 +90,7 @@ export function CatalogViewer() {
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-xs text-accent hover:underline"
+                      className="block text-xs text-primary hover:underline"
                     >
                       {l.label} &rarr;
                     </a>

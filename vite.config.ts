@@ -6,6 +6,6 @@ export default defineConfig({
   base: process.env.CI ? "/agenthud-agui-a2ui/" : "/",
   plugins: [react(), tailwindcss()],
   build: {
-    target: "ES2022",
+    target: "es2022",
   },
 });

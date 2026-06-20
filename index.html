@@ -1,6 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      // Anti-FOUC: theme before first paint (ported from qte77 ui-kit/anti-fouc.html).
+      // Precedence: ?theme= › localStorage["qte77-theme"] › system (no attribute).
+      (function () {
+        try {
+          var url = new URLSearchParams(location.search).get("theme");
+          var ls = localStorage.getItem("qte77-theme");
+          var m = [url, ls].find(function (v) {
+            return v === "light" || v === "dark" || v === "system";
+          });
+          if (m === "light" || m === "dark")
+            document.documentElement.setAttribute("data-theme", m);
+          else document.documentElement.removeAttribute("data-theme");
+        } catch (e) {
+          /* private mode / storage disabled — non-fatal */
+        }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
