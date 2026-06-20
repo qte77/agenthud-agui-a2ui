@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, type EventLogEntry } from "./agent/applyA2UIEvent";
-import type { RecordingEvent, Recording } from "./recordings";
+import type { Recording } from "./recordings";
 
 interface ReplayState {
   isPlaying: boolean;
@@ -20,31 +20,12 @@ export function useReplayEngine(
   const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const startTimeRef = useRef(0);
 
   // Inject the @a2ui renderer; applyA2UIEvent stays decoupled from @a2ui/react.
   const render = useCallback(
     (messages: unknown[]) =>
       processMessages(messages as Parameters<typeof processMessages>[0]),
     [processMessages]
-  );
-
-  const playEvents = useCallback(
-    (events: RecordingEvent[], index: number, startTime: number) => {
-      if (index >= events.length) {
-        setIsPlaying(false);
-        onCompleteRef.current?.();
-        return;
-      }
-
-      const event = events[index];
-      timerRef.current = setTimeout(() => {
-        const entry = applyA2UIEvent(event, Date.now() - startTime, render);
-        setEventLog((prev) => [...prev, entry]);
-        playEvents(events, index + 1, startTime);
-      }, event.delayMs);
-    },
-    [render]
   );
 
   const play = useCallback(
@@ -55,11 +36,29 @@ export function useReplayEngine(
         setEventLog([]);
         clearSurfaces();
       }
-      const start = Date.now();
-      startTimeRef.current = start;
-      playEvents(recording.events, 0, start);
+
+      const events = recording.events;
+      const startTime = Date.now();
+
+      // Schedule events one at a time: each fires after its delayMs, logs, then
+      // queues the next. Plain inner recursion — no memoized self-reference.
+      const step = (index: number) => {
+        if (index >= events.length) {
+          setIsPlaying(false);
+          onCompleteRef.current?.();
+          return;
+        }
+        const event = events[index];
+        timerRef.current = setTimeout(() => {
+          const entry = applyA2UIEvent(event, Date.now() - startTime, render);
+          setEventLog((prev) => [...prev, entry]);
+          step(index + 1);
+        }, event.delayMs);
+      };
+
+      step(0);
     },
-    [isPlaying, recording, playEvents, clearSurfaces]
+    [isPlaying, recording, render, clearSurfaces]
   );
 
   const restart = useCallback(() => {
