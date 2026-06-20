@@ -13,8 +13,6 @@ Put each `*.test.ts(x)` **next to the file it tests** (`Foo.tsx` → `Foo.test.t
   `noEmit` (type-check only) and Vite bundles only *imported* files, so co-located tests
   never reach `dist/`. Keep tests inside the typecheck `include` so test type errors are caught.
 
-> Legacy tests under `src/__tests__/` predate this and are being relocated to match.
-
 ## Vitest is layout-agnostic
 
 Default include glob: `['**/*.{test,spec}.?(c|m)[jt]s?(x)']` — it matches tests whether
