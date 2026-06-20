@@ -100,6 +100,7 @@ Build output in `dist/` is deployable to GitHub Pages with base path `/agenthud-
 
 ## References
 
+- [Agentic Protocols reference](docs/protocols.md) — AG-UI, A2UI, MCP, A2A overview
 - [A2UI Specification](https://a2ui.org/specification/v0.9-a2ui/)
 - [A2UI React Renderer](https://github.com/google/A2UI/tree/main/renderers/react)
 - [AG-UI Protocol](https://docs.ag-ui.com/introduction)
