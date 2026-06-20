@@ -1,31 +1,39 @@
 # Contributing
 
-Thanks for considering a contribution.
+Thanks for considering a contribution to **agenthud-agui-a2ui** — a static Vite/React app
+that replays AG-UI events and renders A2UI components.
 
 ## Before you start
 
-- Check open issues to avoid duplication
-- For non-trivial changes, open an issue first to discuss direction
-- Small fixes (typos, docs) can go straight to a PR
+- Check open issues to avoid duplication; for non-trivial changes, open an issue first.
+- See [AGENTS.md](AGENTS.md) for the working conventions (principles, tests, commits).
+
+## Development
+
+Requires Node.js 22+.
+
+```bash
+npm install        # dependencies
+npm run dev        # Vite dev server
+npm test           # vitest
+npm run typecheck  # tsc -b --noEmit
+npm run lint       # eslint
+npm run build      # tsc -b && vite build
+```
+
+Run `npm run typecheck && npm run lint && npm test` before opening a PR. Test layout:
+[docs/testing.md](docs/testing.md).
 
 ## Pull requests
 
-- Keep PRs focused — one concern per PR
-- Write a clear description: what changed and why
-- Reference related issues (`Closes #123`)
-- Ensure CI passes before requesting review
+- One concern per PR, one topic per branch; reference issues (`Closes #123`).
+- Ensure CI is green before review/merge.
 
 ## Commit messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-- `feat:` new feature
-- `fix:` bug fix
-- `docs:` documentation only
-- `chore:` tooling, dependencies, non-user-facing
-- `refactor:` code change that neither fixes nor adds
-- `test:` tests only
+[Conventional Commits](https://www.conventionalcommits.org/) — enable the template once with
+`git config commit.template .gitmessage` (it lists the accepted types).
 
 ## Questions
 
-Open an issue in the relevant repository.
+Open an issue with the `question` label.
