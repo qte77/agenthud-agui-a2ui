@@ -113,7 +113,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
       <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
         <div className="flex items-center gap-2 text-primary">
           <svg
@@ -265,6 +265,17 @@ function Dashboard() {
           </div>
         </aside>
       </div>
+      <footer className="px-4 py-2 border-t border-border text-center text-xs text-text-muted">
+        AG-UI event replay + A2UI rendering ·{" "}
+        <a
+          href="https://github.com/qte77/agenthud-agui-a2ui"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary hover:underline"
+        >
+          qte77/agenthud-agui-a2ui
+        </a>
+      </footer>
     </div>
   );
 }
