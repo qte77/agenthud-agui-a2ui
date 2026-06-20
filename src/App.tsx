@@ -134,7 +134,12 @@ function Dashboard() {
             />
             <rect x="48.43" y="44.29" width="16.86" height="3" rx="1.5" />
           </svg>
-          <h1 className="text-lg font-semibold">agenthud</h1>
+          <div className="leading-tight">
+            <h1 className="text-lg font-semibold">agenthud</h1>
+            <span className="block text-xs font-normal text-text-muted">
+              AG-UI replay · A2UI rendering · demo
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
