@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@a2ui/react": "^0.8.0",
-    "@ag-ui/core": "0.0.52",
+    "@ag-ui/core": "0.0.57",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/jetbrains-mono": "^5.1.0",
     "react": "^19.2.7",
