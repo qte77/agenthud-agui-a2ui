@@ -6,7 +6,7 @@ that replays AG-UI events and renders A2UI components.
 ## Before you start
 
 - Check open issues to avoid duplication; for non-trivial changes, open an issue first.
-- See [AGENTS.md](AGENTS.md) for the working conventions (principles, tests, commits).
+- See [AGENTS.md](../AGENTS.md) for the working conventions (principles, tests, commits).
 
 ## Development
 
@@ -22,7 +22,7 @@ npm run build      # tsc -b && vite build
 ```
 
 Run `npm run typecheck && npm run lint && npm test` before opening a PR. Test layout:
-[docs/testing.md](docs/testing.md).
+[docs/testing.md](../docs/testing.md).
 
 ## Pull requests
 
