@@ -16,6 +16,7 @@ export function useReplayEngine(
 ): ReplayState {
   const { processMessages, clearSurfaces } = useA2UIActions();
   const onCompleteRef = useRef(onComplete);
+  // eslint-disable-next-line react-hooks/refs -- latest-callback ref so scheduled timers call the current onComplete
   onCompleteRef.current = onComplete;
   const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);

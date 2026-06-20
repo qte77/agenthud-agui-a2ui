@@ -43,6 +43,7 @@ function Dashboard() {
       return {
         meta: activeRecording.meta,
         events: getSegmentEvents(activeRecording, currentSegmentId, {
+          // eslint-disable-next-line react-hooks/refs -- deliberate latest-value side channel; recompute is driven by playTrigger
           append: appendRef.current,
         }),
       };
