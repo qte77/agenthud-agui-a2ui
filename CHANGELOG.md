@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- EyeRest brand theming: Tailwind v4 `@theme` tokens with a light/dark/system toggle (◐/○/●), inline anti-FOUC guard, and self-hosted Inter + JetBrains Mono (Fontsource, latin subset)
+- Validated `zod` contract for A2UI message batches + recordings (`src/agent/contract.ts`)
+- Shared `applyA2UIEvent` render seam — replay and the future live agent use one path
+- ESLint flat config + `lint` script; CI workflow (typecheck + lint + test + build)
+- ADR-0001: agent runtime stack (TS-only vs Pydantic)
 - Vite + React 19 + TypeScript project scaffold with Tailwind v4
 - A2UI surface rendering via `@a2ui/react` (A2UIProvider + A2UIRenderer)
 - AG-UI event replay engine (`useReplayEngine` hook) with setTimeout-based timing
@@ -33,8 +38,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - GitHub Pages build support (`vite.config.ts` base path)
 - `onComplete` callback on replay engine for tree navigation
 
+### Changed
+
+- Streamlined the demo to the single decision-tree tour; removed the three redundant linear tours and the `TourSelector`
+- Replaced the dark-navy theme and blue accent (`#38bdf8`) with the EyeRest brand palette (zero-blue, warm amber)
+
 ### Fixed
 
+- Added `src/vite-env.d.ts` so `*.css` side-effect imports typecheck (`tsc -b` was failing)
+- Lowercased the Vite build target to `es2022` (lightningcss rejected `ES2022`)
 - A2UI v0.8 message format: component type as wrapper key, values as `{ literal: ... }` objects
 - List component replaced with Column+Row (List guard expects resolved children, not items)
 - Error handling in replay engine (try/catch around processMessages)

@@ -88,11 +88,11 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 **Acceptance criteria:**
 
-- [ ] `npm run build` produces a deployable `dist/` with correct base path `/agenthud-agui-a2ui/`
-- [ ] GitHub Actions workflow (`.github/workflows/pages.yml`) builds and deploys on push to main
+- [x] `npm run build` produces a deployable `dist/` with correct base path `/agenthud-agui-a2ui/`
+- [x] GitHub Actions workflow (`.github/workflows/pages.yml`) builds and deploys on push to main
 - [ ] Site loads and replay works at the published URL
 
-**Status:** Not started
+**Status:** Done (deploy workflow in place; a `ci.yml` gate runs typecheck/lint/test/build on PRs)
 
 ---
 
@@ -150,7 +150,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] Switching tours resets the surface and event log
 - [ ] Each tour emphasizes different A2UI component compositions
 
-**Status:** Planned
+**Status:** Descoped — streamlined to the single decision-tree tour (KISS); the three extra linear tours and `TourSelector` were removed. See [ADR-0001](decisions/0001-agent-runtime-stack.md) context + CHANGELOG.
 
 ---
 
@@ -179,8 +179,8 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 2. ~~US-2: Component diversity~~ (done)
 3. ~~US-3: Catalog viewer~~ (done)
 4. ~~US-4: Replay indicator~~ (done)
-5. US-5: GitHub Pages deployment
-6. US-8: Multiple tours
-7. US-6: GitHub Models live mode
-8. US-7: BYOK
+5. ~~US-5: GitHub Pages deployment~~ (done)
+6. ~~US-8: Multiple tours~~ (descoped — single tour)
+7. US-7: BYOK live agent (next)
+8. US-6: Keyless GitHub Models (deferred — optional worker)
 9. US-9: Arbitrary accounts
