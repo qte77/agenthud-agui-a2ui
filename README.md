@@ -64,7 +64,7 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 | Package | Version | Purpose |
 |---|---|---|
 | `@a2ui/react` | 0.8.0 | Google's A2UI React renderer |
-| `@ag-ui/core` | 0.0.50 | AG-UI event type definitions |
+| `@ag-ui/core` | 0.0.52 | AG-UI event type definitions |
 | `zod` | 4 | Validated A2UI + recording contract |
 | `react` | 19 | UI framework |
 | `vite` | 8 | Build + dev server |
