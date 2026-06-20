@@ -61,16 +61,16 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 
 ## Stack
 
-| Package | Version | Purpose |
-|---|---|---|
-| `@a2ui/react` | 0.8.0 | Google's A2UI React renderer |
-| `@ag-ui/core` | 0.0.52 | AG-UI event type definitions |
-| `zod` | 4 | Validated A2UI + recording contract |
-| `react` | 19 | UI framework |
-| `vite` | 8 | Build + dev server |
-| `tailwindcss` | 4 | Styling + EyeRest brand theme tokens (no config file) |
-| `@fontsource/*` | 5 | Self-hosted brand fonts (Inter, JetBrains Mono) |
-| `typescript` | 6 | Type checking |
+| Package | Purpose |
+|---|---|
+| `@a2ui/react` | Google's A2UI React renderer |
+| `@ag-ui/core` | AG-UI event type definitions |
+| `zod` | Validated A2UI + recording contract |
+| `react` | UI framework |
+| `vite` | Build + dev server |
+| `tailwindcss` | Styling + EyeRest brand theme tokens (no config file) |
+| `@fontsource/*` | Self-hosted brand fonts (Inter, JetBrains Mono) |
+| `typescript` | Type checking |
 
 ## Run
 
