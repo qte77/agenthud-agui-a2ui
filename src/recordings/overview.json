@@ -252,7 +252,7 @@
               },
               {
                 "id": "pf-avatar",
-                "component": { "Image": { "url": { "literal": "https://github.com/qte77.png" }, "usageHint": "avatar" } }
+                "component": { "Image": { "url": { "literal": "asset:qte77-avatar" }, "usageHint": "avatar" } }
               },
               {
                 "id": "pf-info",

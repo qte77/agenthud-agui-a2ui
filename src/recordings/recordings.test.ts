@@ -86,4 +86,12 @@ describe("recording registry", () => {
       expect(event.type).toBeTypeOf("string");
     }
   });
+
+  it("self-hosts the avatar (no external image URLs in the recording)", () => {
+    const serialized = JSON.stringify(fullRecording);
+    // The GitHub-hosted source URL must be swapped for the bundled local asset,
+    // so the demo makes zero external requests.
+    expect(serialized).not.toContain("https://github.com/qte77.png");
+    expect(serialized).toContain("qte77-avatar");
+  });
 });
