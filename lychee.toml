@@ -1,0 +1,12 @@
+# Local lychee link-checker config. Each exclusion is a deliberate decision, not a
+# blanket bypass. See https://lychee.cli.rs/usage/config/
+#
+# The `lint-md-links` reusable workflow runs `lychee --no-progress '**/*.md'` with
+# fail:true; committing this config keeps a local run in sync with CI.
+
+# Git-ignored / build artifact dirs that are absent in a clean CI checkout — excluded
+# so a local `lychee '**/*.md'` mirrors CI instead of crawling vendored READMEs.
+exclude_path = [
+    "node_modules",
+    "dist",
+]
