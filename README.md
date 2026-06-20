@@ -23,6 +23,7 @@ Demonstrates how different user intents produce different UI layouts from the sa
 - **Decision history**: Breadcrumb trail of choices + prompt/hint per decision.
 - **Catalog Viewer**: Modal listing all 18 A2UI standard components with first-party links.
 - **Play All**: Runs the full recording linearly.
+- **Theming**: qte77 **EyeRest** brand palette (zero-blue, warm amber) with a light/dark/system toggle (◐ / ○ / ●).
 
 ## Decision tree
 
@@ -63,11 +64,13 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 | Package | Version | Purpose |
 |---|---|---|
 | `@a2ui/react` | 0.8.0 | Google's A2UI React renderer |
-| `@ag-ui/core` | 0.0.49 | AG-UI event type definitions |
+| `@ag-ui/core` | 0.0.50 | AG-UI event type definitions |
+| `zod` | 4 | Validated A2UI + recording contract |
 | `react` | 19 | UI framework |
-| `vite` | 7 | Build + dev server |
-| `tailwindcss` | 4 | Styling (Vite plugin, no config file) |
-| `typescript` | 5.8 | Type checking |
+| `vite` | 8 | Build + dev server |
+| `tailwindcss` | 4 | Styling + EyeRest brand theme tokens (no config file) |
+| `@fontsource/*` | 5 | Self-hosted brand fonts (Inter, JetBrains Mono) |
+| `typescript` | 6 | Type checking |
 
 ## Run
 
