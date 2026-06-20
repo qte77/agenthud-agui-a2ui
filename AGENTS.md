@@ -27,6 +27,7 @@ treat it as the source of truth.
 
 - Docs are indexed in [docs/README.md](docs/README.md) — protocols, testing, user stories,
   and the ADRs in `docs/decisions/`.
+- Contributor dev setup + PR workflow: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md).
 - A local `.claude/rules/` may carry these principles in more depth, but it is **gitignored
   (not shipped)** — so this file, not that directory, is authoritative.
 

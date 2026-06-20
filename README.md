@@ -103,6 +103,7 @@ See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
 ## References
 
 - [Documentation index](docs/README.md) — protocols, testing, user stories, ADRs
+- [Contributing](.github/CONTRIBUTING.md) — dev setup, tests, PR workflow
 - [A2UI Specification](https://a2ui.org/specification/v0.9-a2ui/)
 - [A2UI React Renderer](https://github.com/google/A2UI/tree/main/renderers/react)
 - [AG-UI Protocol](https://docs.ag-ui.com/introduction)
