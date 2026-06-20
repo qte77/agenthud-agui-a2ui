@@ -1,23 +1,19 @@
 import { useEffect, useRef } from "react";
+import type { EventLogEntry } from "./agent/applyA2UIEvent";
 
-export interface EventLogEntry {
-  type: string;
-  timestamp: number;
-  text?: string;
-  a2uiComponentCount?: number;
-  a2uiComponentTypes?: string[];
-}
+export type { EventLogEntry };
 
 interface EventStreamProps {
   events: EventLogEntry[];
 }
 
+// Zero-blue badges from the EyeRest data arc (TEXT_MESSAGE was blue — now neutral).
 function badgeColor(type: string): string {
-  if (type.startsWith("RUN_")) return "bg-green-700 text-green-100";
-  if (type.startsWith("TEXT_MESSAGE")) return "bg-blue-700 text-blue-100";
-  if (type.startsWith("TOOL_CALL")) return "bg-amber-700 text-amber-100";
-  if (type.startsWith("STEP_")) return "bg-gray-600 text-gray-200";
-  return "bg-gray-600 text-gray-200";
+  if (type.startsWith("RUN_")) return "bg-data-positive/15 text-data-positive";
+  if (type.startsWith("TEXT_MESSAGE")) return "bg-text-muted/15 text-text-muted";
+  if (type.startsWith("TOOL_CALL")) return "bg-primary/15 text-primary";
+  if (type.startsWith("STEP_")) return "bg-data-caution/15 text-data-caution";
+  return "bg-text-muted/15 text-text-muted";
 }
 
 function formatTime(ms: number): string {
@@ -35,12 +31,12 @@ export function EventStream({ events }: EventStreamProps) {
   return (
     <div
       ref={containerRef}
-      className="h-full overflow-y-auto bg-gray-900 font-mono text-xs p-2 space-y-1.5"
+      className="h-full overflow-y-auto bg-surface font-mono text-xs p-2 space-y-1.5"
     >
       {events.map((entry, i) => (
         <div key={i}>
           <div className="flex items-start gap-2">
-            <span className="shrink-0 text-gray-500 whitespace-pre">
+            <span className="shrink-0 text-text-muted whitespace-pre">
               {formatTime(entry.timestamp)}
             </span>
             <span
@@ -49,18 +45,18 @@ export function EventStream({ events }: EventStreamProps) {
               {entry.type}
             </span>
             {entry.text && (
-              <span className="text-gray-300 break-words">{entry.text}</span>
+              <span className="text-text break-words">{entry.text}</span>
             )}
           </div>
           {entry.a2uiComponentTypes && entry.a2uiComponentTypes.length > 0 && (
-            <div className="ml-[7.5ch] pl-2 mt-0.5 border-l border-amber-800">
-              <span className="text-amber-400 text-[10px]">
+            <div className="ml-[7.5ch] pl-2 mt-0.5 border-l border-primary">
+              <span className="text-primary text-[10px]">
                 processMessages →{" "}
               </span>
-              <span className="text-gray-400 text-[10px]">
+              <span className="text-text-muted text-[10px]">
                 {entry.a2uiComponentCount} components:{" "}
               </span>
-              <span className="text-amber-300 text-[10px]">
+              <span className="text-primary text-[10px]">
                 {entry.a2uiComponentTypes.join(", ")}
               </span>
             </div>
