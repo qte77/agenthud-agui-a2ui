@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
-import { useReplayEngine } from "../useReplayEngine";
-import type { Recording } from "../recordings";
+import { useReplayEngine } from "./useReplayEngine";
+import type { Recording } from "./recordings";
 
 const mockProcessMessages = vi.fn();
 const mockClearSurfaces = vi.fn();
