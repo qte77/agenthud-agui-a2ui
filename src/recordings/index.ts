@@ -1,36 +1,14 @@
 import recording from "./overview.json";
-import aiProjectsRec from "./ai-projects.json";
-import devToolsRec from "./dev-tools.json";
-import filtersRec from "./interactive-filters.json";
+import type {
+  RecordingEvent,
+  Recording,
+  TreeChoice,
+  TreeNode,
+  DecisionTree,
+} from "../agent/contract";
 
-export interface RecordingEvent {
-  delayMs: number;
-  type: string;
-  text?: string;
-  segment?: string;
-  a2uiMessages?: object[];
-  [key: string]: unknown;
-}
-
-export interface TreeChoice {
-  label: string;
-  hint: string;
-  segment: string;
-  next: string | null;
-}
-
-export interface TreeNode {
-  prompt: string;
-  choices: TreeChoice[];
-}
-
-export type DecisionTree = Record<string, TreeNode>;
-
-export interface Recording {
-  meta: { title: string; description: string };
-  events: RecordingEvent[];
-  tree?: DecisionTree;
-}
+// Single source of truth for these shapes is the validated contract.
+export type { RecordingEvent, Recording, TreeChoice, TreeNode, DecisionTree };
 
 export interface Segment {
   id: string;
@@ -85,11 +63,16 @@ export const fullRecording = recording as unknown as Recording;
 export const segments = extractSegments(fullRecording);
 export const decisionTree = fullRecording.tree ?? {};
 
+// Streamlined to the single decision-tree tour — the one that shows the core
+// "different intents → different layouts from one catalog" idea. The three
+// redundant linear tours were dropped.
 export const tours: Tour[] = [
-  { id: "overview", label: "Full Portfolio", description: "Complete tour with all segments and decision tree", recording: fullRecording },
-  { id: "ai-projects", label: "AI Projects", description: "Deep dive into AI and ML repositories", recording: aiProjectsRec as unknown as Recording },
-  { id: "dev-tools", label: "Developer Tools", description: "Tooling and orchestration repos", recording: devToolsRec as unknown as Recording },
-  { id: "filters", label: "Interactive Filters", description: "CheckBox, Slider, Button components", recording: filtersRec as unknown as Recording },
+  {
+    id: "overview",
+    label: "Full Portfolio",
+    description: "Complete tour with all segments and decision tree",
+    recording: fullRecording,
+  },
 ];
 
 /**

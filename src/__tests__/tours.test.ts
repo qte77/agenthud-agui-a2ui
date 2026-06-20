@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { tours } from "../recordings";
 
 describe("tour registry", () => {
-  it("exports a tours array with at least 3 entries", () => {
+  it("exports the single streamlined tour", () => {
     expect(Array.isArray(tours)).toBe(true);
-    expect(tours.length).toBeGreaterThanOrEqual(3);
+    expect(tours).toHaveLength(1);
   });
 
   it("each tour has id, label, description, and recording", () => {
