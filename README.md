@@ -17,13 +17,13 @@ Demonstrates how different user intents produce different UI layouts from the sa
 
 ## What it shows
 
-- **Decision tree**: Branching choices drive which A2UI components render. Each path uses different components from the same catalog.
-- **A2UI Surface** (left panel): Components accumulate as users navigate deeper. Rendered from declarative JSON via `@a2ui/react`.
-- **AG-UI EventStream** (right panel): Protocol events streamed with timing, showing which components each tool call produces.
-- **Decision history**: Breadcrumb trail of choices + prompt/hint per decision.
-- **Catalog Viewer**: Modal listing all 18 A2UI standard components with first-party links.
-- **Play All**: Runs the full recording linearly.
+- **Decision tree** drives which A2UI components render — each path uses a different mix from the same catalog.
+- **A2UI Surface** (left panel): declarative components accumulate as you navigate, rendered via `@a2ui/react`.
+- **AG-UI EventStream** (right panel): protocol events with timing, showing which components each tool call produces.
+- **Catalog Viewer**: modal listing all 18 A2UI standard components with first-party links.
 - **Theming**: qte77 **EyeRest** brand palette (zero-blue, warm amber) with a light/dark/system toggle (◐ / ○ / ●).
+
+> Full user stories and acceptance criteria: [docs/UserStory.md](docs/UserStory.md).
 
 ## Decision tree
 
@@ -92,15 +92,17 @@ Build output in `dist/` is deployable to GitHub Pages with base path `/agenthud-
 
 ## Modes
 
-| Mode | Status | Description |
+See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
+
+| Mode | Status | Notes |
 |---|---|---|
-| **Replay** | Current | Pre-baked AG-UI events with decision tree navigation |
-| GitHub Models | Planned | Live agent via GitHub Models API (OpenAI-compatible) |
-| BYOK | Planned | Visitor provides their own API key |
+| **Demo** (offline replay) | Current | Pre-baked AG-UI events + decision-tree navigation |
+| **Live (BYOK)** | Planned — [#51](https://github.com/qte77/agenthud-agui-a2ui/issues/51) | In-browser agent, visitor-supplied OpenAI-compatible key (sessionStorage only) |
+| Keyless worker | Deferred — [#52](https://github.com/qte77/agenthud-agui-a2ui/issues/52) | Optional edge worker; GitHub Models has no browser CORS |
 
 ## References
 
-- [Agentic Protocols reference](docs/protocols.md) — AG-UI, A2UI, MCP, A2A overview
+- [Documentation index](docs/README.md) — protocols, testing, user stories, ADRs
 - [A2UI Specification](https://a2ui.org/specification/v0.9-a2ui/)
 - [A2UI React Renderer](https://github.com/google/A2UI/tree/main/renderers/react)
 - [AG-UI Protocol](https://docs.ag-ui.com/introduction)
