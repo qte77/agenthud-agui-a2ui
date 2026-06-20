@@ -10,3 +10,11 @@ exclude_path = [
     "node_modules",
     "dist",
 ]
+
+# Link patterns to skip (folded in from the former .lycheeignore):
+#   - /favicon.svg — root-relative path lychee can't resolve in local markdown
+#   - .../security/dependabot — only reachable after merge to main
+exclude = [
+    '^/favicon\.svg$',
+    'qte77/agenthud-agui-a2ui/security/dependabot',
+]
