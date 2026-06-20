@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)
 [![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui/badge)](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui)
-[![Link Checker](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/links-fail-fast.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/links-fail-fast.yaml)
+[![Lint](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml)
 [![Dependabot](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates)
 
 > **Prototype** — This is a feasibility prototype, not a production application.
@@ -27,7 +27,7 @@ Demonstrates how different user intents produce different UI layouts from the sa
 
 ## Decision tree
 
-```
+```text
 root (3 choices)
 ├─ Show me repos → Card, Row, Text
 │  ├─ Show details → Image, Column, Divider
