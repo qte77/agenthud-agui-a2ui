@@ -107,3 +107,7 @@ See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
 - [A2UI React Renderer](https://github.com/google/A2UI/tree/main/renderers/react)
 - [AG-UI Protocol](https://docs.ag-ui.com/introduction)
 - [AG-UI GitHub](https://github.com/ag-ui-protocol/ag-ui)
+
+## License
+
+[Apache-2.0](LICENSE).
