@@ -5,24 +5,12 @@
 AG-UI event replay + A2UI component rendering in a static Vite/React app — a developer
 demo of how an agent composes safe, declarative UI from a standard catalog.
 
-![Prototype mockup](assets/mockup-prototype.svg)
-
 [![License](https://img.shields.io/badge/license-Apache%202.0-58f4c2.svg)](LICENSE)
 ![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)
 [![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui/badge)](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui)
 [![Lint](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml)
 [![Dependabot](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates)
-
-<details>
-<summary>Screenshots</summary>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png">
-  <img alt="agenthud — decision tree driving A2UI components; adapts to the GitHub light/dark theme" src="assets/screenshot-light.png">
-</picture>
-
-</details>
 
 ## What it shows
 
@@ -83,6 +71,16 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 | `@fontsource/*` | Self-hosted brand fonts (Inter, JetBrains Mono) |
 | `typescript` | Type checking |
 
+<details>
+<summary>Screenshot — Demo mode</summary>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png">
+  <img alt="agenthud — the decision tree and AG-UI event stream driving A2UI components" src="assets/screenshot-light.png">
+</picture>
+
+</details>
+
 ## How
 
 ### Run
@@ -124,7 +122,7 @@ catalog (no code runs), and **AG-UI** streams those choices as protocol events. 
 the smallest end-to-end demonstration of that loop — the same standard catalog producing
 different layouts per user intent — from pre-baked replay to a live BYOK agent.
 
-## References
+## Refs
 
 - [Documentation index](docs/README.md) — protocols, testing, user stories, ADRs
 - [Contributing](.github/CONTRIBUTING.md) — dev setup, tests, PR workflow
