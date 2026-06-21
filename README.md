@@ -22,6 +22,7 @@ Demonstrates how different user intents produce different UI layouts from the sa
 - **AG-UI EventStream** (right panel): protocol events with timing, showing which components each tool call produces.
 - **Catalog Viewer**: modal listing all 18 A2UI standard components with first-party links.
 - **Theming**: qte77 **EyeRest** brand palette (zero-blue, warm amber) with a light/dark/system toggle (◐ / ○ / ●).
+- **Live mode (BYOK)**: switch **Demo → Live** to drive the same surface with a real LLM. Bring an OpenAI-compatible key; the agent's `render_ui` tool streams AG-UI events that render validated A2UI — no server, 100% in-browser.
 
 > Full user stories and acceptance criteria: [docs/UserStory.md](docs/UserStory.md).
 
@@ -65,7 +66,8 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 |---|---|
 | `@a2ui/react` | Google's A2UI React renderer |
 | `@ag-ui/core` | AG-UI event type definitions |
-| `zod` | Validated A2UI + recording contract |
+| `zod` | Validated A2UI + recording contract (also the live agent's `render_ui` tool schema) |
+| `ai` + `@ai-sdk/openai` | Vercel AI SDK — the in-browser BYOK live agent (Live mode, code-split) |
 | `react` | UI framework |
 | `vite` | Build + dev server |
 | `tailwindcss` | Styling + EyeRest brand theme tokens (no config file) |
@@ -80,6 +82,8 @@ npm run dev
 ```
 
 Choose a path from the decision tree or press **Play All** for the full sequence. Click **Catalog** to view the A2UI component library.
+
+For **Live** mode, toggle **Demo → Live** in the header and supply an OpenAI-compatible base URL + API key + model id (e.g. an OpenRouter key). Credentials live in `sessionStorage` only and are never persisted; the demo needs no key.
 
 ## Build
 
@@ -97,7 +101,7 @@ See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
 | Mode | Status | Notes |
 |---|---|---|
 | **Demo** (offline replay) | Current | Pre-baked AG-UI events + decision-tree navigation |
-| **Live (BYOK)** | Planned — [#51](https://github.com/qte77/agenthud-agui-a2ui/issues/51) | In-browser agent, visitor-supplied OpenAI-compatible key (sessionStorage only) |
+| **Live (BYOK)** | Current | In-browser Vercel AI SDK agent; visitor-supplied OpenAI-compatible key (sessionStorage only); `render_ui` tool → validated A2UI |
 | Keyless worker | Deferred — [#52](https://github.com/qte77/agenthud-agui-a2ui/issues/52) | Optional edge worker; GitHub Models has no browser CORS |
 
 ## References
