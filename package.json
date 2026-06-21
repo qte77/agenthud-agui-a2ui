@@ -20,8 +20,10 @@
   "dependencies": {
     "@a2ui/react": "^0.10.1",
     "@ag-ui/core": "0.0.57",
+    "@ai-sdk/openai": "^3.0.73",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/jetbrains-mono": "^5.1.0",
+    "ai": "^6.0.208",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "zod": "^4.4.3"
