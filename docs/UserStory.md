@@ -98,23 +98,20 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 ## Future — GitHub Models integration
 
-### US-6: Live agent mode via GitHub Models API
+### US-6: Keyless live agent via GitHub Models (optional worker)
 
 **As a** visitor,
-**I want to** interact with a live agent that queries the qte77 GitHub account in real time,
-**so that** the UI is generated dynamically based on my questions, not replayed.
+**I want to** try the live agent without supplying my own key,
+**so that** I can see it work with zero setup.
 
 **Acceptance criteria:**
 
-- [ ] Agent runs ADK-JS (`@google/adk`) in the browser with OpenAI-compatible endpoint
-- [ ] Connects to `https://models.github.ai/inference` using build-time injected token
-- [ ] Fine-grained PAT with `models:read` only, no repo access
-- [ ] Agent calls GitHub REST API for public repo data (no auth needed)
-- [ ] AG-UI events stream in real time as the agent processes
-- [ ] A2UI components render progressively based on agent decisions
-- [ ] Falls back to replay mode if no token available
+- [ ] A tiny edge worker (Cloudflare/Vercel) holds a `models:read` GitHub token server-side
+- [ ] The worker calls `https://models.github.ai/inference` and streams AG-UI events (SSE)
+- [ ] The browser consumes the stream and renders A2UI on the same surface
+- [ ] Falls back to BYOK / Demo when the worker is unavailable
 
-**Status:** Planned
+**Status:** Deferred (optional). Superseded for the *in-browser* live tier by US-7 (Vercel AI SDK BYOK). GitHub Models has no browser CORS, so a keyless public demo needs a worker holding the token — built only if wanted (YAGNI). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001](decisions/0001-agent-runtime-stack.md).
 
 ---
 
@@ -126,12 +123,12 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 **Acceptance criteria:**
 
-- [ ] Input field for visitor to paste their GitHub PAT or OpenAI-compatible key
-- [ ] Key stored in sessionStorage only (never persisted)
-- [ ] Key takes precedence over build-time injected token
-- [ ] Clear indication of which mode is active (Replay / Live / BYOK)
+- [x] Inputs for an OpenAI-compatible base URL, API key, and model id
+- [x] Key stored in `sessionStorage` only (never persisted, never logged)
+- [x] In-browser only — no server; the `render_ui` tool emits contract-validated A2UI
+- [x] Clear indication of the active mode (Demo | Live header toggle + "Live · BYOK" badge)
 
-**Status:** Planned
+**Status:** Done — in-browser Vercel AI SDK agent; the AI SDK is code-split to the Live tier. See [ADR-0001](decisions/0001-agent-runtime-stack.md).
 
 ---
 
@@ -181,6 +178,6 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 4. ~~US-4: Replay indicator~~ (done)
 5. ~~US-5: GitHub Pages deployment~~ (done)
 6. ~~US-8: Multiple tours~~ (descoped — single tour)
-7. US-7: BYOK live agent (next)
+7. ~~US-7: BYOK live agent~~ (done)
 8. US-6: Keyless GitHub Models (deferred — optional worker)
 9. US-9: Arbitrary accounts

@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Live **BYOK** agent mode (in-browser, static): the Vercel AI SDK (`ai` + `@ai-sdk/openai`)
+  calls an OpenAI-compatible endpoint with a `render_ui` tool whose schema is the zod A2UI
+  contract; streamed tool calls feed the shared `applyA2UIEvent` seam, so a live LLM drives
+  the same surface as replay. Demo | Live header toggle; key held in `sessionStorage` only.
+  The AI SDK is code-split — loaded only when Live mode is opened. (Closes #51)
 - Brand `q7` logo-mark favicon + in-page header mark with a wordmark sub-tagline
 - Centered max-width app layout with a footer linking the repo
 - `<meta name="description">` for SEO / social previews

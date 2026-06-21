@@ -1,9 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
 import { CatalogViewer } from "./CatalogViewer";
 import { EventStream } from "./EventStream";
+import { useA2UIActions } from "@a2ui/react";
 import { useReplayEngine } from "./useReplayEngine";
 import { ThemeToggle } from "./theme/ThemeToggle";
+import { BrandHeader } from "./BrandHeader";
+import { ModeToggle, type ViewMode } from "./ModeToggle";
+
+// Code-split the live tier: the AI SDK loads only when Live mode is opened, so the
+// default Demo (offline) tier stays lean.
+const LiveDashboard = lazy(() =>
+  import("./LiveDashboard").then((m) => ({ default: m.LiveDashboard }))
+);
 import {
   tours,
   getSegmentEvents,
@@ -24,7 +33,13 @@ interface HistoryEntry {
 // intents → different layouts from one catalog".
 const activeRecording: Recording = tours[0].recording;
 
-function Dashboard() {
+function Dashboard({
+  view,
+  onView,
+}: {
+  view: ViewMode;
+  onView: (mode: ViewMode) => void;
+}) {
   const [mode, setMode] = useState<Mode>("idle");
   const [currentNode, setCurrentNode] = useState("root");
   const [currentSegmentId, setCurrentSegmentId] = useState<string | null>(null);
@@ -115,32 +130,7 @@ function Dashboard() {
   return (
     <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
       <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
-        <div className="flex items-center gap-2 text-primary">
-          <svg
-            viewBox="0 0 80 80"
-            width="22"
-            height="22"
-            fill="currentColor"
-            aria-hidden="true"
-            className="shrink-0"
-          >
-            <path
-              d="M383 561Q383 399 437.0 307.0Q491 215 586 215Q681 215 736.0 307.0Q791 399 791 561Q791 723 736.0 815.0Q681 907 586 907Q491 907 437.0 815.0Q383 723 383 561ZM791 158Q737 64 665.5 17.5Q594 -29 504 -29Q305 -29 197.5 123.0Q90 275 90 559Q90 839 196.0 993.0Q302 1147 494 1147Q595 1147 669.5 1098.0Q744 1049 791 952V1120H1083V-426H791Z"
-              transform="translate(14.7126,47.2900) scale(0.013672,-0.013672)"
-            />
-            <path
-              d="M135 1493H1079V1284L573 0H272L758 1233H135Z"
-              transform="translate(31.5700,47.2900) scale(0.013672,-0.013672)"
-            />
-            <rect x="48.43" y="44.29" width="16.86" height="3" rx="1.5" />
-          </svg>
-          <div className="leading-tight">
-            <h1 className="text-lg font-semibold">agenthud</h1>
-            <span className="block text-xs font-normal text-text-muted">
-              AG-UI replay · A2UI rendering · demo
-            </span>
-          </div>
-        </div>
+        <BrandHeader />
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
             Replay
@@ -152,6 +142,7 @@ function Dashboard() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <ModeToggle mode={view} onChange={onView} />
           <ThemeToggle />
           {(path.length > 0 || mode === "all") && (
             <button
@@ -285,10 +276,38 @@ function Dashboard() {
   );
 }
 
+function Root() {
+  const [view, setView] = useState<ViewMode>("demo");
+  const { clearSurfaces } = useA2UIActions();
+
+  const onView = useCallback(
+    (next: ViewMode) => {
+      if (next === view) return;
+      clearSurfaces(); // start the other mode on a clean surface
+      setView(next);
+    },
+    [view, clearSurfaces]
+  );
+
+  return view === "demo" ? (
+    <Dashboard view={view} onView={onView} />
+  ) : (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-text-muted text-sm">
+          Loading live agent…
+        </div>
+      }
+    >
+      <LiveDashboard mode={view} onMode={onView} />
+    </Suspense>
+  );
+}
+
 export function App() {
   return (
     <A2UISurfaceProvider>
-      <Dashboard />
+      <Root />
     </A2UISurfaceProvider>
   );
 }
