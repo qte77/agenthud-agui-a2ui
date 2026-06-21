@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { applyA2UIEvent } from "./applyA2UIEvent";
+import { applyA2UIEvent } from "../src/agent/applyA2UIEvent";
 
 describe("applyA2UIEvent", () => {
   it("renders a valid batch and logs the component summary", () => {

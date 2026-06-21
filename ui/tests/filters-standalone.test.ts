@@ -1,4 +1,4 @@
-import { fullRecording, getSegmentEvents } from ".";
+import { fullRecording, getSegmentEvents } from "../src/recordings";
 
 /**
  * Validates that each segment's surfaceUpdate components are self-contained:

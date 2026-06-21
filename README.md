@@ -40,6 +40,7 @@ AG-UI events from your own OpenAI-compatible key.
 or run it locally:
 
 ```bash
+cd ui
 npm install
 npm run dev
 ```
@@ -54,6 +55,7 @@ only; the demo needs no key. Rationale: [ADR-0001](docs/decisions/0001-agent-run
 **Build & develop** — the local loop:
 
 ```bash
+cd ui
 npm run build      # tsc -b + vite build -> dist/ (deployable to GitHub Pages)
 npm run typecheck  # tsc -b --noEmit
 npm run lint       # eslint

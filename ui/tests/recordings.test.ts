@@ -3,7 +3,7 @@ import {
   segments,
   decisionTree,
   getSegmentEvents,
-} from ".";
+} from "../src/recordings";
 
 describe("recording registry", () => {
   it("exports fullRecording with meta and events", () => {

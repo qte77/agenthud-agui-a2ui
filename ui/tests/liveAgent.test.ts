@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { streamPartToEvent } from "./liveAgent";
+import { streamPartToEvent } from "../src/agent/liveAgent";
 
 // streamPartToEvent is the pure seam between the Vercel AI SDK fullStream and the
 // AG-UI event vocabulary the EventStream + applyA2UIEvent already consume. Tested

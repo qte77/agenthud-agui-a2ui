@@ -10,9 +10,10 @@ that replays AG-UI events and renders A2UI components.
 
 ## Development
 
-Requires Node.js 22+.
+Requires Node.js 22+. The frontend lives in `ui/` — run npm from there:
 
 ```bash
+cd ui
 npm install        # dependencies
 npm run dev        # Vite dev server
 npm test           # vitest
@@ -21,8 +22,8 @@ npm run lint       # eslint
 npm run build      # tsc -b && vite build
 ```
 
-Run `npm run typecheck && npm run lint && npm test` before opening a PR. Test layout:
-[docs/testing.md](../docs/testing.md).
+Run `npm run typecheck && npm run lint && npm test` (from `ui/`) before opening a PR.
+Test layout: [docs/testing.md](../docs/testing.md).
 
 ## Pull requests
 

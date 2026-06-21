@@ -13,7 +13,7 @@ treat it as the source of truth.
 
 ## Tests
 
-- **Co-locate** `*.test.ts(x)` next to the file under test (`Foo.tsx` → `Foo.test.tsx`).
+- Tests live in `ui/tests/` (flat); import the module under test via `../src/…`.
   See [docs/testing.md](docs/testing.md).
 - **Test what matters:** modules and non-trivial behavior (logic, contracts, component
   callbacks). Skip trivial scripts, library internals, and styling; don't chase coverage.

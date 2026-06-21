@@ -21,6 +21,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -30,6 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: ui/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -42,7 +46,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
-          path: dist
+          path: ui/dist
 
   deploy:
     environment:

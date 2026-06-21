@@ -13,7 +13,7 @@ vi.mock("@a2ui/react", () => ({
   }),
 }));
 
-import { App } from "./App";
+import { App } from "../src/App";
 
 describe("App", () => {
   it("renders header with agenthud title", () => {
