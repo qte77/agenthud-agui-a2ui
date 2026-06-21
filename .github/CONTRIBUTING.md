@@ -32,17 +32,21 @@ Test layout: [docs/testing.md](../docs/testing.md).
 
 ## Releasing
 
-Tier-1 maintainer flow — manual version bump, automated tag + release:
+Semi-automated by design: the **version bump is a manual PR** (it keeps the human-curated
+Keep-a-Changelog accurate), while **tagging and the GitHub Release are automated**. The bump
+is deliberately not a tool — `changesets`/`release-please`/`semantic-release` all fight the
+`ui/` subdir layout or overwrite the Keep-a-Changelog format. To cut `vX.Y.Z`:
 
-1. In the release PR, from `ui/`, run `npm version <patch|minor|major> --no-git-tag-version`
-   (updates `package.json` + `package-lock.json`), bump the README version badge
-   (`version-X.Y.Z-58f4c2`), and in `CHANGELOG.md` rename `## [Unreleased]` to
-   `## [X.Y.Z] - <YYYY-MM-DD>` with a fresh `## [Unreleased]` added above.
-2. Merge to `main` — [`tag-release`](workflows/tag-release.yaml) auto-tags `vX.Y.Z` on the
-   squash-merge commit.
-3. Optionally run [`publish-release`](workflows/publish-release.yaml) (Actions tab, or
-   `gh workflow run publish-release.yaml -f tag=vX.Y.Z`) to cut a GitHub Release with notes from
-   the matching `CHANGELOG.md` block. Tag-only is fine.
+1. **Bump — one PR off `main`.** Run `( cd ui && npm version <patch|minor|major>
+   --no-git-tag-version )` to set the version in `ui/package.json` + `ui/package-lock.json`;
+   update the README badge (`version-X.Y.Z-58f4c2`); and in `CHANGELOG.md` rename
+   `## [Unreleased]` to `## [X.Y.Z] - <YYYY-MM-DD>`, adding a fresh `## [Unreleased]` above.
+   Commit as `chore(release): vX.Y.Z` and merge on green CI.
+2. **Tag — automatic.** The merge changes `ui/package.json` on `main`, so
+   [`tag-release`](workflows/tag-release.yaml) tags `vX.Y.Z` on the squash-merge commit.
+3. **Release — one click.** Run [`publish-release`](workflows/publish-release.yaml) (Actions
+   tab, or `gh workflow run publish-release.yaml -f tag=vX.Y.Z`) to publish a GitHub Release
+   with notes from the matching `CHANGELOG.md` block. Tag-only is fine.
 
 ## Commit messages
 
