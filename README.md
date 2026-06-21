@@ -1,5 +1,12 @@
 # agenthud-agui-a2ui
 
+> **Prototype** — a feasibility prototype, not a production application.
+
+AG-UI event replay + A2UI component rendering in a static Vite/React app — a developer
+demo of how an agent composes safe, declarative UI from a standard catalog.
+
+![Prototype mockup](assets/mockup-prototype.svg)
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-58f4c2.svg)](LICENSE)
 ![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)
 [![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
@@ -7,13 +14,15 @@
 [![Lint](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml)
 [![Dependabot](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates)
 
-> **Prototype** — This is a feasibility prototype, not a production application.
+<details>
+<summary>Screenshots</summary>
 
-AG-UI event replay + A2UI component rendering in a static Vite/React app.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png">
+  <img alt="agenthud — decision tree driving A2UI components; adapts to the GitHub light/dark theme" src="assets/screenshot-light.png">
+</picture>
 
-Demonstrates how different user intents produce different UI layouts from the same A2UI standard catalog — without executing arbitrary code. Users navigate a decision tree; each choice plays a different segment with distinct component compositions that stack on the surface.
-
-![Prototype mockup](assets/mockup-prototype.svg)
+</details>
 
 ## What it shows
 
@@ -26,7 +35,7 @@ Demonstrates how different user intents produce different UI layouts from the sa
 
 > Full user stories and acceptance criteria: [docs/UserStory.md](docs/UserStory.md).
 
-## Decision tree
+### Decision tree
 
 ```text
 root (3 choices)
@@ -48,7 +57,7 @@ root (3 choices)
 
 10 tree nodes, no dead ends. Every leaf connects back to other branches.
 
-## Repos shown
+### Repos shown
 
 - Agents-eval — Multi-agent evaluation framework
 - RAPID-spec-forge — Requirements-to-Agent Pipeline
@@ -56,11 +65,11 @@ root (3 choices)
 - polyforge-orchestrator — Parallel agent orchestration
 - claude-code-plugins — Plugin marketplace (26 plugins)
 
-## Components used (10 of 18)
+### Components used (10 of 18)
 
 Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + results view.
 
-## Stack
+### Stack
 
 | Package | Purpose |
 |---|---|
@@ -74,7 +83,9 @@ Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + result
 | `@fontsource/*` | Self-hosted brand fonts (Inter, JetBrains Mono) |
 | `typescript` | Type checking |
 
-## Run
+## How
+
+### Run
 
 ```bash
 npm install
@@ -85,7 +96,7 @@ Choose a path from the decision tree or press **Play All** for the full sequence
 
 For **Live** mode, toggle **Demo → Live** in the header and supply an OpenAI-compatible base URL + API key + model id (e.g. an OpenRouter key). Credentials live in `sessionStorage` only and are never persisted; the demo needs no key.
 
-## Build
+### Build
 
 ```bash
 npm run build
@@ -94,7 +105,7 @@ npx vite preview
 
 Build output in `dist/` is deployable to GitHub Pages with base path `/agenthud-agui-a2ui/`.
 
-## Modes
+### Modes
 
 See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
 
@@ -103,6 +114,15 @@ See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
 | **Demo** (offline replay) | Current | Pre-baked AG-UI events + decision-tree navigation |
 | **Live (BYOK)** | Current | In-browser Vercel AI SDK agent; visitor-supplied OpenAI-compatible key (sessionStorage only); `render_ui` tool → validated A2UI |
 | Keyless worker | Deferred — [#52](https://github.com/qte77/agenthud-agui-a2ui/issues/52) | Optional edge worker; GitHub Models has no browser CORS |
+
+## Why
+
+Agents increasingly need to *show* things, not just say them — but server-rendered
+generative UI couples the agent to a frontend framework and risks executing arbitrary code
+on the client. **A2UI** keeps it safe: the agent only references components from a known
+catalog (no code runs), and **AG-UI** streams those choices as protocol events. agenthud is
+the smallest end-to-end demonstration of that loop — the same standard catalog producing
+different layouts per user intent — from pre-baked replay to a live BYOK agent.
 
 ## References
 
