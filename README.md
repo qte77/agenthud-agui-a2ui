@@ -1,136 +1,87 @@
 # agenthud-agui-a2ui
 
-> **Prototype** — a feasibility prototype, not a production application.
-
-AG-UI event replay + A2UI component rendering in a static Vite/React app — a developer
-demo of how an agent composes safe, declarative UI from a standard catalog.
+> AG-UI event replay + A2UI component rendering in a static Vite/React app — a feasibility
+> prototype for developers exploring how an agent composes safe, declarative UI from a
+> standard catalog.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-58f4c2.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)
+[![Version](https://img.shields.io/badge/version-0.0.1-58f4c2.svg)](CHANGELOG.md)
+[![CI](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/ci.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui/badge)](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui)
 [![Lint](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/lint-md-links.yml)
 [![Dependabot](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/dependabot/dependabot-updates)
 
-## What it shows
+## What
 
-- **Decision tree** drives which A2UI components render — each path uses a different mix from the same catalog.
-- **A2UI Surface** (left panel): declarative components accumulate as you navigate, rendered via `@a2ui/react`.
-- **AG-UI EventStream** (right panel): protocol events with timing, showing which components each tool call produces.
-- **Catalog Viewer**: modal listing all 18 A2UI standard components with first-party links.
-- **Theming**: qte77 **EyeRest** brand palette (zero-blue, warm amber) with a light/dark/system toggle (◐ / ○ / ●).
-- **Live mode (BYOK)**: switch **Demo → Live** to drive the same surface with a real LLM. Bring an OpenAI-compatible key; the agent's `render_ui` tool streams AG-UI events that render validated A2UI — no server, 100% in-browser.
-
-> Full user stories and acceptance criteria: [docs/UserStory.md](docs/UserStory.md).
-
-### Decision tree
-
-```text
-root (3 choices)
-├─ Show me repos → Card, Row, Text
-│  ├─ Show details → Image, Column, Divider
-│  ├─ List plugins → Column, Row, Text
-│  └─ Browse categories → Tabs
-├─ Browse by category → Tabs
-│  ├─ Show repo details → Image, Column, Divider
-│  ├─ List plugins → Column, Row
-│  └─ Set up filters → CheckBox
-└─ Filter repos → Card, CheckBox
-   ├─ Adjust range → Slider
-   │  └─ Apply filters → Button
-   │     └─ Show results → Card, Text, Divider
-   └─ Apply now → Button
-      └─ Show results → Card, Text, Divider
-```
-
-10 tree nodes, no dead ends. Every leaf connects back to other branches.
-
-### Repos shown
-
-- Agents-eval — Multi-agent evaluation framework
-- RAPID-spec-forge — Requirements-to-Agent Pipeline
-- ai-agents-research — Claude Code internals research
-- polyforge-orchestrator — Parallel agent orchestration
-- claude-code-plugins — Plugin marketplace (26 plugins)
-
-### Components used (10 of 18)
-
-Card, Column, Row, Text, Image, Divider, Tabs, CheckBox, Slider, Button + results view.
-
-### Stack
-
-| Package | Purpose |
-|---|---|
-| `@a2ui/react` | Google's A2UI React renderer |
-| `@ag-ui/core` | AG-UI event type definitions |
-| `zod` | Validated A2UI + recording contract (also the live agent's `render_ui` tool schema) |
-| `ai` + `@ai-sdk/openai` | Vercel AI SDK — the in-browser BYOK live agent (Live mode, code-split) |
-| `react` | UI framework |
-| `vite` | Build + dev server |
-| `tailwindcss` | Styling + EyeRest brand theme tokens (no config file) |
-| `@fontsource/*` | Self-hosted brand fonts (Inter, JetBrains Mono) |
-| `typescript` | Type checking |
+agenthud demonstrates the **AG-UI + A2UI** loop end to end: an agent composes UI by
+referencing components from a fixed catalog — no arbitrary code runs on the client —
+streamed as AG-UI protocol events and rendered by `@a2ui/react` on a Vite/React surface.
+What you get: a **Demo** tier that replays pre-baked AG-UI events down a branching decision
+tree, where each path renders a different component mix from the same catalog (with a live
+event stream beside the surface) plus a Catalog Viewer of all 18 A2UI components; the qte77
+**EyeRest** theme with a light/dark/system toggle; and a **Live (BYOK)** tier that swaps the
+replay for a real LLM in the browser — its `render_ui` tool (zod-validated) emits the same
+AG-UI events from your own OpenAI-compatible key.
 
 <details>
 <summary>Screenshot — Demo mode</summary>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png">
-  <img alt="agenthud — the decision tree and AG-UI event stream driving A2UI components" src="assets/screenshot-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png" />
+  <img alt="agenthud — the decision tree and AG-UI event stream driving A2UI components" src="assets/screenshot-light.png" />
 </picture>
 
 </details>
 
 ## How
 
-### Run
+**Explore** — open the [live demo](https://qte77.github.io/agenthud-agui-a2ui/) (zero setup),
+or run it locally:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Choose a path from the decision tree or press **Play All** for the full sequence. Click **Catalog** to view the A2UI component library.
+Pick a path from the decision tree or press **Play All**; click **Catalog** to browse the
+A2UI components.
 
-For **Live** mode, toggle **Demo → Live** in the header and supply an OpenAI-compatible base URL + API key + model id (e.g. an OpenRouter key). Credentials live in `sessionStorage` only and are never persisted; the demo needs no key.
+**Live (BYOK)** — toggle **Demo → Live** in the header and supply an OpenAI-compatible base
+URL + API key + model id (e.g. an OpenRouter key). Credentials stay in `sessionStorage`
+only; the demo needs no key. Rationale: [ADR-0001](docs/decisions/0001-agent-runtime-stack.md).
 
-### Build
+**Build & develop** — the local loop:
 
 ```bash
-npm run build
-npx vite preview
+npm run build      # tsc -b + vite build -> dist/ (deployable to GitHub Pages)
+npm run typecheck  # tsc -b --noEmit
+npm run lint       # eslint
+npm test           # vitest
 ```
-
-Build output in `dist/` is deployable to GitHub Pages with base path `/agenthud-agui-a2ui/`.
-
-### Modes
-
-See [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) for the rationale.
-
-| Mode | Status | Notes |
-|---|---|---|
-| **Demo** (offline replay) | Current | Pre-baked AG-UI events + decision-tree navigation |
-| **Live (BYOK)** | Current | In-browser Vercel AI SDK agent; visitor-supplied OpenAI-compatible key (sessionStorage only); `render_ui` tool → validated A2UI |
-| Keyless worker | Deferred — [#52](https://github.com/qte77/agenthud-agui-a2ui/issues/52) | Optional edge worker; GitHub Models has no browser CORS |
 
 ## Why
 
-Agents increasingly need to *show* things, not just say them — but server-rendered
-generative UI couples the agent to a frontend framework and risks executing arbitrary code
-on the client. **A2UI** keeps it safe: the agent only references components from a known
-catalog (no code runs), and **AG-UI** streams those choices as protocol events. agenthud is
-the smallest end-to-end demonstration of that loop — the same standard catalog producing
-different layouts per user intent — from pre-baked replay to a live BYOK agent.
+Agents increasingly need to *show* things, not just say them — but server-rendered generative
+UI couples the agent to a frontend framework and risks executing arbitrary code on the client.
+**A2UI** keeps it safe: the agent only references components from a known catalog (no code
+runs), and **AG-UI** streams those choices as protocol events. agenthud is the smallest
+end-to-end demonstration of that loop — the same standard catalog producing different layouts
+per user intent — from pre-baked replay to a live BYOK agent. More in
+[docs/UserStory.md](docs/UserStory.md) and [docs/protocols.md](docs/protocols.md).
 
 ## Refs
 
+A static Vite/React app: pre-baked recordings — or a live Vercel AI SDK agent — emit AG-UI
+events through one `applyA2UIEvent` seam into the `@a2ui/react` surface; `zod` validates the
+A2UI payloads on both sides.
+
 - [Documentation index](docs/README.md) — protocols, testing, user stories, ADRs
+- [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) — TS-only agent runtime (vs Pydantic)
 - [Contributing](.github/CONTRIBUTING.md) — dev setup, tests, PR workflow
-- [A2UI Specification](https://a2ui.org/specification/v0.9-a2ui/)
-- [A2UI React Renderer](https://github.com/google/A2UI/tree/main/renderers/react)
-- [AG-UI Protocol](https://docs.ag-ui.com/introduction)
-- [AG-UI GitHub](https://github.com/ag-ui-protocol/ag-ui)
+- [A2UI](https://a2ui.org/specification/v0.9-a2ui/) · [AG-UI](https://docs.ag-ui.com/introduction)
 
 ## License
 
-[Apache-2.0](LICENSE).
+Apache-2.0 — see [LICENSE](LICENSE). Bundled brand fonts (Inter, JetBrains Mono) are under the
+SIL OFL 1.1.
