@@ -2,38 +2,37 @@
 
 Where test files live in this repo, and the general Vitest/TypeScript guidance.
 
-## This repo: co-locate tests
+## This repo: tests in `ui/tests/`
 
-Put each `*.test.ts(x)` **next to the file it tests** (`Foo.tsx` → `Foo.test.tsx`).
+The frontend lives under `ui/`; tests live in a flat **`ui/tests/`** directory
+(separate from `ui/src/`) and import the module under test via `../src/…`:
 
-- **Why:** this is a Vite + Vitest **app** (`"private": true`, deployed to GitHub Pages,
-  not a published package), and co-location is the idiomatic convention for that stack.
-  Already followed in `src/agent/` and `src/theme/`.
-- **No config needed:** Vitest's default `include` finds tests anywhere; `tsc -b` runs
-  `noEmit` (type-check only) and Vite bundles only *imported* files, so co-located tests
-  never reach `dist/`. Keep tests inside the typecheck `include` so test type errors are caught.
+```text
+ui/
+  src/agent/liveAgent.ts
+  tests/liveAgent.test.ts   →  import … from "../src/agent/liveAgent"
+```
+
+- **Why:** mirrors the `ui/` package layout used across qte77 repos (e.g. `qte77/paperverse`),
+  keeping `src/` free of test files and all test code in one place.
+- **Config:** `ui/tsconfig.app.json` includes both `src` and `tests` so test type errors are
+  caught; `ui/vite.config.ts` sets `setupFiles: ["tests/setup.ts"]`. Tests never reach `dist/`
+  — `tsc -b` is `noEmit` and Vite bundles only *imported* files.
 
 ## Vitest is layout-agnostic
 
-Default include glob: `['**/*.{test,spec}.?(c|m)[jt]s?(x)']` — it matches tests whether
-co-located, under `__tests__/`, or in a top-level `tests/`. Switching layout needs no config.
+Default include glob: `['**/*.{test,spec}.?(c|m)[jt]s?(x)']` — it matches tests whether in a
+top-level `tests/`, co-located, or under `__tests__/`. Switching layout needs no config.
 
 ## When to use which
 
 | Approach | Use when |
 |---|---|
-| **Co-located** — `Foo.test.tsx` beside `Foo.tsx` | **Default for apps** (this repo). Component/feature-centric code; best discoverability; no published-package concern. |
-| **Centralized `src/__tests__/`** | Jest-era habit; a flat `src/` with no feature folders; many shared fixtures you don't want scattered. Valid, just older. |
-| **Top-level `tests/`** (outside `src/`) | **Publishable libraries/packages** — keeps tests + test-utils out of the shipped tarball (`files` / `.npmignore`); also the Node-backend tradition. Not idiomatic for an unpublished app. |
-
-## TypeScript note
-
-Co-located tests can leak into `dist/` under a raw `tsc` build; the standard fix is a
-`tsconfig.build.json` that `exclude`s `**/*.test.*`. **Not needed here** — `tsc -b` is
-`noEmit` and Vite's bundler only includes imported files, so tests never reach the build.
+| **Top-level `tests/`** (this repo) | Keeps `src/` clean; all tests in one place; matches the cross-repo `ui/` convention. |
+| **Co-located** — `Foo.test.tsx` beside `Foo.tsx` | Component-centric apps wanting maximum discoverability; the common Vite default. |
+| **Centralized `src/__tests__/`** | Jest-era habit; a flat `src/` with many shared fixtures. |
 
 ## Sources
 
 - Vitest `include` — <https://vitest.dev/config/include>
 - Next.js Vitest guide (notes both `__tests__` and co-location) — <https://nextjs.org/docs/app/guides/testing/vitest>
-- Excluding test files from a TS build — <https://bobbyhadz.com/blog/typescript-exclude-test-files-from-compilation>

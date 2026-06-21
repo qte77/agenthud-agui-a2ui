@@ -8,7 +8,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { useA2UIActions } from "@a2ui/react";
-import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
+import { A2UISurfaceProvider, A2UISurface } from "../src/A2UISurface";
 
 const SMOKE_TEXT = "SmokeTestUniqueText__a2ui";
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import overview from "../recordings/overview.json";
-import { A2UIMessageBatchSchema, RecordingSchema } from "./contract";
+import overview from "../src/recordings/overview.json";
+import { A2UIMessageBatchSchema, RecordingSchema } from "../src/agent/contract";
 
 describe("recording contract (internal data)", () => {
   it("the bundled overview.json conforms to RecordingSchema", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tours } from ".";
+import { tours } from "../src/recordings";
 
 describe("tour registry", () => {
   it("exports the single streamlined tour", () => {

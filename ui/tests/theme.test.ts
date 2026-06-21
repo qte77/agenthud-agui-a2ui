@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { THEME_CYCLE, isThemeMode, nextTheme, resolveTheme } from "./theme";
+import { THEME_CYCLE, isThemeMode, nextTheme, resolveTheme } from "../src/theme/theme";
 
 describe("theme cycler", () => {
   it("cycles system → light → dark → system", () => {

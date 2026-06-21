@@ -33,4 +33,4 @@ description: Non-obvious patterns that prevent repeated mistakes across sprints
 - **Solution**: Ignore the `DRIFT` failures for this Tailwind-v4 app — the `<slug>-{light,dark}.png`
   screenshots are still written. Do **not** rename tokens to bare names (breaks Tailwind utilities).
 - **Example**: `uv run --directory ../polyfetch-scrape python ../qte77/brand/scripts/gui-check.py --url http://localhost:4173 --out /tmp/shots`
-- **References**: `src/index.css` (`@theme` tokens), `brand/scripts/gui-check.py`.
+- **References**: `ui/src/index.css` (`@theme` tokens), `brand/scripts/gui-check.py`.
