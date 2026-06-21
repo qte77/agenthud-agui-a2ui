@@ -16,6 +16,29 @@ const DEFAULTS: LiveSettings = {
   model: "",
 };
 
+// OpenAI-compatible BYOK endpoints. The first group is CORS-friendly and works
+// in-browser as-is; `experimental` ones lack browser CORS, so they fail from a
+// static page until the deferred proxy lands (ADR-0001 / US-6). `editable` reveals
+// the freeform URL field (Custom, plus Azure's per-resource template).
+const ENDPOINTS: {
+  label: string;
+  baseURL: string;
+  experimental?: boolean;
+  editable?: boolean;
+}[] = [
+  { label: "OpenRouter", baseURL: "https://openrouter.ai/api/v1" },
+  { label: "Groq", baseURL: "https://api.groq.com/openai/v1" },
+  { label: "Together", baseURL: "https://api.together.xyz/v1" },
+  { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
+  { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
+  { label: "GitHub Models", baseURL: "https://models.github.ai/inference", experimental: true },
+  { label: "Google", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", experimental: true },
+  { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
+  { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
+  { label: "Custom…", baseURL: "", editable: true },
+];
+const CUSTOM = ENDPOINTS[ENDPOINTS.length - 1];
+
 function loadSettings(): LiveSettings {
   try {
     const raw = sessionStorage.getItem(SETTINGS_KEY);
@@ -59,6 +82,10 @@ export function LiveDashboard({
     settings.model.trim() &&
     prompt.trim();
 
+  // Selection is derived from the persisted baseURL — no extra state to keep in sync.
+  const selected =
+    ENDPOINTS.find((e) => e.baseURL === settings.baseURL) ?? CUSTOM;
+
   return (
     <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
       <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
@@ -96,13 +123,35 @@ export function LiveDashboard({
                 Connection (OpenAI-compatible · BYOK)
               </summary>
               <div className="mt-2 space-y-2">
-                <input
+                <select
                   className={fieldClass}
-                  type="url"
-                  placeholder="Base URL (e.g. https://openrouter.ai/api/v1)"
-                  value={settings.baseURL}
-                  onChange={(e) => patchSettings({ baseURL: e.target.value })}
-                />
+                  value={selected.label}
+                  onChange={(e) => {
+                    const next = ENDPOINTS.find((x) => x.label === e.target.value);
+                    if (next) patchSettings({ baseURL: next.baseURL });
+                  }}
+                >
+                  {ENDPOINTS.map((e) => (
+                    <option key={e.label} value={e.label}>
+                      {e.experimental ? `${e.label} (experimental)` : e.label}
+                    </option>
+                  ))}
+                </select>
+                {selected.editable && (
+                  <input
+                    className={fieldClass}
+                    type="url"
+                    placeholder="Base URL (e.g. https://openrouter.ai/api/v1)"
+                    value={settings.baseURL}
+                    onChange={(e) => patchSettings({ baseURL: e.target.value })}
+                  />
+                )}
+                {selected.experimental && (
+                  <p className="text-data-negative">
+                    ⚠ Experimental — not browser-callable from a static page (CORS).
+                    Likely fails without the deferred proxy (ADR-0001 / US-6).
+                  </p>
+                )}
                 <input
                   className={fieldClass}
                   type="password"
