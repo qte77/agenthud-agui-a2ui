@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-21
+
+### Added
+
+- BYOK connection: a preset endpoint dropdown of OpenAI-compatible providers (OpenRouter, Groq,
+  Together, Fireworks, DeepSeek) plus a Custom option; non-CORS endpoints (GitHub Models, Google,
+  Mammouth, Azure) are listed but flagged **experimental** with a runtime CORS warning. (#81)
+- Release flow: `tag-release` auto-tags `vX.Y.Z` when `ui/package.json`'s version changes on
+  `main`, and `publish-release` cuts a GitHub Release from the matching CHANGELOG block;
+  documented in CONTRIBUTING. (#83)
+
+### Changed
+
+- Moved the frontend into a `ui/` subdirectory (matching `qte77/paperverse`); tests now live in a
+  flat `ui/tests/` importing source via `../src/…`. CI, GitHub Pages, and Dependabot updated for
+  the new layout. (#82)
+
+### Removed
+
+- Orphaned hero mockup SVG (`assets/mockup-prototype.svg`), unreferenced since the README
+  restructure. (#80)
+
 ## [0.1.0] - 2026-06-21
 
 ### Added
