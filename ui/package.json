@@ -20,7 +20,7 @@
   "dependencies": {
     "@a2ui/react": "^0.10.1",
     "@ag-ui/core": "0.0.57",
-    "@ai-sdk/openai": "^3.0.73",
+    "@ai-sdk/openai": "^3.0.74",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/jetbrains-mono": "^5.1.0",
     "ai": "^6.0.208",
