@@ -16,10 +16,12 @@ const DEFAULTS: LiveSettings = {
   model: "",
 };
 
-// OpenAI-compatible BYOK endpoints. The first group is CORS-friendly and works
-// in-browser as-is; `experimental` ones lack browser CORS, so they fail from a
-// static page until the deferred proxy lands (ADR-0001 / US-6). `editable` reveals
-// the freeform URL field (Custom, plus Azure's per-resource template).
+// OpenAI-compatible BYOK endpoints. The CORS-friendly ones work in-browser as-is.
+// GitHub Models + Google have no browser CORS, so they route through the edge proxy
+// (US-6 / ADR-0001 — see worker/README.md); set PROXY_BASE to your deployed worker.
+// Mammouth + Azure stay `experimental` (still fail from a static page). `editable`
+// reveals the freeform URL field (Custom, plus Azure's per-resource template).
+const PROXY_BASE = "https://agenthud-proxy.qte77.workers.dev"; // deployed worker — see worker/README.md
 const ENDPOINTS: {
   label: string;
   baseURL: string;
@@ -31,8 +33,8 @@ const ENDPOINTS: {
   { label: "Together", baseURL: "https://api.together.xyz/v1" },
   { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
   { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
-  { label: "GitHub Models", baseURL: "https://models.github.ai/inference", experimental: true },
-  { label: "Google", baseURL: "https://generativelanguage.googleapis.com/v1beta/openai", experimental: true },
+  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
+  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google` },
   { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
   { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
   { label: "Custom…", baseURL: "", editable: true },

@@ -6,7 +6,7 @@ import type { AgentEvent } from "./applyA2UIEvent";
 
 // BYOK connection details — supplied by the visitor, held in sessionStorage only
 // (never persisted), per US-7. Any CORS-friendly OpenAI-compatible endpoint works
-// (e.g. OpenRouter); GitHub Models needs a proxy (no browser CORS) — see ADR-0001.
+// (e.g. OpenRouter); GitHub Models / Google route via the edge proxy — see worker/README.md (US-6).
 export interface LiveSettings {
   baseURL: string;
   apiKey: string;
