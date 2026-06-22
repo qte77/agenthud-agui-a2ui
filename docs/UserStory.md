@@ -111,7 +111,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] The browser consumes the stream and renders A2UI on the same surface
 - [ ] Falls back to BYOK / Demo when the worker is unavailable
 
-**Status:** Deferred (optional). Superseded for the *in-browser* live tier by US-7 (Vercel AI SDK BYOK). GitHub Models has no browser CORS, so a keyless public demo needs a worker holding the token — built only if wanted (YAGNI). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001](decisions/0001-agent-runtime-stack.md).
+**Status:** Partially delivered. The edge worker now exists as a **BYOK pass-through CORS proxy** (`worker/`): it relays the non-CORS endpoints (GitHub Models, Google) server-to-server so they work in-browser with the *visitor's own* key — satisfying the CORS-relay part (criteria 2-3). The **keyless** variant (criterion 1 — the worker holding a `models:read` token so visitors need no key) stays deferred (abuse/secret surface). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001](decisions/0001-agent-runtime-stack.md) and `worker/README.md`.
 
 ---
 

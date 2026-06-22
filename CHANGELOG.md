@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Edge proxy (`worker/`): a BYOK pass-through Cloudflare Worker that relays the non-CORS endpoints
+  (GitHub Models, Google) server-to-server, so they work in-browser from the static site with the
+  visitor's own key. Holds no secret; fixed upstream allowlist (no open proxy); CORS limited to
+  the gh-pages + localhost origins. The dropdown gains "GitHub Models (via proxy)" / "Google (via
+  proxy)"; set `PROXY_BASE` after `wrangler deploy` (`worker/README.md`). Delivers the CORS-relay
+  half of US-6 / ADR-0001; the keyless variant stays deferred.
+
 ## [0.2.0] - 2026-06-21
 
 ### Added

@@ -1,0 +1,19 @@
+{
+  "name": "agenthud-proxy",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BYOK pass-through CORS proxy for non-CORS OpenAI-compatible endpoints (US-6).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.9",
+    "wrangler": "^4"
+  }
+}
