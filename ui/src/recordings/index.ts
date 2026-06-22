@@ -83,11 +83,15 @@ export const tours: Tour[] = [
 ];
 
 /**
- * Patch root Column's explicitList to only reference IDs that exist
- * in the same surfaceUpdate. Prevents broken references when playing
- * a single segment that shares the root with other segments.
+ * Patch root's explicitList to drop references to component IDs not defined anywhere in the
+ * segment so far. `definedIds` accumulates across the segment's surfaceUpdates, mirroring the
+ * @a2ui processor's cumulative component Map — so cards added by earlier batches in the same
+ * segment are kept, while truly-dangling cross-segment references are stripped.
  */
-function patchRootChildren(event: RecordingEvent): RecordingEvent {
+function patchRootChildren(
+  event: RecordingEvent,
+  definedIds: Set<string>
+): RecordingEvent {
   if (!event.a2uiMessages) return event;
 
   const patched = structuredClone(event);
@@ -97,7 +101,7 @@ function patchRootChildren(event: RecordingEvent): RecordingEvent {
       | undefined;
     if (!update?.components) continue;
 
-    const definedIds = new Set(update.components.map((c) => c.id));
+    for (const c of update.components) definedIds.add(c.id);
     const root = update.components.find((c) => c.id === "root");
     if (!root?.component) continue;
 
@@ -123,6 +127,7 @@ export function getSegmentEvents(
   const filtered: RecordingEvent[] = [];
   let inSegment = false;
   let foundBeginRendering = false;
+  const definedIds = new Set<string>();
 
   for (const event of rec.events) {
     // Always include RUN lifecycle
@@ -161,7 +166,7 @@ export function getSegmentEvents(
         }
         foundBeginRendering = true;
       }
-      filtered.push(options?.append ? event : patchRootChildren(event));
+      filtered.push(options?.append ? event : patchRootChildren(event, definedIds));
     }
   }
 

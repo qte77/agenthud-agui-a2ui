@@ -3,6 +3,7 @@ import {
   segments,
   decisionTree,
   getSegmentEvents,
+  type Recording,
 } from "../src/recordings";
 
 describe("recording registry", () => {
@@ -76,6 +77,77 @@ describe("recording registry", () => {
       )
     );
     expect(hasBegin).toBe(true);
+  });
+
+  it("keeps a segment's cumulative root across additive surfaceUpdates", () => {
+    // Additive segment: event 1 adds card "a"; event 2 adds card "b" and grows the root to
+    // [a, b], relying on the @a2ui processor keeping "a" from event 1. The per-event root patch
+    // must NOT strip "a" from event 2's root just because that batch doesn't re-send it.
+    const additive: Recording = {
+      meta: { title: "t", description: "d" },
+      events: [
+        { delayMs: 0, type: "RUN_STARTED" },
+        { delayMs: 0, type: "STEP_STARTED", segment: "seg" },
+        {
+          delayMs: 0,
+          type: "TOOL_CALL_START",
+          a2uiMessages: [
+            { beginRendering: { surfaceId: "main", root: "root" } },
+            {
+              surfaceUpdate: {
+                surfaceId: "main",
+                components: [
+                  { id: "root", component: { Column: { children: { explicitList: ["a"] } } } },
+                  { id: "a", component: { Text: { text: { literal: "A" } } } },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          delayMs: 0,
+          type: "TOOL_CALL_START",
+          a2uiMessages: [
+            {
+              surfaceUpdate: {
+                surfaceId: "main",
+                components: [
+                  { id: "root", component: { Column: { children: { explicitList: ["a", "b"] } } } },
+                  { id: "b", component: { Text: { text: { literal: "B" } } } },
+                ],
+              },
+            },
+          ],
+        },
+        { delayMs: 0, type: "STEP_FINISHED" },
+        { delayMs: 0, type: "RUN_FINISHED" },
+      ],
+    };
+
+    const result = getSegmentEvents(additive, "seg", { append: false });
+
+    const rootLists = result
+      .flatMap((e) => (e.a2uiMessages ?? []) as Array<Record<string, unknown>>)
+      .map(
+        (m) =>
+          m.surfaceUpdate as
+            | {
+                components?: Array<{
+                  id: string;
+                  component: Record<string, { children?: { explicitList?: string[] } }>;
+                }>;
+              }
+            | undefined
+      )
+      .map((u) => u?.components?.find((c) => c.id === "root"))
+      .filter((r): r is NonNullable<typeof r> => Boolean(r))
+      .map((r) => {
+        const type = Object.keys(r.component)[0];
+        return r.component[type].children?.explicitList ?? [];
+      });
+
+    // The final root must still reference both cards (cumulative), not just the last batch's.
+    expect(rootLists.at(-1)).toEqual(["a", "b"]);
   });
 
   it("every event has delayMs and type fields", () => {
