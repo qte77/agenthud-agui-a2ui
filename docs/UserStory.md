@@ -179,5 +179,5 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 5. ~~US-5: GitHub Pages deployment~~ (done)
 6. ~~US-8: Multiple tours~~ (descoped — single tour)
 7. ~~US-7: BYOK live agent~~ (done)
-8. US-6: Keyless GitHub Models (deferred — optional worker)
+8. US-6: GitHub Models proxy (CORS-relay delivered via worker; keyless deferred)
 9. US-9: Arbitrary accounts
