@@ -1,6 +1,6 @@
 // Header links to the project's GitHub repo + issues. Icon+text ghost controls matching
 // ThemeToggle's style; the octocat is an inline SVG (no icon library, zero external requests).
-const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
+export const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
 const ISSUES_URL = `${REPO_URL}/issues`;
 
 const linkClass =
