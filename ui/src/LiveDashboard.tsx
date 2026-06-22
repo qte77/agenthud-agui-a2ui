@@ -13,11 +13,14 @@ const DEFAULTS: LiveSettings = {
 };
 
 // OpenAI-compatible BYOK endpoints. The CORS-friendly ones work in-browser as-is.
-// GitHub Models + Google have no browser CORS, so they route through the edge proxy
-// (US-6 / ADR-0001 — see worker/README.md); set PROXY_BASE to your deployed worker.
-// Mammouth + Azure stay `experimental` (still fail from a static page). `editable`
-// reveals the freeform URL field (Custom, plus Azure's per-resource template).
-const PROXY_BASE = "https://agenthud-proxy.qte77.workers.dev"; // deployed worker — see worker/README.md
+// GitHub Models + Google have no browser CORS, so they would route through the edge proxy
+// (US-6 / ADR-0001 — see worker/README.md). Mammouth + Azure stay `experimental` (still fail
+// from a static page). `editable` reveals the freeform URL field (Custom, plus Azure's template).
+//
+// PROXY_BASE is a PLACEHOLDER — the worker is NOT deployed yet, so the "(via proxy)" options below
+// are flagged `experimental` and will fail. After `wrangler deploy`, set this to the real
+// workers.dev URL and drop their experimental flag (worker/README.md).
+const PROXY_BASE = "https://<your-worker>.workers.dev";
 const ENDPOINTS: {
   label: string;
   baseURL: string;
@@ -29,8 +32,8 @@ const ENDPOINTS: {
   { label: "Together", baseURL: "https://api.together.xyz/v1" },
   { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
   { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
-  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
-  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google` },
+  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models`, experimental: true },
+  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google`, experimental: true },
   { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
   { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
   { label: "Custom…", baseURL: "", editable: true },

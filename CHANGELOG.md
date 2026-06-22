@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- BYOK "(via proxy)" options (GitHub Models, Google) are flagged **experimental** and `PROXY_BASE`
+  is reset to a placeholder — the edge proxy is **not deployed yet**, so the previous code wrongly
+  implied a live worker (its host did not resolve) and those two options failed with a connection
+  error.
 - Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
   renders **all** of its cards, not just the last. The per-event root patch was stripping cards
   added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
