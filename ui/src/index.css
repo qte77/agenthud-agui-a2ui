@@ -80,6 +80,20 @@ body {
   flex: none;
 }
 
+/* GitHub Invertocat — its permitted palette is black/white only (brand.github.com), so it must
+ * NOT inherit the warm --color-text. Invert by theme: black on light, white on dark. */
+.gh-mark {
+  color: #000;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .gh-mark {
+    color: #fff;
+  }
+}
+:root[data-theme="dark"] .gh-mark {
+  color: #fff;
+}
+
 /* ---- a11y baseline (ported from qte77 ui-kit/a11y.css) ---- */
 
 /* Screen-reader-only: the live-region announce text is hidden but read aloud. */
