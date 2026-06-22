@@ -6,21 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Fixed
-
-- Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
-  renders **all** of its cards, not just the last. The per-event root patch was stripping cards
-  added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
-  processor's cumulative component map).
-
 ### Added
 
+- Header links to the GitHub **Repo** and **Issues** (octocat icon + text), on both the Demo and
+  Live pages.
 - Edge proxy (`worker/`): a BYOK pass-through Cloudflare Worker that relays the non-CORS endpoints
   (GitHub Models, Google) server-to-server, so they work in-browser from the static site with the
   visitor's own key. Holds no secret; fixed upstream allowlist (no open proxy); CORS limited to
   the gh-pages + localhost origins. The dropdown gains "GitHub Models (via proxy)" / "Google (via
   proxy)"; set `PROXY_BASE` after `wrangler deploy` (`worker/README.md`). Delivers the CORS-relay
   half of US-6 / ADR-0001; the keyless variant stays deferred.
+
+### Fixed
+
+- Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
+  renders **all** of its cards, not just the last. The per-event root patch was stripping cards
+  added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
+  processor's cumulative component map).
 
 ## [0.2.0] - 2026-06-21
 
