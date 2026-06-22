@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
+  renders **all** of its cards, not just the last. The per-event root patch was stripping cards
+  added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
+  processor's cumulative component map).
+
 ### Added
 
 - Edge proxy (`worker/`): a BYOK pass-through Cloudflare Worker that relays the non-CORS endpoints
