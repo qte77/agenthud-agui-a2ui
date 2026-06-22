@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
 import { CatalogViewer } from "./CatalogViewer";
+import { GitHubLinks } from "./GitHubLinks";
 import { EventStream } from "./EventStream";
 import { useA2UIActions } from "@a2ui/react";
 import { useReplayEngine } from "./useReplayEngine";
@@ -160,6 +161,7 @@ function Dashboard({
             Play All
           </button>
           <CatalogViewer />
+          <GitHubLinks />
         </div>
       </header>
       <div className="flex flex-1 min-h-0">

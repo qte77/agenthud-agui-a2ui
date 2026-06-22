@@ -2,6 +2,7 @@ import { useState } from "react";
 import { A2UISurface } from "./A2UISurface";
 import { EventStream } from "./EventStream";
 import { CatalogViewer } from "./CatalogViewer";
+import { GitHubLinks } from "./GitHubLinks";
 import { BrandHeader } from "./BrandHeader";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { ModeToggle, type ViewMode } from "./ModeToggle";
@@ -99,6 +100,7 @@ export function LiveDashboard({
           <ModeToggle mode={mode} onChange={onMode} />
           <ThemeToggle />
           <CatalogViewer />
+          <GitHubLinks />
         </div>
       </header>
       <div className="flex flex-1 min-h-0">
