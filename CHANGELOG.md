@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - The Demo and Live dashboards now share one `DashboardShell` (header, A2UI surface, event sidebar,
   footer) instead of duplicating it — no behavior change; the Live tier's AI SDK stays lazy-loaded.
+- Header logo mark adopts the shared `brand-mark` style (neutral `--color-text`, theme-adaptive,
+  28px) for parity with the qte77 sibling sites — was amber/22px.
 
 ### Fixed
 
