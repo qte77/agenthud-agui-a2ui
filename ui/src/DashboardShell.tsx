@@ -46,9 +46,9 @@ export function DashboardShell({
         {headerMiddle}
         <div className="flex items-center gap-2">
           <ModeToggle mode={view} onChange={onView} />
-          <ThemeToggle />
           {extraControls}
           <CatalogViewer />
+          <ThemeToggle />
           <GitHubLinks />
         </div>
       </header>
