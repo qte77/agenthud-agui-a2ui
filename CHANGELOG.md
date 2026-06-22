@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   proxy)"; set `PROXY_BASE` after `wrangler deploy` (`worker/README.md`). Delivers the CORS-relay
   half of US-6 / ADR-0001; the keyless variant stays deferred.
 
+### Changed
+
+- The Demo and Live dashboards now share one `DashboardShell` (header, A2UI surface, event sidebar,
+  footer) instead of duplicating it — no behavior change; the Live tier's AI SDK stays lazy-loaded.
+
 ### Fixed
 
 - Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision

@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { A2UISurface } from "./A2UISurface";
-import { EventStream } from "./EventStream";
-import { CatalogViewer } from "./CatalogViewer";
-import { GitHubLinks } from "./GitHubLinks";
-import { BrandHeader } from "./BrandHeader";
-import { ThemeToggle } from "./theme/ThemeToggle";
-import { ModeToggle, type ViewMode } from "./ModeToggle";
+import { DashboardShell } from "./DashboardShell";
+import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
 import type { LiveSettings } from "./agent/liveAgent";
 
@@ -90,30 +85,19 @@ export function LiveDashboard({
     ENDPOINTS.find((e) => e.baseURL === settings.baseURL) ?? CUSTOM;
 
   return (
-    <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
-      <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
-        <BrandHeader />
+    <DashboardShell
+      view={mode}
+      onView={onMode}
+      headerMiddle={
         <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
           Live · BYOK
         </span>
-        <div className="flex items-center gap-2">
-          <ModeToggle mode={mode} onChange={onMode} />
-          <ThemeToggle />
-          <CatalogViewer />
-          <GitHubLinks />
-        </div>
-      </header>
-      <div className="flex flex-1 min-h-0">
-        <main className="flex-1 overflow-y-auto p-4">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
-            <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-              A2UI Surface
-            </span>
-            <span className="text-xs text-text-muted">
-              — composed live by the agent via the render_ui tool
-            </span>
-          </div>
-          <A2UISurface />
+      }
+      surfaceSubtitle="composed live by the agent via the render_ui tool"
+      eventsSubtitle="live protocol stream driving the surface"
+      eventLog={eventLog}
+      footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
+    >
 
           <form
             className="mt-6 max-w-md mx-auto space-y-3"
@@ -211,32 +195,6 @@ export function LiveDashboard({
               </p>
             )}
           </form>
-        </main>
-        <aside className="w-96 border-l border-border flex flex-col">
-          <div className="flex items-center gap-2 px-2 py-2 border-b border-border">
-            <span className="text-xs font-semibold text-data-positive uppercase tracking-wide">
-              AG-UI Events
-            </span>
-            <span className="text-xs text-text-muted">
-              — live protocol stream driving the surface
-            </span>
-          </div>
-          <div className="flex-1 min-h-0">
-            <EventStream events={eventLog} />
-          </div>
-        </aside>
-      </div>
-      <footer className="px-4 py-2 border-t border-border text-center text-xs text-text-muted">
-        Live BYOK agent · Vercel AI SDK → AG-UI → A2UI ·{" "}
-        <a
-          href="https://github.com/qte77/agenthud-agui-a2ui"
-          target="_blank"
-          rel="noreferrer"
-          className="text-primary hover:underline"
-        >
-          qte77/agenthud-agui-a2ui
-        </a>
-      </footer>
-    </div>
+    </DashboardShell>
   );
 }

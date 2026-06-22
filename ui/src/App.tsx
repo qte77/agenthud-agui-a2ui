@@ -1,13 +1,9 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { A2UISurfaceProvider, A2UISurface } from "./A2UISurface";
-import { CatalogViewer } from "./CatalogViewer";
-import { GitHubLinks } from "./GitHubLinks";
-import { EventStream } from "./EventStream";
+import { A2UISurfaceProvider } from "./A2UISurface";
+import { DashboardShell } from "./DashboardShell";
 import { useA2UIActions } from "@a2ui/react";
 import { useReplayEngine } from "./useReplayEngine";
-import { ThemeToggle } from "./theme/ThemeToggle";
-import { BrandHeader } from "./BrandHeader";
-import { ModeToggle, type ViewMode } from "./ModeToggle";
+import { type ViewMode } from "./ModeToggle";
 
 // Code-split the live tier: the AI SDK loads only when Live mode is opened, so the
 // default Demo (offline) tier stays lean.
@@ -34,7 +30,7 @@ interface HistoryEntry {
 // intents → different layouts from one catalog".
 const activeRecording: Recording = tours[0].recording;
 
-function Dashboard({
+function DemoDashboard({
   view,
   onView,
 }: {
@@ -129,22 +125,21 @@ function Dashboard({
   }
 
   return (
-    <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
-      <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
-        <BrandHeader />
+    <DashboardShell
+      view={view}
+      onView={onView}
+      headerMiddle={
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
             Replay
           </span>
           {path.length > 0 && (
-            <span className="text-xs text-text-muted">
-              {path.join(" → ")}
-            </span>
+            <span className="text-xs text-text-muted">{path.join(" → ")}</span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <ModeToggle mode={view} onChange={onView} />
-          <ThemeToggle />
+      }
+      extraControls={
+        <>
           {(path.length > 0 || mode === "all") && (
             <button
               onClick={handleStartOver}
@@ -160,21 +155,13 @@ function Dashboard({
           >
             Play All
           </button>
-          <CatalogViewer />
-          <GitHubLinks />
-        </div>
-      </header>
-      <div className="flex flex-1 min-h-0">
-        <main className="flex-1 overflow-y-auto p-4">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
-            <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-              A2UI Surface
-            </span>
-            <span className="text-xs text-text-muted">
-              — components selected by user intent from standard catalog
-            </span>
-          </div>
-          <A2UISurface />
+        </>
+      }
+      surfaceSubtitle="components selected by user intent from standard catalog"
+      eventsSubtitle="protocol stream driving the surface"
+      eventLog={eventLog}
+      footerLead="AG-UI event replay + A2UI rendering"
+    >
 
           {mode === "idle" && (
             <div className="mt-8">
@@ -248,33 +235,7 @@ function Dashboard({
               <p>Path complete. Try a different route or play the full sequence.</p>
             </div>
           )}
-        </main>
-        <aside className="w-96 border-l border-border flex flex-col">
-          <div className="flex items-center gap-2 px-2 py-2 border-b border-border">
-            <span className="text-xs font-semibold text-data-positive uppercase tracking-wide">
-              AG-UI Events
-            </span>
-            <span className="text-xs text-text-muted">
-              — protocol stream driving the surface
-            </span>
-          </div>
-          <div className="flex-1 min-h-0">
-            <EventStream events={eventLog} />
-          </div>
-        </aside>
-      </div>
-      <footer className="px-4 py-2 border-t border-border text-center text-xs text-text-muted">
-        AG-UI event replay + A2UI rendering ·{" "}
-        <a
-          href="https://github.com/qte77/agenthud-agui-a2ui"
-          target="_blank"
-          rel="noreferrer"
-          className="text-primary hover:underline"
-        >
-          qte77/agenthud-agui-a2ui
-        </a>
-      </footer>
-    </div>
+    </DashboardShell>
   );
 }
 
@@ -292,7 +253,7 @@ function Root() {
   );
 
   return view === "demo" ? (
-    <Dashboard view={view} onView={onView} />
+    <DemoDashboard view={view} onView={onView} />
   ) : (
     <Suspense
       fallback={
