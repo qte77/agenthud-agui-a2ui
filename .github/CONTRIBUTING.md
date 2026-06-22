@@ -8,6 +8,18 @@ that replays AG-UI events and renders A2UI components.
 - Check open issues to avoid duplication; for non-trivial changes, open an issue first.
 - See [AGENTS.md](../AGENTS.md) for the working conventions (principles, tests, commits).
 
+## Documentation hierarchy
+
+One audience per file — reference, don't duplicate
+([doc-structure.md](https://github.com/qte77/qte77/blob/main/docs/doc-structure.md)):
+
+| File | Audience | Owns |
+| --- | --- | --- |
+| [README.md](../README.md) | users / evaluators | what this is, why, how — the front door |
+| CONTRIBUTING.md (this file) | contributors | workflow, commands, conventions, releasing |
+| [AGENTS.md](../AGENTS.md) | AI agents | behavioural rules (`CLAUDE.md` loads the same) |
+| [CHANGELOG.md](../CHANGELOG.md) | everyone | notable changes by version |
+
 ## Development
 
 Requires Node.js 22+. The frontend lives in `ui/` — run npm from there:
@@ -29,6 +41,17 @@ Test layout: [docs/testing.md](../docs/testing.md).
 
 - One concern per PR, one topic per branch; reference issues (`Closes #123`).
 - Ensure CI is green before review/merge.
+
+## Branches
+
+- `feat/TOPIC`, `fix/TOPIC`, `docs/TOPIC`, `chore/TOPIC`
+- Squash-merge is default. Force-push only with `--force-with-lease`, never to `main`.
+
+## CHANGELOG
+
+Add an entry under `## [Unreleased]` in [CHANGELOG.md](../CHANGELOG.md) for any consumer-visible
+change; lead with the file path. Keep-a-Changelog format; no fragment tool (see the Releasing
+section).
 
 ## Releasing
 
