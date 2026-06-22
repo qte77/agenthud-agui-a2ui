@@ -73,6 +73,13 @@ body {
   margin: 0;
 }
 
+/* Shared header brand mark — neutral via currentColor, theme-adaptive (zero-blue).
+ * Same class + rule as the qte77 sibling sites, for cross-repo brand parity. */
+.brand-mark {
+  color: var(--color-text);
+  flex: none;
+}
+
 /* ---- a11y baseline (ported from qte77 ui-kit/a11y.css) ---- */
 
 /* Screen-reader-only: the live-region announce text is hidden but read aloud. */
