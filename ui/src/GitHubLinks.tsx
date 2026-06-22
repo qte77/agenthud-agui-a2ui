@@ -6,7 +6,9 @@ const ISSUES_URL = `${REPO_URL}/issues`;
 const linkClass =
   "flex items-center gap-1.5 rounded border border-border bg-surface px-2 py-1 text-sm text-text transition-colors hover:border-primary";
 
-// GitHub Invertocat mark.
+// GitHub Invertocat mark — byte-identical to the canonical qte77/assets/images/icons/github.svg
+// (same viewBox + path). Inlined rather than vendored as a file so fill="currentColor" tracks the
+// link's text color and theme; re-sync from that source if it ever changes.
 function GitHubMark() {
   return (
     <svg
