@@ -46,6 +46,14 @@ splits the repo into two languages.
 - The BYOK key is held in `sessionStorage` only (never persisted), per US-7.
 - The three replay tiers degrade gracefully: Live (BYOK) → Demo (offline replay).
 
+## Amendment (2026-06-22)
+
+The deferred Cloudflare Worker now exists (`worker/`), but as a **BYOK pass-through CORS
+proxy** rather than the keyless variant: it relays the non-CORS endpoints (GitHub Models,
+Google) server-to-server so they work in-browser with the *visitor's own* key — no secret is
+held. This delivers the CORS-relay half of the deferred consequence above; the keyless
+token-holding demo stays deferred. See `worker/README.md` and US-6.
+
 ## References
 
 - [AG-UI client SDK](https://docs.ag-ui.com/sdk/js/client/overview)
