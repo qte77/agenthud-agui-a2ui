@@ -80,18 +80,22 @@ body {
   flex: none;
 }
 
-/* GitHub Invertocat — its permitted palette is black/white only (brand.github.com), so it must
- * NOT inherit the warm --color-text. Invert by theme: black on light, white on dark. */
-.gh-mark {
-  color: #000;
+/* GitHub mark — brand.github.com forbids recoloring, so we show GitHub's actual black/white marks
+ * (vendored from the qte77 brand kit) and swap them by theme: black on light, white on dark.
+ * Mirrors the kit's brand/ui-kit/github-links.html. */
+.gh-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  background: center / contain no-repeat url("./assets/icons/github-black.svg");
+}
+:root[data-theme="dark"] .gh-icon {
+  background-image: url("./assets/icons/github-white.svg");
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .gh-mark {
-    color: #fff;
+  :root:not([data-theme="light"]) .gh-icon {
+    background-image: url("./assets/icons/github-white.svg");
   }
-}
-:root[data-theme="dark"] .gh-mark {
-  color: #fff;
 }
 
 /* ---- a11y baseline (ported from qte77 ui-kit/a11y.css) ---- */
