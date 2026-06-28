@@ -6,3 +6,4 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 - [Testing](testing.md) — test-layout convention (co-location)
 - [User Stories](UserStory.md) — acceptance criteria and status
 - [ADR-0001: Agent runtime stack](decisions/0001-agent-runtime-stack.md) — TS-only, BYOK in-browser
+- [ADR-0002: Edge proxy platform](decisions/0002-edge-proxy-platform.md) — Cloudflare Workers (vs Supabase / Vercel)
