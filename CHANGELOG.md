@@ -26,8 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- GitHub octocat renders in its permitted **black/white** palette (per GitHub's brand guidelines),
-  inverting by theme, instead of being recolored to the warm theme text color.
+- GitHub octocat uses GitHub's actual **black/white** marks (vendored `#181717`/white SVGs from the
+  qte77 brand kit), swapped by theme per GitHub's brand guidelines — never recolored.
 - BYOK "(via proxy)" options (GitHub Models, Google) are flagged **experimental** and `PROXY_BASE`
   is reset to a placeholder — the edge proxy is **not deployed yet**, so the previous code wrongly
   implied a live worker (its host did not resolve) and those two options failed with a connection
