@@ -52,7 +52,8 @@ The deferred Cloudflare Worker now exists (`worker/`), but as a **BYOK pass-thro
 proxy** rather than the keyless variant: it relays the non-CORS endpoints (GitHub Models,
 Google) server-to-server so they work in-browser with the *visitor's own* key — no secret is
 held. This delivers the CORS-relay half of the deferred consequence above; the keyless
-token-holding demo stays deferred. See `worker/README.md` and US-6.
+token-holding demo stays deferred. See `worker/README.md` and US-6; the platform choice
+(Cloudflare Workers vs Supabase / Vercel) is recorded in [ADR-0002](0002-edge-proxy-platform.md).
 
 ## References
 
