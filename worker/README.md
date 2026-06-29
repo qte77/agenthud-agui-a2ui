@@ -37,15 +37,25 @@ deployed `https://agenthud-proxy.<your-subdomain>.workers.dev` URL — that's wh
 
 ## Local dev
 
+The "(via proxy)" endpoints need a localhost-allowed worker (production rejects `localhost`). Full loop:
+
 ```bash
-cd worker && npx wrangler dev          # http://localhost:8787
-# then set VITE_PROXY_BASE=http://localhost:8787 in ui/.env and: npm --prefix ui run dev
+cd worker
+printf 'ALLOW_LOCALHOST="true"\n' >> .dev.vars   # gitignored; lets wrangler dev accept localhost origins
+npx wrangler dev                                  # http://localhost:8787 — keep this running
+# in ui/.env set VITE_PROXY_BASE="http://localhost:8787", then (re)start the UI:
+npm --prefix ui run dev
 ```
 
-`wrangler dev` rejects a `localhost` origin unless `ALLOW_LOCALHOST="true"` is set — add it to a
-gitignored `worker/.dev.vars` (`wrangler dev` loads it), or deploy the dev env
-(`wrangler deploy --env dev`). Non-browser callers (curl, CI) need no localhost entry: send
-`Origin: https://qte77.github.io` and the `isAllowedOrigin` gate passes (CORS is browser-only).
+Now "GitHub Models (via proxy)" / "Google (via proxy)" resolve to the local worker. Notes:
+
+- **`compatibility_date` must be ≤ the date the installed wrangler's runtime supports**, or
+  `wrangler dev` refuses to start (`requires compatibility date "…"` error). Bump it alongside
+  wrangler upgrades, not blindly to "today".
+- **Restart `npm run dev` after editing `ui/.env`** — Vite reads env at startup, not via HMR.
+- Non-browser callers (curl, CI) need no localhost entry: send `Origin: https://qte77.github.io` and
+  the `isAllowedOrigin` gate passes (CORS is browser-only). Or deploy the dev env
+  (`wrangler deploy --env dev`).
 
 ## Deferred
 
