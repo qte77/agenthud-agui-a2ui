@@ -3,6 +3,7 @@ import { DashboardShell } from "./DashboardShell";
 import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
 import type { LiveSettings } from "./agent/liveAgent";
+import { ENDPOINTS } from "./config";
 
 // BYOK connection — base URL + model persist in sessionStorage; the API key stays in memory only
 // (never written to storage, so it's gone on reload/close/reopen), per US-7.
@@ -24,37 +25,8 @@ const DEFAULTS: LiveSettings = import.meta.env.DEV
     }
   : BASE_DEFAULTS;
 
-// OpenAI-compatible BYOK endpoints. The CORS-friendly ones work in-browser as-is.
-// GitHub Models + Google have no browser CORS, so they would route through the edge proxy
-// (US-6 / ADR-0001 — see worker/README.md). Mammouth + Azure stay `experimental` (still fail
-// from a static page). `editable` reveals the freeform URL field (Custom, plus Azure's template).
-//
-// PROXY_BASE points at the deployed edge proxy (US-6 / worker/) — the "(via proxy)" options below
-// route GitHub Models + Google through it so they work in-browser despite no upstream CORS. In dev,
-// VITE_PROXY_BASE (ui/.env) overrides it to target a local `wrangler dev` worker that allows the
-// localhost origin (prod rejects localhost by design); prod ignores it since DEV is false.
-const PROXY_BASE =
-  import.meta.env.DEV && import.meta.env.VITE_PROXY_BASE
-    ? import.meta.env.VITE_PROXY_BASE
-    : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
-const ENDPOINTS: {
-  label: string;
-  baseURL: string;
-  experimental?: boolean;
-  editable?: boolean;
-}[] = [
-  { label: "OpenRouter", baseURL: "https://openrouter.ai/api/v1" },
-  { label: "Groq", baseURL: "https://api.groq.com/openai/v1" },
-  { label: "Together", baseURL: "https://api.together.ai/v1" },
-  { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
-  { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
-  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
-  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google` },
-  { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
-  { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
-  { label: "Custom…", baseURL: "", editable: true },
-];
-// ENDPOINTS is a non-empty literal array; provide an explicit fallback to satisfy noUncheckedIndexedAccess
+// ENDPOINTS live in ./config (single source of truth for URLs). CUSTOM is the UI-side fallback for
+// the freeform option; the explicit literal satisfies noUncheckedIndexedAccess on the array tail.
 const CUSTOM = ENDPOINTS[ENDPOINTS.length - 1] ?? { label: "Custom…", baseURL: "", editable: true };
 
 function loadSettings(): LiveSettings {

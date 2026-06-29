@@ -3,7 +3,8 @@
 // brand kit as ./assets/icons/github-{black,white}.svg and swapped by theme via index.css's
 // `.gh-icon` — never recolored, per brand.github.com. The visible labels carry the meaning, so
 // the icon is decorative (aria-hidden).
-export const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
+import { REPO_URL } from "./config";
+
 const ISSUES_URL = `${REPO_URL}/issues`;
 
 const linkClass =
