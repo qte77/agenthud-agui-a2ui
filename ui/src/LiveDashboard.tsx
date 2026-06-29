@@ -28,7 +28,7 @@ const ENDPOINTS: {
 }[] = [
   { label: "OpenRouter", baseURL: "https://openrouter.ai/api/v1" },
   { label: "Groq", baseURL: "https://api.groq.com/openai/v1" },
-  { label: "Together", baseURL: "https://api.together.xyz/v1" },
+  { label: "Together", baseURL: "https://api.together.ai/v1" },
   { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
   { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
   { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
