@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, type EventLogEntry } from "./applyA2UIEvent";
-import { runLiveAgent, type LiveSettings } from "./liveAgent";
+import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
@@ -42,7 +42,7 @@ export function useLiveAgent() {
         );
       } catch (err) {
         if (!ac.signal.aborted) {
-          setError(err instanceof Error ? err.message : String(err));
+          setError(toConnectionError(err));
         }
       } finally {
         setIsRunning(false);

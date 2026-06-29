@@ -22,11 +22,18 @@ export interface StreamPart {
   error?: unknown;
 }
 
-/** Convert an unknown stream error value to a safe string message. */
-function errorText(err: unknown): string {
-  if (err instanceof Error) return err.message;
-  if (typeof err === "string") return err;
-  return "unknown error";
+/**
+ * Friendlier connection error. The browser hides the real CORS reason from JS — a blocked or failed
+ * cross-origin fetch only surfaces as a generic TypeError ("NetworkError" / "Failed to fetch") — so
+ * spell out the likely causes instead of the bare message.
+ */
+export function toConnectionError(err: unknown): string {
+  const msg =
+    err instanceof Error ? err.message : typeof err === "string" ? err : "unknown error";
+  if (/networkerror|failed to fetch|load failed/i.test(msg)) {
+    return `${msg} — the request was blocked or could not connect. Likely a browser extension or tracking protection blocking cross-origin requests, a network/VPN/antivirus filter, or (for "(via proxy)" endpoints) a wrong base URL or the local worker not running.`;
+  }
+  return msg;
 }
 
 /**
@@ -57,7 +64,7 @@ export function streamPartToEvent(part: StreamPart): AgentEvent | null {
     case "finish":
       return { type: "RUN_FINISHED" };
     case "error":
-      return { type: "RUN_ERROR", text: errorText(part.error) };
+      return { type: "RUN_ERROR", text: toConnectionError(part.error) };
     default:
       return null;
   }
