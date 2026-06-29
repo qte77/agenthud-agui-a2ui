@@ -1,3 +1,8 @@
+---
+title: Agentic Protocols — Reference
+description: Concise reference for AG-UI, A2UI, MCP, and A2A and how they stack for this project.
+---
+
 # Agentic Protocols — Reference
 
 Concise notes on the protocols this project sits on (**AG-UI**, **A2UI**) and the
@@ -143,7 +148,7 @@ agenthud already sits at the **AG-UI + A2UI** layers:
 A live **BYOK** agent (planned) adds the **agent-logic** layer (Vercel AI SDK) emitting the
 same AG-UI events a real agent would — the replay engine and a live SSE stream share one
 event schema. **MCP** (tools) and **A2A** (multi-agent) are natural future layers, not yet
-wired in. See [ADR-0001](decisions/0001-agent-runtime-stack.md).
+wired in. See [ADR-0001][adr-0001].
 
 ## Sources
 
@@ -153,3 +158,5 @@ Linux Foundation, CopilotKit, and the Google Developers Blog.
 
 > **Caveat:** A2UI v1.0 is a Candidate spec (last updated Jun 2026) and AGNTCY is still
 > evolving — verify message shapes against the live spec before relying on them.
+
+[adr-0001]: decisions/0001-agent-runtime-stack.md

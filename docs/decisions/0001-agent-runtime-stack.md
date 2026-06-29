@@ -1,7 +1,12 @@
+---
+title: ADR-0001 — Agent runtime stack
+description: Decision to use a TypeScript-only BYOK in-browser stack (Vercel AI SDK + zod) over a Python backend.
+---
+
 # ADR-0001 — Agent runtime stack
 
 **Status:** Accepted (2026-06-20)
-**Relates to:** [US-6 / US-7](../UserStory.md) (live agent mode, BYOK)
+**Relates to:** [US-6 / US-7][user-stories] (live agent mode, BYOK)
 
 ## Context
 
@@ -53,11 +58,18 @@ proxy** rather than the keyless variant: it relays the non-CORS endpoints (GitHu
 Google) server-to-server so they work in-browser with the *visitor's own* key — no secret is
 held. This delivers the CORS-relay half of the deferred consequence above; the keyless
 token-holding demo stays deferred. See `worker/README.md` and US-6; the platform choice
-(Cloudflare Workers vs Supabase / Vercel) is recorded in [ADR-0002](0002-edge-proxy-platform.md).
+(Cloudflare Workers vs Supabase / Vercel) is recorded in [ADR-0002][adr-0002].
 
 ## References
 
-- [AG-UI client SDK](https://docs.ag-ui.com/sdk/js/client/overview)
-- [Vercel AI SDK — tools & tool calling](https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling)
-- [Pydantic AI — AG-UI integration](https://pydantic.dev/docs/ai/integrations/ui/ag-ui/)
-- [GitHub Models REST API](https://docs.github.com/en/rest/models/inference) (no browser CORS)
+- [AG-UI client SDK][ag-ui-client-sdk]
+- [Vercel AI SDK — tools & tool calling][vercel-ai-sdk-tools]
+- [Pydantic AI — AG-UI integration][pydantic-ai-ag-ui]
+- [GitHub Models REST API][github-models-api] (no browser CORS)
+
+[user-stories]: ../UserStory.md
+[adr-0002]: 0002-edge-proxy-platform.md
+[ag-ui-client-sdk]: https://docs.ag-ui.com/sdk/js/client/overview
+[vercel-ai-sdk-tools]: https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling
+[pydantic-ai-ag-ui]: https://pydantic.dev/docs/ai/integrations/ui/ag-ui/
+[github-models-api]: https://docs.github.com/en/rest/models/inference
