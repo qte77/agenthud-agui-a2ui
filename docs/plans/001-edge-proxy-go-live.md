@@ -1,8 +1,13 @@
+---
+title: Plan 001 — Edge proxy go-live + CI release standardization
+description: Prioritized plan for deploying the edge proxy (#97) and adopting org reusable release workflows (#102).
+---
+
 # Plan 001 — Edge proxy go-live + CI release standardization
 
 **Date:** 2026-06-29
-**Open issues:** [#97](https://github.com/qte77/agenthud-agui-a2ui/issues/97) ·
-[#102](https://github.com/qte77/agenthud-agui-a2ui/issues/102)
+**Open issues:** [#97][issue-97] ·
+[#102][issue-102]
 
 ## Context
 
@@ -52,6 +57,12 @@ pre-drafted now.
 
 ## References
 
-- [Cloudflare / Wrangler runbook](../cloudflare-runbook.md) ·
-  [ADR-0002](../decisions/0002-edge-proxy-platform.md) ·
-  [worker/README](../../worker/README.md)
+- [Cloudflare / Wrangler runbook][cloudflare-runbook] ·
+  [ADR-0002][adr-0002] ·
+  [worker/README][worker-readme]
+
+[issue-97]: https://github.com/qte77/agenthud-agui-a2ui/issues/97
+[issue-102]: https://github.com/qte77/agenthud-agui-a2ui/issues/102
+[cloudflare-runbook]: ../cloudflare-runbook.md
+[adr-0002]: ../decisions/0002-edge-proxy-platform.md
+[worker-readme]: ../../worker/README.md

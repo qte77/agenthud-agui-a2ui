@@ -3,6 +3,8 @@ date: 2026-06-29
 status: done
 issues: [97]
 plan: plans/001-edge-proxy-go-live.md
+title: Handoff 001 — Edge proxy go-live
+description: Handoff state and next actions for deploying the BYOK edge proxy and wiring PROXY_BASE.
 ---
 
 # Handoff 001 — Edge proxy go-live
@@ -41,8 +43,13 @@ Then hand the resulting `…workers.dev` URL to Claude.
 
 ## Pointers
 
-- Full plan + ROI/feasibility: [plans/001-edge-proxy-go-live.md](../plans/001-edge-proxy-go-live.md)
-- Deploy / auth / IaC / abuse: [docs/cloudflare-runbook.md](../cloudflare-runbook.md)
-- Why Cloudflare: [ADR-0002](../decisions/0002-edge-proxy-platform.md) ·
-  Data flow: [architecture](../architecture.md)
+- Full plan + ROI/feasibility: [plans/001-edge-proxy-go-live.md][plan-001]
+- Deploy / auth / IaC / abuse: [docs/cloudflare-runbook.md][cloudflare-runbook]
+- Why Cloudflare: [ADR-0002][adr-0002] ·
+  Data flow: [architecture][architecture]
 - CF skills installed: `cloudflare`, `wrangler`, `workers-best-practices`.
+
+[plan-001]: ../plans/001-edge-proxy-go-live.md
+[cloudflare-runbook]: ../cloudflare-runbook.md
+[adr-0002]: ../decisions/0002-edge-proxy-platform.md
+[architecture]: ../architecture.md

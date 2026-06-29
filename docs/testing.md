@@ -1,3 +1,8 @@
+---
+title: Testing — file layout conventions
+description: Where test files live, Vitest guidance, and headless UI checks via patchright.
+---
+
 # Testing — file layout conventions
 
 Where test files live in this repo, and the general Vitest/TypeScript guidance.

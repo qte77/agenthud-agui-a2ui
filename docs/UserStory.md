@@ -1,3 +1,8 @@
+---
+title: User Stories — agenthud-agui-a2ui
+description: Acceptance criteria and status for all user stories, from prototype to live agent.
+---
+
 # User Stories — agenthud-agui-a2ui
 
 ## Epic: Interactive GitHub Portfolio Tour via AG-UI + A2UI
@@ -111,7 +116,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] The browser consumes the stream and renders A2UI on the same surface
 - [ ] Falls back to BYOK / Demo when the worker is unavailable
 
-**Status:** CORS-relay delivered & live. The edge worker is **deployed** as a **BYOK pass-through CORS proxy** (`worker/`): it relays the non-CORS endpoints (GitHub Models, Google) server-to-server so they work in-browser with the *visitor's own* key — satisfying criteria 2-3, and the "(via proxy)" options are now active in the dashboard. The **keyless** variant (criterion 1 — the worker holding a `models:read` token so visitors need no key) stays deferred (abuse/secret surface). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001](decisions/0001-agent-runtime-stack.md) and `worker/README.md`.
+**Status:** CORS-relay delivered & live. The edge worker is **deployed** as a **BYOK pass-through CORS proxy** (`worker/`): it relays the non-CORS endpoints (GitHub Models, Google) server-to-server so they work in-browser with the *visitor's own* key — satisfying criteria 2-3, and the "(via proxy)" options are now active in the dashboard. The **keyless** variant (criterion 1 — the worker holding a `models:read` token so visitors need no key) stays deferred (abuse/secret surface). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001][adr-0001] and `worker/README.md`.
 
 ---
 
@@ -128,7 +133,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [x] In-browser only — no server; the `render_ui` tool emits contract-validated A2UI
 - [x] Clear indication of the active mode (Demo | Live header toggle + "Live · BYOK" badge)
 
-**Status:** Done — in-browser Vercel AI SDK agent; the AI SDK is code-split to the Live tier. See [ADR-0001](decisions/0001-agent-runtime-stack.md).
+**Status:** Done — in-browser Vercel AI SDK agent; the AI SDK is code-split to the Live tier. See [ADR-0001][adr-0001].
 
 ---
 
@@ -147,7 +152,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] Switching tours resets the surface and event log
 - [ ] Each tour emphasizes different A2UI component compositions
 
-**Status:** Descoped — streamlined to the single decision-tree tour (KISS); the three extra linear tours and `TourSelector` were removed. See [ADR-0001](decisions/0001-agent-runtime-stack.md) context + CHANGELOG.
+**Status:** Descoped — streamlined to the single decision-tree tour (KISS); the three extra linear tours and `TourSelector` were removed. See [ADR-0001][adr-0001] context + CHANGELOG.
 
 ---
 
@@ -181,3 +186,5 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 7. ~~US-7: BYOK live agent~~ (done)
 8. US-6: GitHub Models proxy (CORS-relay delivered via worker; keyless deferred)
 9. US-9: Arbitrary accounts
+
+[adr-0001]: decisions/0001-agent-runtime-stack.md

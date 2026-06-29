@@ -1,10 +1,15 @@
+---
+title: Architecture
+description: End-to-end data flow for the Live (BYOK) tier, showing what we own versus what we run on.
+---
+
 # Architecture
 
 End-to-end data flow for the Live (BYOK) tier, split by **what we own** vs **what we run on**.
 The app is static (GitHub Pages); the edge proxy is *our* code on Cloudflare's runtime
-([ADR-0002](decisions/0002-edge-proxy-platform.md)); the upstreams are third-party LLM APIs. The
+([ADR-0002][adr-0002]); the upstreams are third-party LLM APIs. The
 proxy exists **only for the non-CORS endpoints** (GitHub Models, Google) — CORS-friendly providers
-are called directly from the browser. Worker specifics live in [`worker/README.md`](../worker/README.md).
+are called directly from the browser. Worker specifics live in [`worker/README.md`][worker-readme].
 
 ```
         ┌──────────────── OURS (code we author + host) ─────────────────┐
@@ -57,3 +62,6 @@ the worker relays server-to-server (where CORS doesn't apply) and stamps the res
 only access gate** — production echoes only `https://qte77.github.io`; localhost is added only in dev
 (`ALLOW_LOCALHOST`). CORS is browser-enforced, so non-browser callers (curl, CI) pass the gate by
 sending an allowlisted `Origin`.
+
+[adr-0002]: decisions/0002-edge-proxy-platform.md
+[worker-readme]: ../worker/README.md

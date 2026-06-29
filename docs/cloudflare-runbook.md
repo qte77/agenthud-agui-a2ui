@@ -1,8 +1,13 @@
+---
+title: Cloudflare / Wrangler Runbook
+description: Actionable deploy, auth, IaC, and abuse-model notes for the BYOK edge proxy.
+---
+
 # Cloudflare / Wrangler runbook
 
 Concise, actionable notes for deploying + operating the BYOK edge proxy (`worker/`). Companion to
-[`worker/README.md`](../worker/README.md) (routes + deploy), [ADR-0002](decisions/0002-edge-proxy-platform.md)
-(why Cloudflare Workers), and [architecture](architecture.md) (data flow).
+[`worker/README.md`][worker-readme] (routes + deploy), [ADR-0002][adr-0002]
+(why Cloudflare Workers), and [architecture][architecture] (data flow).
 
 ## Deploy
 
@@ -62,3 +67,7 @@ The worker **holds no secret** (BYOK pass-through), so its only gates are:
 | `wrangler deploy --env dev` | deploy `agenthud-proxy-dev` (localhost allowed) |
 | `wrangler dev` | local server on `:8787` (loads `.dev.vars`) |
 | `wrangler tail` | stream live logs |
+
+[worker-readme]: ../worker/README.md
+[adr-0002]: decisions/0002-edge-proxy-platform.md
+[architecture]: architecture.md

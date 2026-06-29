@@ -1,7 +1,12 @@
+---
+title: ADR-0002 — Edge proxy platform: Cloudflare Workers
+description: Decision to host the BYOK CORS relay on Cloudflare Workers over Supabase or Vercel.
+---
+
 # ADR-0002 — Edge proxy platform: Cloudflare Workers
 
 **Status:** Accepted (2026-06-22)
-**Relates to:** [US-6](../UserStory.md), [ADR-0001 amendment](0001-agent-runtime-stack.md)
+**Relates to:** [US-6][user-stories], [ADR-0001 amendment][adr-0001-amendment]
 
 ## Context
 
@@ -48,6 +53,13 @@ Deciding deltas:
 
 ## References
 
-- [Cloudflare Workers — pricing](https://developers.cloudflare.com/workers/platform/pricing/) · [limits](https://developers.cloudflare.com/workers/platform/limits/)
-- [Supabase Edge Functions](https://supabase.com/docs/guides/functions)
-- [Vercel Functions](https://vercel.com/docs/functions)
+- [Cloudflare Workers — pricing][cf-workers-pricing] · [limits][cf-workers-limits]
+- [Supabase Edge Functions][supabase-edge-functions]
+- [Vercel Functions][vercel-functions]
+
+[user-stories]: ../UserStory.md
+[adr-0001-amendment]: 0001-agent-runtime-stack.md
+[cf-workers-pricing]: https://developers.cloudflare.com/workers/platform/pricing/
+[cf-workers-limits]: https://developers.cloudflare.com/workers/platform/limits/
+[supabase-edge-functions]: https://supabase.com/docs/guides/functions
+[vercel-functions]: https://vercel.com/docs/functions
