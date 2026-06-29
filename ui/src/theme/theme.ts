@@ -34,7 +34,8 @@ export function resolveTheme(
 /** Next mode in the cycle (wraps). */
 export function nextTheme(mode: ThemeMode): ThemeMode {
   const i = THEME_CYCLE.indexOf(mode);
-  return THEME_CYCLE[(i + 1) % THEME_CYCLE.length];
+  // THEME_CYCLE is a non-empty literal array; modulo index is always valid
+  return THEME_CYCLE[(i + 1) % THEME_CYCLE.length]!;
 }
 
 /** Effective light|dark for a mode (resolves "system" against the OS preference). */

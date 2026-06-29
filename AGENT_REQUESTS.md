@@ -15,18 +15,11 @@ description: Escalation protocol and active requests requiring human decision
 
 ## Active Requests
 
-Backlog from the 2026-06-29 stack audit (security / typing / lint / UX). The P1 security items
-(body-size cap, header stripping, `compatibility_date` bump) and the dev-`.env` prefill already
-shipped; the items below are the deferred remainder.
-
-- [ ] [P2] Stricter TS compiler flags in both tsconfigs
-  - **Context**: `ui/tsconfig.app.json` + `worker/tsconfig.json` set `strict` but not the
-    higher-signal flags.
-  - **Problem**: `noUncheckedIndexedAccess` would prove `UPSTREAMS[provider]` is nullable (the
-    guard works by value, not type today); `exactOptionalPropertyTypes` tightens optional `Env`
-    fields. Also consider `noImplicitReturns` / `noUnusedLocals` / `noFallthroughCasesInSwitch`.
-  - **Files**: `ui/tsconfig.app.json`, `worker/tsconfig.json`.
-  - **Impact**: catches real array/optional bugs; expect a handful of new errors to fix.
+Backlog from the 2026-06-29 stack audit (security / typing / lint / UX). Shipped since: the P1
+security items (body-size cap, header stripping, `compatibility_date` bump), the dev-`.env` prefill,
+the worker ESLint + complexity gate, and the **strict TS compiler flags**
+(`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, … on both tsconfigs). The items below are
+the deferred remainder.
 
 - [ ] [P3] Typed linting for the UI (`strict-type-checked` + `parserOptions.projectService`)
   - **Context**: `ui/eslint.config.js` uses `tseslint.configs.recommended` (no type info).

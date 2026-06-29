@@ -28,7 +28,8 @@ interface HistoryEntry {
 
 // Single streamlined tour: the decision-tree recording that shows "different
 // intents → different layouts from one catalog".
-const activeRecording: Recording = tours[0].recording;
+// tours is a non-empty literal array; index 0 is always defined
+const activeRecording: Recording = tours[0]!.recording;
 
 function DemoDashboard({
   view,

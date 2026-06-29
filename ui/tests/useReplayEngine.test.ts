@@ -76,26 +76,27 @@ describe("useReplayEngine", () => {
       vi.advanceTimersByTime(0);
     });
     expect(result.current.eventLog).toHaveLength(1);
-    expect(result.current.eventLog[0].type).toBe("RUN_STARTED");
+    // fixture-guaranteed indices: non-null assertions are safe in test context
+    expect(result.current.eventLog[0]!.type).toBe("RUN_STARTED");
 
     // Second event has delayMs: 100
     act(() => {
       vi.advanceTimersByTime(100);
     });
     expect(result.current.eventLog).toHaveLength(2);
-    expect(result.current.eventLog[1].type).toBe("TEXT_MESSAGE_CONTENT");
+    expect(result.current.eventLog[1]!.type).toBe("TEXT_MESSAGE_CONTENT");
 
     // Third event has delayMs: 100
     act(() => {
       vi.advanceTimersByTime(100);
     });
     expect(result.current.eventLog).toHaveLength(3);
-    expect(result.current.eventLog[2].type).toBe("TOOL_CALL_START");
+    expect(result.current.eventLog[2]!.type).toBe("TOOL_CALL_START");
 
     // Fourth event has delayMs: 0 — flush remaining recursive timers
     flushAllTimers();
     expect(result.current.eventLog).toHaveLength(4);
-    expect(result.current.eventLog[3].type).toBe("RUN_FINISHED");
+    expect(result.current.eventLog[3]!.type).toBe("RUN_FINISHED");
   });
 
   it("calls processMessages for events with a2uiMessages", () => {
@@ -112,7 +113,7 @@ describe("useReplayEngine", () => {
 
     expect(mockProcessMessages).toHaveBeenCalledOnce();
     expect(mockProcessMessages).toHaveBeenCalledWith(
-      testRecording.events[2].a2uiMessages
+      testRecording.events[2]!.a2uiMessages
     );
   });
 
@@ -133,7 +134,7 @@ describe("useReplayEngine", () => {
     }
 
     // Second entry should have text
-    expect(result.current.eventLog[1].text).toBe("hello");
+    expect(result.current.eventLog[1]!.text).toBe("hello");
   });
 
   it("isPlaying becomes false after all events played", () => {

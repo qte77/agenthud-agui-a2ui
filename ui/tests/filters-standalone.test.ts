@@ -21,7 +21,8 @@ function collectIdsFromSegment(segmentId: string) {
       for (const comp of update.components) {
         definedIds.add(comp.id);
         if (!comp.component) continue;
-        const typeName = Object.keys(comp.component)[0];
+        // component is a non-empty single-type map (contract-guaranteed)
+        const typeName = Object.keys(comp.component)[0]!;
         const props = comp.component[typeName] as Record<string, unknown> | undefined;
         if (!props) continue;
 

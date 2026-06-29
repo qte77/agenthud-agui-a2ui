@@ -4,16 +4,18 @@ import { A2UIMessageBatchSchema } from "./contract";
 export interface EventLogEntry {
   type: string;
   timestamp: number;
-  text?: string;
-  a2uiComponentCount?: number;
-  a2uiComponentTypes?: string[];
+  // exactOptionalPropertyTypes: allow explicit undefined so callers can spread {text: maybeStr}
+  text?: string | undefined;
+  a2uiComponentCount?: number | undefined;
+  a2uiComponentTypes?: string[] | undefined;
 }
 
 // Minimal shape shared by replayed events and live AG-UI events.
 export interface AgentEvent {
   type: string;
-  text?: string;
-  a2uiMessages?: unknown[];
+  // exactOptionalPropertyTypes: allow explicit undefined (e.g. toolName may be absent)
+  text?: string | undefined;
+  a2uiMessages?: unknown[] | undefined;
 }
 
 /** Summarize an A2UI batch for the log: component count + distinct catalog types. */
