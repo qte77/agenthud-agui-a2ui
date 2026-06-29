@@ -39,7 +39,7 @@ deployed `https://agenthud-proxy.<your-subdomain>.workers.dev` URL — that's wh
 
 ```bash
 cd worker && npx wrangler dev          # http://localhost:8787
-# point PROXY_BASE at http://localhost:8787, then: npm --prefix ui run dev
+# then set VITE_PROXY_BASE=http://localhost:8787 in ui/.env and: npm --prefix ui run dev
 ```
 
 `wrangler dev` rejects a `localhost` origin unless `ALLOW_LOCALHOST="true"` is set — add it to a
