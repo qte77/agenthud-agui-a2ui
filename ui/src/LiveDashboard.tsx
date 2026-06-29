@@ -48,7 +48,8 @@ const ENDPOINTS: {
   { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
   { label: "Custom…", baseURL: "", editable: true },
 ];
-const CUSTOM = ENDPOINTS[ENDPOINTS.length - 1];
+// ENDPOINTS is a non-empty literal array; provide an explicit fallback to satisfy noUncheckedIndexedAccess
+const CUSTOM = ENDPOINTS[ENDPOINTS.length - 1] ?? { label: "Custom…", baseURL: "", editable: true };
 
 function loadSettings(): LiveSettings {
   try {

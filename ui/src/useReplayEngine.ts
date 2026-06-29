@@ -49,7 +49,8 @@ export function useReplayEngine(
           onCompleteRef.current?.();
           return;
         }
-        const event = events[index];
+        // index < events.length is guaranteed by the guard above
+        const event = events[index]!;
         timerRef.current = setTimeout(() => {
           const entry = applyA2UIEvent(event, Date.now() - startTime, render);
           setEventLog((prev) => [...prev, entry]);

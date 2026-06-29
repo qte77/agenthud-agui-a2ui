@@ -31,8 +31,9 @@ describe("recording registry", () => {
 
   it("decisionTree has a root node with 3 choices", () => {
     expect(decisionTree).toHaveProperty("root");
-    expect(decisionTree.root.prompt).toBeTypeOf("string");
-    expect(decisionTree.root.choices).toHaveLength(3);
+    // root is asserted to exist by the preceding expect (fixture-guaranteed)
+    expect(decisionTree.root!.prompt).toBeTypeOf("string");
+    expect(decisionTree.root!.choices).toHaveLength(3);
   });
 
   it("all tree choice segments exist in segments list", () => {
@@ -142,8 +143,9 @@ describe("recording registry", () => {
       .map((u) => u?.components?.find((c) => c.id === "root"))
       .filter((r): r is NonNullable<typeof r> => Boolean(r))
       .map((r) => {
-        const type = Object.keys(r.component)[0];
-        return r.component[type].children?.explicitList ?? [];
+        // component is a non-empty single-type map (contract-guaranteed)
+        const type = Object.keys(r.component)[0]!;
+        return r.component[type]!.children?.explicitList ?? [];
       });
 
     // The final root must still reference both cards (cumulative), not just the last batch's.

@@ -107,7 +107,8 @@ export async function runLiveAgent(
     prompt,
     tools: { render_ui: buildRenderUiTool() },
     stopWhen: stepCountIs(3),
-    abortSignal: opts?.signal,
+    // exactOptionalPropertyTypes: only include abortSignal when defined
+    ...(opts?.signal ? { abortSignal: opts.signal } : {}),
   });
 
   for await (const part of result.fullStream) {

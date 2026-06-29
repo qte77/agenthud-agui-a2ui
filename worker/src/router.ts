@@ -9,6 +9,7 @@ const UPSTREAMS: Record<string, string> = {
 /** Map `/<provider>/<rest...>` to its allowlisted upstream URL, or null if unknown. */
 export function resolveUpstream(pathname: string): string | null {
   const [, provider, ...rest] = pathname.split("/");
+  if (!provider) return null;
   const base = UPSTREAMS[provider];
   if (!base) return null;
   return rest.length ? `${base}/${rest.join("/")}` : base;

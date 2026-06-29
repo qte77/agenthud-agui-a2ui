@@ -105,7 +105,8 @@ function patchRootChildren(
     const root = update.components.find((c) => c.id === "root");
     if (!root?.component) continue;
 
-    const rootType = Object.keys(root.component)[0];
+    // root.component is a non-empty map (one catalog type per component)
+    const rootType = Object.keys(root.component)[0]!;
     const rootProps = root.component[rootType] as Record<string, unknown> | undefined;
     const children = rootProps?.children as { explicitList?: string[] } | undefined;
     if (!children?.explicitList) continue;
