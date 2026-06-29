@@ -17,6 +17,22 @@ export interface Segment {
   componentHint: string;
 }
 
+/** Collect component catalog types from one event into the per-segment type set. */
+function trackComponentTypes(event: RecordingEvent, types: Set<string>): void {
+  if (!event.a2uiMessages) return;
+  for (const msg of event.a2uiMessages as Record<string, unknown>[]) {
+    const update = msg.surfaceUpdate as
+      | { components?: { component?: Record<string, unknown> }[] }
+      | undefined;
+    if (!update?.components) continue;
+    for (const comp of update.components) {
+      if (!comp.component) continue;
+      const type = Object.keys(comp.component)[0];
+      if (type) types.add(type);
+    }
+  }
+}
+
 /** Derive segments from STEP_STARTED events with segment field */
 function extractSegments(rec: Recording): Segment[] {
   const componentsBySegment = new Map<string, Set<string>>();
@@ -30,19 +46,8 @@ function extractSegments(rec: Recording): Segment[] {
       }
     }
     if (currentSegment && event.a2uiMessages) {
-      for (const msg of event.a2uiMessages as Array<Record<string, unknown>>) {
-        const update = msg.surfaceUpdate as
-          | { components?: Array<{ component?: Record<string, unknown> }> }
-          | undefined;
-        if (update?.components) {
-          for (const comp of update.components) {
-            if (comp.component) {
-              const type = Object.keys(comp.component)[0];
-              if (type) componentsBySegment.get(currentSegment)!.add(type);
-            }
-          }
-        }
-      }
+      const types = componentsBySegment.get(currentSegment);
+      if (types) trackComponentTypes(event, types);
     }
   }
 
@@ -95,9 +100,9 @@ function patchRootChildren(
   if (!event.a2uiMessages) return event;
 
   const patched = structuredClone(event);
-  for (const msg of patched.a2uiMessages as Array<Record<string, unknown>>) {
+  for (const msg of patched.a2uiMessages as Record<string, unknown>[]) {
     const update = msg.surfaceUpdate as
-      | { components?: Array<{ id: string; component?: Record<string, unknown> }> }
+      | { components?: { id: string; component?: Record<string, unknown> }[] }
       | undefined;
     if (!update?.components) continue;
 
@@ -116,6 +121,32 @@ function patchRootChildren(
   return patched;
 }
 
+/**
+ * Inject a synthetic beginRendering event before the first A2UI batch in a segment
+ * if the batch does not already include one. Returns true once beginRendering is confirmed.
+ */
+function maybeInjectBeginRendering(
+  event: RecordingEvent,
+  foundBeginRendering: boolean,
+  filtered: RecordingEvent[],
+): boolean {
+  if (!event.a2uiMessages || foundBeginRendering) return foundBeginRendering;
+  const hasBegin = (event.a2uiMessages as Record<string, unknown>[]).some(
+    (m) => m.beginRendering,
+  );
+  if (!hasBegin) {
+    filtered.push({
+      delayMs: 0,
+      type: "TOOL_CALL_START",
+      text: "(surface init)",
+      a2uiMessages: [
+        { beginRendering: { surfaceId: "main", root: "root" } },
+      ],
+    });
+  }
+  return true;
+}
+
 /** Filter recording events to only those in the given segment.
  *  When append=true, skip root patching (tree mode accumulates). */
 export function getSegmentEvents(
@@ -131,42 +162,17 @@ export function getSegmentEvents(
   const definedIds = new Set<string>();
 
   for (const event of rec.events) {
-    // Always include RUN lifecycle
     if (event.type === "RUN_STARTED" || event.type === "RUN_FINISHED") {
       filtered.push(event);
-      continue;
-    }
-
-    // Track segment boundaries
-    if (event.type === "STEP_STARTED" && event.segment) {
+    } else if (event.type === "STEP_STARTED" && event.segment) {
       inSegment = event.segment === segmentId;
-    }
-    if (event.type === "STEP_FINISHED") {
+    } else if (event.type === "STEP_FINISHED") {
       if (inSegment) {
         filtered.push(event);
         inSegment = false;
       }
-      continue;
-    }
-
-    if (inSegment) {
-      // Ensure beginRendering is included for the surface
-      if (event.a2uiMessages && !foundBeginRendering) {
-        const hasBegin = (event.a2uiMessages as Array<Record<string, unknown>>).some(
-          (m) => m.beginRendering
-        );
-        if (!hasBegin) {
-          filtered.push({
-            delayMs: 0,
-            type: "TOOL_CALL_START",
-            text: "(surface init)",
-            a2uiMessages: [
-              { beginRendering: { surfaceId: "main", root: "root" } },
-            ],
-          });
-        }
-        foundBeginRendering = true;
-      }
+    } else if (inSegment) {
+      foundBeginRendering = maybeInjectBeginRendering(event, foundBeginRendering, filtered);
       filtered.push(options?.append ? event : patchRootChildren(event, definedIds));
     }
   }

@@ -5,6 +5,59 @@ import { fullRecording, getSegmentEvents } from "../src/recordings";
  * every ID referenced in a children.explicitList or child field must be
  * defined in the same segment's surfaceUpdate components.
  */
+
+/** Collect defined/referenced IDs from a single component entry. */
+function collectFromComp(
+  comp: { id: string; component?: Record<string, unknown> },
+  definedIds: Set<string>,
+  referencedIds: Set<string>,
+): void {
+  definedIds.add(comp.id);
+  if (!comp.component) return;
+  // component is a non-empty single-type map (contract-guaranteed)
+  const typeName = Object.keys(comp.component)[0]!;
+  const props = comp.component[typeName] as Record<string, unknown> | undefined;
+  if (!props) return;
+
+  // Collect children.explicitList references
+  const children = props.children as { explicitList?: string[] } | undefined;
+  if (children?.explicitList) {
+    for (const childId of children.explicitList) {
+      referencedIds.add(childId);
+    }
+  }
+
+  // Collect child references (e.g., Button.child)
+  if (typeof props.child === "string") {
+    referencedIds.add(props.child);
+  }
+
+  // Collect tabItems child references
+  const tabItems = props.tabItems as { child?: string }[] | undefined;
+  if (tabItems) {
+    for (const item of tabItems) {
+      if (typeof item.child === "string") {
+        referencedIds.add(item.child);
+      }
+    }
+  }
+}
+
+/** Collect defined/referenced IDs from a single A2UI message object. */
+function collectFromMsg(
+  msg: Record<string, unknown>,
+  definedIds: Set<string>,
+  referencedIds: Set<string>,
+): void {
+  const update = msg.surfaceUpdate as
+    | { components?: { id: string; component?: Record<string, unknown> }[] }
+    | undefined;
+  if (!update?.components) return;
+  for (const comp of update.components) {
+    collectFromComp(comp, definedIds, referencedIds);
+  }
+}
+
 function collectIdsFromSegment(segmentId: string) {
   const events = getSegmentEvents(fullRecording, segmentId);
   const definedIds = new Set<string>();
@@ -12,43 +65,8 @@ function collectIdsFromSegment(segmentId: string) {
 
   for (const event of events) {
     if (!event.a2uiMessages) continue;
-    for (const msg of event.a2uiMessages as Array<Record<string, unknown>>) {
-      const update = msg.surfaceUpdate as
-        | { components?: Array<{ id: string; component?: Record<string, unknown> }> }
-        | undefined;
-      if (!update?.components) continue;
-
-      for (const comp of update.components) {
-        definedIds.add(comp.id);
-        if (!comp.component) continue;
-        // component is a non-empty single-type map (contract-guaranteed)
-        const typeName = Object.keys(comp.component)[0]!;
-        const props = comp.component[typeName] as Record<string, unknown> | undefined;
-        if (!props) continue;
-
-        // Collect children.explicitList references
-        const children = props.children as { explicitList?: string[] } | undefined;
-        if (children?.explicitList) {
-          for (const childId of children.explicitList) {
-            referencedIds.add(childId);
-          }
-        }
-
-        // Collect child references (e.g., Button.child)
-        if (typeof props.child === "string") {
-          referencedIds.add(props.child);
-        }
-
-        // Collect tabItems child references
-        const tabItems = props.tabItems as Array<{ child?: string }> | undefined;
-        if (tabItems) {
-          for (const item of tabItems) {
-            if (typeof item.child === "string") {
-              referencedIds.add(item.child);
-            }
-          }
-        }
-      }
+    for (const msg of event.a2uiMessages as Record<string, unknown>[]) {
+      collectFromMsg(msg, definedIds, referencedIds);
     }
   }
 
