@@ -1,6 +1,11 @@
-# Handoff 001 — Edge proxy go-live
+---
+date: 2026-06-29
+status: blocked-on-deploy
+issues: [97]
+plan: plans/001-edge-proxy-go-live.md
+---
 
-**Date:** 2026-06-29 · **Plan:** [plans/001-edge-proxy-go-live.md](../plans/001-edge-proxy-go-live.md)
+# Handoff 001 — Edge proxy go-live
 
 ## State
 
@@ -31,6 +36,7 @@ Then hand the resulting `…workers.dev` URL to Claude.
 
 ## Pointers
 
+- Full plan + ROI/feasibility: [plans/001-edge-proxy-go-live.md](../plans/001-edge-proxy-go-live.md)
 - Deploy / auth / IaC / abuse: [docs/cloudflare-runbook.md](../cloudflare-runbook.md)
 - Why Cloudflare: [ADR-0002](../decisions/0002-edge-proxy-platform.md) ·
   Data flow: [architecture](../architecture.md)
