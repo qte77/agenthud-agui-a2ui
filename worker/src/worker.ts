@@ -37,14 +37,12 @@ export default {
     }
 
     // Cap the forwarded body — blocks cost/DoS amplification (chat payloads are far smaller than
-    // 1 MiB). Check the declared length first (cheap), then the actual bytes (covers a missing or
-    // spoofed Content-Length).
+    // 1 MiB). Skip reading when the declared length already exceeds the cap; otherwise verify the
+    // actual bytes (covers a missing or spoofed Content-Length).
     const MAX_BODY_BYTES = 1_048_576;
-    if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
-      return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
-    }
-    const body = await request.arrayBuffer();
-    if (body.byteLength > MAX_BODY_BYTES) {
+    const overByHeader = Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES;
+    const body = overByHeader ? null : await request.arrayBuffer();
+    if (body === null || body.byteLength > MAX_BODY_BYTES) {
       return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
     }
 
