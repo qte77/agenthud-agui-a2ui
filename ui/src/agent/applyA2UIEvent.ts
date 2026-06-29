@@ -92,7 +92,11 @@ export function applyA2UIEvent(
   try {
     render(event.a2uiMessages);
   } catch (e) {
-    console.warn("A2UI render error:", e);
+    // Surface render failures (e.g. an @a2ui schema mismatch) in the event log instead of silently
+    // blanking the surface — a silent swallow here once hid a Card `children` vs `child` mismatch.
+    const message = e instanceof Error ? e.message : String(e);
+    console.error("A2UI render error:", e);
+    entry.text = `A2UI render error: ${message}`;
   }
   return entry;
 }
