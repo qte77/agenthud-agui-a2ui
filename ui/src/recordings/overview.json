@@ -46,7 +46,11 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval"
+                      ]
+                    }
                   }
                 }
               },
@@ -54,37 +58,92 @@
                 "id": "card-agents-eval",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["ae-title", "ae-desc", "ae-langs"] }
+                    "child": "card-agents-eval-body"
+                  }
+                }
+              },
+              {
+                "id": "card-agents-eval-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "ae-title",
+                        "ae-desc",
+                        "ae-langs"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "ae-title",
-                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h2" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Agents-eval"
+                    },
+                    "usageHint": "h2"
+                  }
+                }
               },
               {
                 "id": "ae-desc",
-                "component": { "Text": { "text": { "literal": "Multi-agent evaluation framework — PydanticAI, Streamlit GUI, 3-tier metrics" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Multi-agent evaluation framework — PydanticAI, Streamlit GUI, 3-tier metrics"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "ae-langs",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["ae-l1", "ae-l2", "ae-l3"] }
+                    "children": {
+                      "explicitList": [
+                        "ae-l1",
+                        "ae-l2",
+                        "ae-l3"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "ae-l1",
-                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Python"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "ae-l2",
-                "component": { "Text": { "text": { "literal": "PydanticAI" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "PydanticAI"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "ae-l3",
-                "component": { "Text": { "text": { "literal": "Streamlit" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Streamlit"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               }
             ]
           }
@@ -108,7 +167,12 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "card-rapid"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "card-rapid"
+                      ]
+                    }
                   }
                 }
               },
@@ -116,33 +180,80 @@
                 "id": "card-rapid",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["rapid-title", "rapid-desc", "rapid-langs"] }
+                    "child": "card-rapid-body"
+                  }
+                }
+              },
+              {
+                "id": "card-rapid-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "rapid-title",
+                        "rapid-desc",
+                        "rapid-langs"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "rapid-title",
-                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h2" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "RAPID-spec-forge"
+                    },
+                    "usageHint": "h2"
+                  }
+                }
               },
               {
                 "id": "rapid-desc",
-                "component": { "Text": { "text": { "literal": "Requirements-to-Agent Pipeline — BRD, PRD, FRP generation for small teams" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Requirements-to-Agent Pipeline — BRD, PRD, FRP generation for small teams"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "rapid-langs",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["rapid-l1", "rapid-l2"] }
+                    "children": {
+                      "explicitList": [
+                        "rapid-l1",
+                        "rapid-l2"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "rapid-l1",
-                "component": { "Text": { "text": { "literal": "Python" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Python"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "rapid-l2",
-                "component": { "Text": { "text": { "literal": "Templates" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Templates"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               }
             ]
           }
@@ -166,7 +277,13 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "card-rapid", "card-research"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "card-rapid",
+                        "card-research"
+                      ]
+                    }
                   }
                 }
               },
@@ -174,33 +291,80 @@
                 "id": "card-research",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["research-title", "research-desc", "research-langs"] }
+                    "child": "card-research-body"
+                  }
+                }
+              },
+              {
+                "id": "card-research-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "research-title",
+                        "research-desc",
+                        "research-langs"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "research-title",
-                "component": { "Text": { "text": { "literal": "ai-agents-research" }, "usageHint": "h2" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "ai-agents-research"
+                    },
+                    "usageHint": "h2"
+                  }
+                }
               },
               {
                 "id": "research-desc",
-                "component": { "Text": { "text": { "literal": "Deep-dive research on Claude Code internals, agent orchestration, and comparative analysis" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Deep-dive research on Claude Code internals, agent orchestration, and comparative analysis"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "research-langs",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["research-l1", "research-l2"] }
+                    "children": {
+                      "explicitList": [
+                        "research-l1",
+                        "research-l2"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "research-l1",
-                "component": { "Text": { "text": { "literal": "Markdown" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Markdown"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "research-l2",
-                "component": { "Text": { "text": { "literal": "Research" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Research"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               }
             ]
           }
@@ -234,45 +398,92 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "divider-1",
+                        "pf-row"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "divider-1",
-                "component": { "Divider": {} }
+                "component": {
+                  "Divider": {}
+                }
               },
               {
                 "id": "pf-row",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["pf-avatar", "pf-info"] }
+                    "children": {
+                      "explicitList": [
+                        "pf-avatar",
+                        "pf-info"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "pf-avatar",
-                "component": { "Image": { "url": { "literal": "asset:qte77-avatar" }, "usageHint": "avatar" } }
+                "component": {
+                  "Image": {
+                    "url": {
+                      "literal": "asset:qte77-avatar"
+                    },
+                    "usageHint": "avatar"
+                  }
+                }
               },
               {
                 "id": "pf-info",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["pf-title", "pf-desc", "pf-caption"] }
+                    "children": {
+                      "explicitList": [
+                        "pf-title",
+                        "pf-desc",
+                        "pf-caption"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "pf-title",
-                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "polyforge-orchestrator"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "pf-desc",
-                "component": { "Text": { "text": { "literal": "Parallel AI coding agent orchestration across polyrepo codebase. Manages 8 repos via repos.conf, runs Claude Code in parallel." }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Parallel AI coding agent orchestration across polyrepo codebase. Manages 8 repos via repos.conf, runs Claude Code in parallel."
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "pf-caption",
-                "component": { "Text": { "text": { "literal": "Bash / Make / Devcontainer" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Bash / Make / Devcontainer"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               }
             ]
           }
@@ -306,35 +517,72 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "divider-1",
+                        "pf-row",
+                        "divider-2",
+                        "cc-section"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "divider-2",
-                "component": { "Divider": {} }
+                "component": {
+                  "Divider": {}
+                }
               },
               {
                 "id": "cc-section",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["cc-title", "cc-desc", "cc-list"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-title",
+                        "cc-desc",
+                        "cc-list"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "cc-title",
-                "component": { "Text": { "text": { "literal": "claude-code-plugins" }, "usageHint": "h2" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "claude-code-plugins"
+                    },
+                    "usageHint": "h2"
+                  }
+                }
               },
               {
                 "id": "cc-desc",
-                "component": { "Text": { "text": { "literal": "Plugin marketplace — 15 plugins, 31+ skills for Claude Code" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Plugin marketplace — 15 plugins, 31+ skills for Claude Code"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "cc-list",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["cc-item-1", "cc-item-2", "cc-item-3", "cc-item-4"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-item-1",
+                        "cc-item-2",
+                        "cc-item-3",
+                        "cc-item-4"
+                      ]
+                    }
                   }
                 }
               },
@@ -342,65 +590,141 @@
                 "id": "cc-item-1",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["cc-item-1-name", "cc-item-1-desc"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-item-1-name",
+                        "cc-item-1-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "cc-item-1-name",
-                "component": { "Text": { "text": { "literal": "python-dev" }, "usageHint": "h5" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "python-dev"
+                    },
+                    "usageHint": "h5"
+                  }
+                }
               },
               {
                 "id": "cc-item-1-desc",
-                "component": { "Text": { "text": { "literal": "TDD + uv + ruff — 3 skills" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "TDD + uv + ruff — 3 skills"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "cc-item-2",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["cc-item-2-name", "cc-item-2-desc"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-item-2-name",
+                        "cc-item-2-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "cc-item-2-name",
-                "component": { "Text": { "text": { "literal": "commit-helper" }, "usageHint": "h5" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "commit-helper"
+                    },
+                    "usageHint": "h5"
+                  }
+                }
               },
               {
                 "id": "cc-item-2-desc",
-                "component": { "Text": { "text": { "literal": "Conventional commits + GPG" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Conventional commits + GPG"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "cc-item-3",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["cc-item-3-name", "cc-item-3-desc"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-item-3-name",
+                        "cc-item-3-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "cc-item-3-name",
-                "component": { "Text": { "text": { "literal": "market-research" }, "usageHint": "h5" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "market-research"
+                    },
+                    "usageHint": "h5"
+                  }
+                }
               },
               {
                 "id": "cc-item-3-desc",
-                "component": { "Text": { "text": { "literal": "GTM pipeline — 8 skills" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "GTM pipeline — 8 skills"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "cc-item-4",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["cc-item-4-name", "cc-item-4-desc"] }
+                    "children": {
+                      "explicitList": [
+                        "cc-item-4-name",
+                        "cc-item-4-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "cc-item-4-name",
-                "component": { "Text": { "text": { "literal": "embedded-dev" }, "usageHint": "h5" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "embedded-dev"
+                    },
+                    "usageHint": "h5"
+                  }
+                }
               },
               {
                 "id": "cc-item-4-desc",
-                "component": { "Text": { "text": { "literal": "ESP-IDF, KiCad, CE/FCC — 4 skills" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "ESP-IDF, KiCad, CE/FCC — 4 skills"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               }
             ]
           }
@@ -447,22 +771,49 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "divider-1",
+                        "pf-row",
+                        "divider-2",
+                        "cc-section",
+                        "divider-3",
+                        "tabs-section"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "divider-3",
-                "component": { "Divider": {} }
+                "component": {
+                  "Divider": {}
+                }
               },
               {
                 "id": "tabs-section",
                 "component": {
                   "Tabs": {
                     "tabItems": [
-                      { "title": { "literal": "AI / ML" }, "child": "tab-ai" },
-                      { "title": { "literal": "DevTools" }, "child": "tab-devtools" },
-                      { "title": { "literal": "Templates" }, "child": "tab-templates" }
+                      {
+                        "title": {
+                          "literal": "AI / ML"
+                        },
+                        "child": "tab-ai"
+                      },
+                      {
+                        "title": {
+                          "literal": "DevTools"
+                        },
+                        "child": "tab-devtools"
+                      },
+                      {
+                        "title": {
+                          "literal": "Templates"
+                        },
+                        "child": "tab-templates"
+                      }
                     ]
                   }
                 }
@@ -471,37 +822,70 @@
                 "id": "tab-ai",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["tab-ai-text"] }
+                    "children": {
+                      "explicitList": [
+                        "tab-ai-text"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "tab-ai-text",
-                "component": { "Text": { "text": { "literal": "Agents-eval, ai-agents-research, RAPID-spec-forge, SimpleAgents" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Agents-eval, ai-agents-research, RAPID-spec-forge, SimpleAgents"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "tab-devtools",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["tab-devtools-text"] }
+                    "children": {
+                      "explicitList": [
+                        "tab-devtools-text"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "tab-devtools-text",
-                "component": { "Text": { "text": { "literal": "polyforge-orchestrator, claude-code-plugins, dotfiles, rtk" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "polyforge-orchestrator, claude-code-plugins, dotfiles, rtk"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "tab-templates",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["tab-templates-text"] }
+                    "children": {
+                      "explicitList": [
+                        "tab-templates-text"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "tab-templates-text",
-                "component": { "Text": { "text": { "literal": "ralph-loop-cc-tdd-wt-vibe-kanban-template" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "ralph-loop-cc-tdd-wt-vibe-kanban-template"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               }
             ]
           }
@@ -544,31 +928,71 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["card-agents-eval", "divider-1", "pf-row", "divider-2", "cc-section", "divider-3", "tabs-section", "divider-4", "filter-card"] }
+                    "children": {
+                      "explicitList": [
+                        "card-agents-eval",
+                        "divider-1",
+                        "pf-row",
+                        "divider-2",
+                        "cc-section",
+                        "divider-3",
+                        "tabs-section",
+                        "divider-4",
+                        "filter-card"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "divider-4",
-                "component": { "Divider": {} }
+                "component": {
+                  "Divider": {}
+                }
               },
               {
                 "id": "filter-card",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["filter-title", "filter-row-1"] }
+                    "child": "filter-card-body"
+                  }
+                }
+              },
+              {
+                "id": "filter-card-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "filter-title",
+                        "filter-row-1"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "filter-title",
-                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Filter Repositories"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "filter-row-1",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                    "children": {
+                      "explicitList": [
+                        "filter-cb-active",
+                        "filter-cb-python",
+                        "filter-cb-forks"
+                      ]
+                    }
                   }
                 }
               },
@@ -576,8 +1000,12 @@
                 "id": "filter-cb-active",
                 "component": {
                   "CheckBox": {
-                    "label": { "literal": "Active only" },
-                    "value": { "literal": true }
+                    "label": {
+                      "literal": "Active only"
+                    },
+                    "value": {
+                      "literal": true
+                    }
                   }
                 }
               },
@@ -585,8 +1013,12 @@
                 "id": "filter-cb-python",
                 "component": {
                   "CheckBox": {
-                    "label": { "literal": "Python repos" },
-                    "value": { "literal": false }
+                    "label": {
+                      "literal": "Python repos"
+                    },
+                    "value": {
+                      "literal": false
+                    }
                   }
                 }
               },
@@ -594,8 +1026,12 @@
                 "id": "filter-cb-forks",
                 "component": {
                   "CheckBox": {
-                    "label": { "literal": "Include forks" },
-                    "value": { "literal": false }
+                    "label": {
+                      "literal": "Include forks"
+                    },
+                    "value": {
+                      "literal": false
+                    }
                   }
                 }
               }
@@ -631,43 +1067,107 @@
                 "id": "filter-card",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider"] }
+                    "child": "filter-card-body"
+                  }
+                }
+              },
+              {
+                "id": "filter-card-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "filter-title",
+                        "filter-row-1",
+                        "filter-slider-label",
+                        "filter-slider"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "filter-title",
-                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Filter Repositories"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "filter-row-1",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                    "children": {
+                      "explicitList": [
+                        "filter-cb-active",
+                        "filter-cb-python",
+                        "filter-cb-forks"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "filter-cb-active",
-                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Active only"
+                    },
+                    "value": {
+                      "literal": true
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-cb-python",
-                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Python repos"
+                    },
+                    "value": {
+                      "literal": false
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-cb-forks",
-                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Include forks"
+                    },
+                    "value": {
+                      "literal": false
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-slider-label",
-                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Minimum stars"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "filter-slider",
                 "component": {
                   "Slider": {
-                    "value": { "literal": 5 }
+                    "value": {
+                      "literal": 5
+                    }
                   }
                 }
               }
@@ -703,47 +1203,121 @@
                 "id": "filter-card",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["filter-title", "filter-row-1", "filter-slider-label", "filter-slider", "filter-btn-row"] }
+                    "child": "filter-card-body"
+                  }
+                }
+              },
+              {
+                "id": "filter-card-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "filter-title",
+                        "filter-row-1",
+                        "filter-slider-label",
+                        "filter-slider",
+                        "filter-btn-row"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "filter-title",
-                "component": { "Text": { "text": { "literal": "Filter Repositories" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Filter Repositories"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "filter-row-1",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["filter-cb-active", "filter-cb-python", "filter-cb-forks"] }
+                    "children": {
+                      "explicitList": [
+                        "filter-cb-active",
+                        "filter-cb-python",
+                        "filter-cb-forks"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "filter-cb-active",
-                "component": { "CheckBox": { "label": { "literal": "Active only" }, "value": { "literal": true } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Active only"
+                    },
+                    "value": {
+                      "literal": true
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-cb-python",
-                "component": { "CheckBox": { "label": { "literal": "Python repos" }, "value": { "literal": false } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Python repos"
+                    },
+                    "value": {
+                      "literal": false
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-cb-forks",
-                "component": { "CheckBox": { "label": { "literal": "Include forks" }, "value": { "literal": false } } }
+                "component": {
+                  "CheckBox": {
+                    "label": {
+                      "literal": "Include forks"
+                    },
+                    "value": {
+                      "literal": false
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-slider-label",
-                "component": { "Text": { "text": { "literal": "Minimum stars" }, "usageHint": "caption" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Minimum stars"
+                    },
+                    "usageHint": "caption"
+                  }
+                }
               },
               {
                 "id": "filter-slider",
-                "component": { "Slider": { "value": { "literal": 5 } } }
+                "component": {
+                  "Slider": {
+                    "value": {
+                      "literal": 5
+                    }
+                  }
+                }
               },
               {
                 "id": "filter-btn-row",
                 "component": {
                   "Row": {
-                    "children": { "explicitList": ["filter-btn-apply", "filter-btn-reset"] }
+                    "children": {
+                      "explicitList": [
+                        "filter-btn-apply",
+                        "filter-btn-reset"
+                      ]
+                    }
                   }
                 }
               },
@@ -752,26 +1326,46 @@
                 "component": {
                   "Button": {
                     "child": "filter-btn-apply-label",
-                    "action": { "type": "action", "name": "applyFilters" }
+                    "action": {
+                      "type": "action",
+                      "name": "applyFilters"
+                    }
                   }
                 }
               },
               {
                 "id": "filter-btn-apply-label",
-                "component": { "Text": { "text": { "literal": "Apply Filters" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Apply Filters"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "filter-btn-reset",
                 "component": {
                   "Button": {
                     "child": "filter-btn-reset-label",
-                    "action": { "type": "action", "name": "resetFilters" }
+                    "action": {
+                      "type": "action",
+                      "name": "resetFilters"
+                    }
                   }
                 }
               },
               {
                 "id": "filter-btn-reset-label",
-                "component": { "Text": { "text": { "literal": "Reset" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Reset"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               }
             ]
           }
@@ -805,65 +1399,163 @@
                 "id": "root",
                 "component": {
                   "Column": {
-                    "children": { "explicitList": ["results-header", "results-divider", "results-card-1", "results-card-2", "results-card-3"] }
+                    "children": {
+                      "explicitList": [
+                        "results-header",
+                        "results-divider",
+                        "results-card-1",
+                        "results-card-2",
+                        "results-card-3"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "results-header",
-                "component": { "Text": { "text": { "literal": "3 repositories match your filters" }, "usageHint": "h2" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "3 repositories match your filters"
+                    },
+                    "usageHint": "h2"
+                  }
+                }
               },
               {
                 "id": "results-divider",
-                "component": { "Divider": {} }
+                "component": {
+                  "Divider": {}
+                }
               },
               {
                 "id": "results-card-1",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["rc1-title", "rc1-desc"] }
+                    "child": "results-card-1-body"
+                  }
+                }
+              },
+              {
+                "id": "results-card-1-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "rc1-title",
+                        "rc1-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "rc1-title",
-                "component": { "Text": { "text": { "literal": "Agents-eval" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Agents-eval"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "rc1-desc",
-                "component": { "Text": { "text": { "literal": "Multi-agent evaluation — Python, PydanticAI, Streamlit" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Multi-agent evaluation — Python, PydanticAI, Streamlit"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "results-card-2",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["rc2-title", "rc2-desc"] }
+                    "child": "results-card-2-body"
+                  }
+                }
+              },
+              {
+                "id": "results-card-2-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "rc2-title",
+                        "rc2-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "rc2-title",
-                "component": { "Text": { "text": { "literal": "polyforge-orchestrator" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "polyforge-orchestrator"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "rc2-desc",
-                "component": { "Text": { "text": { "literal": "Parallel agent orchestration — Bash, Make, Devcontainer" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Parallel agent orchestration — Bash, Make, Devcontainer"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               },
               {
                 "id": "results-card-3",
                 "component": {
                   "Card": {
-                    "children": { "explicitList": ["rc3-title", "rc3-desc"] }
+                    "child": "results-card-3-body"
+                  }
+                }
+              },
+              {
+                "id": "results-card-3-body",
+                "component": {
+                  "Column": {
+                    "children": {
+                      "explicitList": [
+                        "rc3-title",
+                        "rc3-desc"
+                      ]
+                    }
                   }
                 }
               },
               {
                 "id": "rc3-title",
-                "component": { "Text": { "text": { "literal": "RAPID-spec-forge" }, "usageHint": "h3" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "RAPID-spec-forge"
+                    },
+                    "usageHint": "h3"
+                  }
+                }
               },
               {
                 "id": "rc3-desc",
-                "component": { "Text": { "text": { "literal": "Requirements pipeline — Python, Templates, BRD/PRD/FRP" }, "usageHint": "body" } }
+                "component": {
+                  "Text": {
+                    "text": {
+                      "literal": "Requirements pipeline — Python, Templates, BRD/PRD/FRP"
+                    },
+                    "usageHint": "body"
+                  }
+                }
               }
             ]
           }
@@ -913,67 +1605,172 @@
     "root": {
       "prompt": "What would you like to explore?",
       "choices": [
-        { "label": "Show me repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
-        { "label": "Browse by category", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
-        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+        {
+          "label": "Show me repos",
+          "hint": "Card, Row, Text",
+          "segment": "overview",
+          "next": "after-overview"
+        },
+        {
+          "label": "Browse by category",
+          "hint": "Tabs",
+          "segment": "navigation",
+          "next": "after-navigation"
+        },
+        {
+          "label": "Filter repos",
+          "hint": "Card, CheckBox",
+          "segment": "filters-checkboxes",
+          "next": "after-checkboxes"
+        }
       ]
     },
     "after-overview": {
       "prompt": "Want to go deeper?",
       "choices": [
-        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
-        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
-        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
+        {
+          "label": "Show details",
+          "hint": "Image, Column, Divider",
+          "segment": "detail",
+          "next": "after-detail"
+        },
+        {
+          "label": "List plugins",
+          "hint": "Column, Row",
+          "segment": "plugins",
+          "next": "after-plugins"
+        },
+        {
+          "label": "Browse categories",
+          "hint": "Tabs",
+          "segment": "navigation",
+          "next": "after-navigation"
+        }
       ]
     },
     "after-detail": {
       "prompt": "Explore further?",
       "choices": [
-        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
-        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+        {
+          "label": "List plugins",
+          "hint": "Column, Row",
+          "segment": "plugins",
+          "next": "after-plugins"
+        },
+        {
+          "label": "Set up filters",
+          "hint": "Card, CheckBox",
+          "segment": "filters-checkboxes",
+          "next": "after-checkboxes"
+        }
       ]
     },
     "after-plugins": {
       "prompt": "What else?",
       "choices": [
-        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" },
-        { "label": "Filter repos", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+        {
+          "label": "Browse categories",
+          "hint": "Tabs",
+          "segment": "navigation",
+          "next": "after-navigation"
+        },
+        {
+          "label": "Filter repos",
+          "hint": "Card, CheckBox",
+          "segment": "filters-checkboxes",
+          "next": "after-checkboxes"
+        }
       ]
     },
     "after-navigation": {
       "prompt": "Dive into a category?",
       "choices": [
-        { "label": "Show repo details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
-        { "label": "List plugins", "hint": "Column, Row", "segment": "plugins", "next": "after-plugins" },
-        { "label": "Set up filters", "hint": "Card, CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+        {
+          "label": "Show repo details",
+          "hint": "Image, Column, Divider",
+          "segment": "detail",
+          "next": "after-detail"
+        },
+        {
+          "label": "List plugins",
+          "hint": "Column, Row",
+          "segment": "plugins",
+          "next": "after-plugins"
+        },
+        {
+          "label": "Set up filters",
+          "hint": "Card, CheckBox",
+          "segment": "filters-checkboxes",
+          "next": "after-checkboxes"
+        }
       ]
     },
     "after-checkboxes": {
       "prompt": "Refine the filter?",
       "choices": [
-        { "label": "Adjust range", "hint": "Slider", "segment": "filters-slider", "next": "after-slider" },
-        { "label": "Apply now", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+        {
+          "label": "Adjust range",
+          "hint": "Slider",
+          "segment": "filters-slider",
+          "next": "after-slider"
+        },
+        {
+          "label": "Apply now",
+          "hint": "Button",
+          "segment": "filters-buttons",
+          "next": "after-apply"
+        }
       ]
     },
     "after-slider": {
       "prompt": "Ready to apply?",
       "choices": [
-        { "label": "Apply filters", "hint": "Button", "segment": "filters-buttons", "next": "after-apply" }
+        {
+          "label": "Apply filters",
+          "hint": "Button",
+          "segment": "filters-buttons",
+          "next": "after-apply"
+        }
       ]
     },
     "after-apply": {
       "prompt": "Filters applied. See results?",
       "choices": [
-        { "label": "Show results", "hint": "Card, Text, Divider", "segment": "results", "next": "after-results" },
-        { "label": "Adjust filters", "hint": "CheckBox", "segment": "filters-checkboxes", "next": "after-checkboxes" }
+        {
+          "label": "Show results",
+          "hint": "Card, Text, Divider",
+          "segment": "results",
+          "next": "after-results"
+        },
+        {
+          "label": "Adjust filters",
+          "hint": "CheckBox",
+          "segment": "filters-checkboxes",
+          "next": "after-checkboxes"
+        }
       ]
     },
     "after-results": {
       "prompt": "Explore the matches?",
       "choices": [
-        { "label": "View all repos", "hint": "Card, Row, Text", "segment": "overview", "next": "after-overview" },
-        { "label": "Show details", "hint": "Image, Column, Divider", "segment": "detail", "next": "after-detail" },
-        { "label": "Browse categories", "hint": "Tabs", "segment": "navigation", "next": "after-navigation" }
+        {
+          "label": "View all repos",
+          "hint": "Card, Row, Text",
+          "segment": "overview",
+          "next": "after-overview"
+        },
+        {
+          "label": "Show details",
+          "hint": "Image, Column, Divider",
+          "segment": "detail",
+          "next": "after-detail"
+        },
+        {
+          "label": "Browse categories",
+          "hint": "Tabs",
+          "segment": "navigation",
+          "next": "after-navigation"
+        }
       ]
     }
   }

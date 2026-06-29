@@ -94,7 +94,8 @@ An A2UI batch is an array of messages:
 - { "surfaceUpdate": { "surfaceId": "main", "components": [ ...Component ] } }
 
 A Component is { "id": string, "component": { <Type>: <props> } } with exactly one Type.
-- Containers list children by id: { "Column": { "children": { "explicitList": ["a","b"] } } }
+- Row / Column / List hold MANY children by id: { "Column": { "children": { "explicitList": ["a","b"] } } }
+- Card holds ONE child by id: { "Card": { "child": "an-id" } } — to group several items in a Card, point its child at a Column.
 - Text uses a literal: { "Text": { "text": { "literal": "Hello" }, "usageHint": "h2" } }
 - The root component must have id "root" and list its children.
 

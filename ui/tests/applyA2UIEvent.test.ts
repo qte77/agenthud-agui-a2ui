@@ -47,4 +47,25 @@ describe("applyA2UIEvent", () => {
     expect(render).not.toHaveBeenCalled();
     expect(entry).toEqual({ type: "RUN_STARTED", timestamp: 5, text: undefined });
   });
+
+  it("surfaces a render error in the log entry instead of swallowing it", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const render = vi.fn(() => {
+      throw new Error("Card child required");
+    });
+
+    const entry = applyA2UIEvent(
+      {
+        type: "TOOL_CALL_START",
+        a2uiMessages: [{ beginRendering: { surfaceId: "main", root: "root" } }],
+      },
+      0,
+      render
+    );
+
+    expect(render).toHaveBeenCalledOnce();
+    expect(entry.text).toContain("A2UI render error");
+    expect(entry.text).toContain("Card child required");
+    spy.mockRestore();
+  });
 });
