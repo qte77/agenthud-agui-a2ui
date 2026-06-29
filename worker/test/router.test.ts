@@ -30,15 +30,27 @@ describe("resolveUpstream", () => {
 });
 
 describe("isAllowedOrigin", () => {
-  it("allows the GitHub Pages origin and localhost dev origins", () => {
+  it("always allows the GitHub Pages origin (production default, no env)", () => {
     expect(isAllowedOrigin("https://qte77.github.io")).toBe(true);
-    expect(isAllowedOrigin("http://localhost:5173")).toBe(true);
-    expect(isAllowedOrigin("http://localhost:8787")).toBe(true);
+    expect(isAllowedOrigin("https://qte77.github.io", { ALLOW_LOCALHOST: "true" })).toBe(true);
   });
 
-  it("rejects other or spoofed origins and a missing origin", () => {
+  it("rejects localhost in production (ALLOW_LOCALHOST unset)", () => {
+    expect(isAllowedOrigin("http://localhost:5173")).toBe(false);
+    expect(isAllowedOrigin("http://127.0.0.1:8787")).toBe(false);
+  });
+
+  it("allows localhost only when ALLOW_LOCALHOST is set (dev)", () => {
+    const dev = { ALLOW_LOCALHOST: "true" };
+    expect(isAllowedOrigin("http://localhost:5173", dev)).toBe(true);
+    expect(isAllowedOrigin("http://127.0.0.1:8787", dev)).toBe(true);
+  });
+
+  it("rejects other or spoofed origins and a missing origin (even in dev)", () => {
+    const dev = { ALLOW_LOCALHOST: "true" };
     expect(isAllowedOrigin("https://evil.example.com")).toBe(false);
+    expect(isAllowedOrigin("https://evil.example.com", dev)).toBe(false);
     expect(isAllowedOrigin("https://qte77.github.io.evil.com")).toBe(false);
-    expect(isAllowedOrigin(null)).toBe(false);
+    expect(isAllowedOrigin(null, dev)).toBe(false);
   });
 });
