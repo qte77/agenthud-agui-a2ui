@@ -4,6 +4,7 @@ import { EventStream } from "./EventStream";
 import { CatalogViewer } from "./CatalogViewer";
 import { GitHubLinks } from "./GitHubLinks";
 import { REPO_URL } from "./config";
+import { formatBuildInfo } from "./buildInfo";
 import { BrandHeader } from "./BrandHeader";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { ModeToggle, type ViewMode } from "./ModeToggle";
@@ -40,6 +41,7 @@ export function DashboardShell({
   footerLead,
   children,
 }: DashboardShellProps) {
+  const build = formatBuildInfo(__APP_VERSION__, __BUILD_SHA__);
   return (
     <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
       <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
@@ -85,6 +87,16 @@ export function DashboardShell({
           className="text-primary hover:underline"
         >
           qte77/agenthud-agui-a2ui
+        </a>{" "}
+        ·{" "}
+        <a
+          href={build.href}
+          target="_blank"
+          rel="noreferrer"
+          title={build.title}
+          className="text-primary hover:underline"
+        >
+          {build.label}
         </a>
       </footer>
     </div>

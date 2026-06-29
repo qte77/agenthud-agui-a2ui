@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `ui/src/DashboardShell.tsx`: footer **build badge** — shows `v{version} · {short-sha}` linked to
+  the exact GitHub commit the deploy was built from (gh-pages injects `github.sha` via
+  `VITE_BUILD_SHA`; local builds show `dev`), so deployed builds are distinguishable.
 - Header links to the GitHub **Repo** and **Issues** (octocat icon + text), on both the Demo and
   Live pages.
 - Edge proxy (`worker/`): a BYOK pass-through Cloudflare Worker that relays the non-CORS endpoints

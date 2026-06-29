@@ -12,3 +12,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// Build-version globals injected by vite.config.ts `define` (static string replacement).
+// __APP_VERSION__ = package.json version; __BUILD_SHA__ = the build's commit sha ("" locally).
+declare const __APP_VERSION__: string;
+declare const __BUILD_SHA__: string;
