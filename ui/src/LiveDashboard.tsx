@@ -17,10 +17,9 @@ const DEFAULTS: LiveSettings = {
 // (US-6 / ADR-0001 — see worker/README.md). Mammouth + Azure stay `experimental` (still fail
 // from a static page). `editable` reveals the freeform URL field (Custom, plus Azure's template).
 //
-// PROXY_BASE is a PLACEHOLDER — the worker is NOT deployed yet, so the "(via proxy)" options below
-// are flagged `experimental` and will fail. After `wrangler deploy`, set this to the real
-// workers.dev URL and drop their experimental flag (worker/README.md).
-const PROXY_BASE = "https://<your-worker>.workers.dev";
+// PROXY_BASE points at the deployed edge proxy (US-6 / worker/) — the "(via proxy)" options below
+// route GitHub Models + Google through it so they work in-browser despite no upstream CORS.
+const PROXY_BASE = "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
 const ENDPOINTS: {
   label: string;
   baseURL: string;
@@ -32,8 +31,8 @@ const ENDPOINTS: {
   { label: "Together", baseURL: "https://api.together.xyz/v1" },
   { label: "Fireworks", baseURL: "https://api.fireworks.ai/inference/v1" },
   { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
-  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models`, experimental: true },
-  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google`, experimental: true },
+  { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
+  { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google` },
   { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
   { label: "Azure OpenAI", baseURL: "https://<resource>.openai.azure.com/openai/v1", experimental: true, editable: true },
   { label: "Custom…", baseURL: "", editable: true },
