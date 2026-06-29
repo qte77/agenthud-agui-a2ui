@@ -20,6 +20,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   structured upstream-failure handling (**502** with CORS). Docs: a
   [Cloudflare/Wrangler runbook](docs/cloudflare-runbook.md) and an end-to-end
   [architecture diagram](docs/architecture.md).
+- **Edge proxy deployed + live** — the BYOK proxy is deployed; the "GitHub Models (via proxy)" /
+  "Google (via proxy)" options now work in-browser (`PROXY_BASE` wired, no longer experimental),
+  with a connection-panel disclaimer on BYOK key handling (forwarded, not stored; `sessionStorage`,
+  cleared on tab close). Worker hardened further — 1 MiB request-body cap (**413**), `set-cookie` /
+  hop-by-hop stripping, `compatibility_date` 2026-06-29, declarative `wrangler.toml`
+  (`workers_dev`, `preview_urls = false`, logs + traces). Closes #97.
+- **Dev-only `ui/.env`** — `VITE_BYOK_*` prefill the Live connection and `VITE_PROXY_BASE` points the
+  proxy at a local `wrangler dev` worker; read only in dev (tree-shaken from prod builds), `ui/.env`
+  gitignored. See `ui/.env.example`.
+- **Strict typing + type-checked linting** — `noUncheckedIndexedAccess` / `exactOptionalPropertyTypes`
+  (+ more) on both tsconfigs, and `strictTypeChecked` ESLint with a complexity gate on `ui/` and
+  `worker/`.
 
 ### Changed
 
@@ -29,15 +41,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   28px) for parity with the qte77 sibling sites — was amber/22px.
 - Edge proxy CORS allowlist is **environment-gated** — production allows only
   `https://qte77.github.io`; localhost is added only in dev (`ALLOW_LOCALHOST`).
+- `Together` provider base URL → `api.together.ai/v1` (the `.xyz` host is no longer documented).
+- Docs: YAML frontmatter + reference-style links across `docs/`; headless UI testing via patchright
+  documented in `docs/testing.md`.
 
 ### Fixed
 
 - GitHub octocat uses GitHub's actual **black/white** marks (vendored `#181717`/white SVGs from the
   qte77 brand kit), swapped by theme per GitHub's brand guidelines — never recolored.
-- BYOK "(via proxy)" options (GitHub Models, Google) are flagged **experimental** and `PROXY_BASE`
-  is reset to a placeholder — the edge proxy is **not deployed yet**, so the previous code wrongly
-  implied a live worker (its host did not resolve) and those two options failed with a connection
-  error.
 - Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
   renders **all** of its cards, not just the last. The per-event root patch was stripping cards
   added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
