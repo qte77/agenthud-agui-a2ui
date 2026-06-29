@@ -6,11 +6,22 @@ import type { LiveSettings } from "./agent/liveAgent";
 
 // BYOK connection — kept in sessionStorage only (cleared on tab close), per US-7.
 const SETTINGS_KEY = "agenthud-byok";
-const DEFAULTS: LiveSettings = {
+
+const BASE_DEFAULTS: LiveSettings = {
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: "",
   model: "",
 };
+// Dev-only: prefill the connection from ui/.env (VITE_BYOK_*) so you don't retype keys while
+// developing. Read ONLY in dev — the prod branch below carries no VITE_ reference (so keys can't
+// leak into a production build) and ui/.env is gitignored. See ui/.env.example.
+const DEFAULTS: LiveSettings = import.meta.env.DEV
+  ? {
+      baseURL: import.meta.env.VITE_BYOK_BASE_URL ?? BASE_DEFAULTS.baseURL,
+      apiKey: import.meta.env.VITE_BYOK_API_KEY ?? BASE_DEFAULTS.apiKey,
+      model: import.meta.env.VITE_BYOK_MODEL ?? BASE_DEFAULTS.model,
+    }
+  : BASE_DEFAULTS;
 
 // OpenAI-compatible BYOK endpoints. The CORS-friendly ones work in-browser as-is.
 // GitHub Models + Google have no browser CORS, so they would route through the edge proxy
