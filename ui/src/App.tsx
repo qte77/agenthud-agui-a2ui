@@ -14,6 +14,7 @@ import {
   tours,
   getSegmentEvents,
   type TreeChoice,
+  type TreeNode,
   type Recording,
   type DecisionTree,
 } from "./recordings";
@@ -30,6 +31,60 @@ interface HistoryEntry {
 // intents → different layouts from one catalog".
 // tours is a non-empty literal array; index 0 is always defined
 const activeRecording: Recording = tours[0]!.recording;
+
+/** Renders the tree-choice buttons when in tree mode and choices are available. */
+function DemoTreeChoiceView({
+  mode,
+  isPlaying,
+  showChoices,
+  node,
+  onChoice,
+}: {
+  mode: Mode;
+  isPlaying: boolean;
+  showChoices: boolean;
+  node: TreeNode | undefined;
+  onChoice: (c: TreeChoice) => void;
+}) {
+  if (mode !== "tree" || isPlaying || !showChoices || !node) return null;
+  return (
+    <div className="mt-4 border-t border-border pt-4">
+      <p className="text-text-muted text-sm mb-3">{node.prompt}</p>
+      <div className="flex flex-wrap gap-2">
+        {node.choices.map((c) => (
+          <button
+            key={c.segment}
+            onClick={() => onChoice(c)}
+            className="px-3 py-2 rounded-lg border border-border hover:border-primary text-left transition-colors"
+          >
+            <span className="text-sm font-medium text-primary">{c.label}</span>
+            <span className="text-xs text-text-muted ml-2">{c.hint}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Renders the leaf-end message when the path is complete and no further node exists. */
+function DemoLeafView({
+  mode,
+  isPlaying,
+  showChoices,
+  treeNode,
+}: {
+  mode: Mode;
+  isPlaying: boolean;
+  showChoices: boolean;
+  treeNode: TreeNode | undefined;
+}) {
+  if (mode !== "tree" || isPlaying || !showChoices || treeNode) return null;
+  return (
+    <div className="mt-6 border-t border-border pt-4 text-center text-text-muted text-sm">
+      <p>Path complete. Try a different route or play the full sequence.</p>
+    </div>
+  );
+}
 
 function DemoDashboard({
   view,
@@ -50,7 +105,7 @@ function DemoDashboard({
 
   const activeTree: DecisionTree = activeRecording.tree ?? {};
 
-  const filteredRecording = useMemo(() => {
+  const filteredRecording = useMemo((): Pick<Recording, "meta" | "events"> => {
     if (mode === "all") return activeRecording;
     if (mode === "tree" && currentSegmentId) {
       return {
@@ -82,7 +137,6 @@ function DemoDashboard({
   }, [playTrigger, play]);
 
   const treeNode = activeTree[currentNode];
-  const isLeaf = mode === "tree" && !isPlaying && showChoices && !treeNode;
 
   function triggerPlay(append: boolean) {
     appendRef.current = append;
@@ -207,35 +261,20 @@ function DemoDashboard({
             </div>
           )}
 
-          {mode === "tree" && !isPlaying && showChoices && treeNode && (
-            <div className="mt-4 border-t border-border pt-4">
-              <p className="text-text-muted text-sm mb-3">
-                {treeNode.prompt}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {treeNode.choices.map((c) => (
-                  <button
-                    key={c.segment}
-                    onClick={() => handleChoice(c)}
-                    className="px-3 py-2 rounded-lg border border-border hover:border-primary text-left transition-colors"
-                  >
-                    <span className="text-sm font-medium text-primary">
-                      {c.label}
-                    </span>
-                    <span className="text-xs text-text-muted ml-2">
-                      {c.hint}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <DemoTreeChoiceView
+            mode={mode}
+            isPlaying={isPlaying}
+            showChoices={showChoices}
+            node={treeNode}
+            onChoice={handleChoice}
+          />
 
-          {isLeaf && (
-            <div className="mt-6 border-t border-border pt-4 text-center text-text-muted text-sm">
-              <p>Path complete. Try a different route or play the full sequence.</p>
-            </div>
-          )}
+          <DemoLeafView
+            mode={mode}
+            isPlaying={isPlaying}
+            showChoices={showChoices}
+            treeNode={treeNode}
+          />
     </DashboardShell>
   );
 }

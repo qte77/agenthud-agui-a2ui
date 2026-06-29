@@ -73,7 +73,7 @@ describe("recording registry", () => {
     const result = getSegmentEvents(fullRecording, "detail");
 
     const hasBegin = result.some((e) =>
-      (e.a2uiMessages as Array<Record<string, unknown>> | undefined)?.some(
+      (e.a2uiMessages as Record<string, unknown>[] | undefined)?.some(
         (m) => m.beginRendering
       )
     );
@@ -128,15 +128,15 @@ describe("recording registry", () => {
     const result = getSegmentEvents(additive, "seg", { append: false });
 
     const rootLists = result
-      .flatMap((e) => (e.a2uiMessages ?? []) as Array<Record<string, unknown>>)
+      .flatMap((e) => (e.a2uiMessages ?? []) as Record<string, unknown>[])
       .map(
         (m) =>
           m.surfaceUpdate as
             | {
-                components?: Array<{
+                components?: {
                   id: string;
                   component: Record<string, { children?: { explicitList?: string[] } }>;
-                }>;
+                }[];
               }
             | undefined
       )

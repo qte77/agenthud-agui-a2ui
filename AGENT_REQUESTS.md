@@ -17,16 +17,10 @@ description: Escalation protocol and active requests requiring human decision
 
 Backlog from the 2026-06-29 stack audit (security / typing / lint / UX). Shipped since: the P1
 security items (body-size cap, header stripping, `compatibility_date` bump), the dev-`.env` prefill,
-the worker ESLint + complexity gate, and the **strict TS compiler flags**
-(`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, … on both tsconfigs). The items below are
-the deferred remainder.
-
-- [ ] [P3] Typed linting for the UI (`strict-type-checked` + `parserOptions.projectService`)
-  - **Context**: `ui/eslint.config.js` uses `tseslint.configs.recommended` (no type info).
-  - **Problem**: type-aware rules (`no-floating-promises`, `no-misused-promises`,
-    `no-unnecessary-condition`) are silently skipped.
-  - **Files**: `ui/eslint.config.js`.
-  - **Impact**: surfaces floating promises in async handlers; first run is noisy.
+the worker ESLint + complexity gate, the **strict TS compiler flags** (both tsconfigs), and
+**type-checked ESLint** (`strictTypeChecked` + `stylisticTypeChecked` + a complexity gate, both
+packages — surfaced + fixed a floating promise, unsafe `any`, and refactored 5 over-complex
+functions). The items below are the deferred remainder.
 
 - [ ] [P3] vitest coverage thresholds (`@vitest/coverage-v8`)
   - **Files**: `ui/vite.config.ts`, `worker/` test config.

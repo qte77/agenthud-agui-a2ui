@@ -53,7 +53,7 @@ export function isAllowedOrigin(origin: string | null, env?: Env): boolean {
 export function corsHeaders(origin: string | null, env?: Env): Record<string, string> {
   if (!isAllowedOrigin(origin, env)) return {};
   return {
-    "access-control-allow-origin": origin as string,
+    "access-control-allow-origin": origin!,
     "access-control-allow-methods": "POST, OPTIONS",
     "access-control-allow-headers": "authorization, content-type",
     "access-control-max-age": "86400",

@@ -18,6 +18,28 @@ export interface AgentEvent {
   a2uiMessages?: unknown[] | undefined;
 }
 
+/** Count components and collect catalog types from a single A2UI message object. */
+function collectFromMessage(
+  msg: Record<string, unknown>,
+  types: Set<string>,
+): number {
+  let count = 0;
+  const update = msg.surfaceUpdate as
+    | { components?: { component?: Record<string, unknown> }[] }
+    | undefined;
+  if (update?.components) {
+    for (const comp of update.components) {
+      count++;
+      if (comp.component) {
+        const type = Object.keys(comp.component)[0];
+        if (type) types.add(type);
+      }
+    }
+  }
+  if (msg.beginRendering) types.add("beginRendering");
+  return count;
+}
+
 /** Summarize an A2UI batch for the log: component count + distinct catalog types. */
 export function summarizeA2UI(messages: unknown[]): {
   count: number;
@@ -25,20 +47,8 @@ export function summarizeA2UI(messages: unknown[]): {
 } {
   const types = new Set<string>();
   let count = 0;
-  for (const msg of messages as Array<Record<string, unknown>>) {
-    const update = msg.surfaceUpdate as
-      | { components?: Array<{ component?: Record<string, unknown> }> }
-      | undefined;
-    if (update?.components) {
-      for (const comp of update.components) {
-        count++;
-        if (comp.component) {
-          const type = Object.keys(comp.component)[0];
-          if (type) types.add(type);
-        }
-      }
-    }
-    if (msg.beginRendering) types.add("beginRendering");
+  for (const msg of messages as Record<string, unknown>[]) {
+    count += collectFromMessage(msg, types);
   }
   return { count, types: [...types] };
 }

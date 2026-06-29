@@ -54,7 +54,7 @@ const CUSTOM = ENDPOINTS[ENDPOINTS.length - 1] ?? { label: "Custom…", baseURL:
 function loadSettings(): LiveSettings {
   try {
     const raw = sessionStorage.getItem(SETTINGS_KEY);
-    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
+    if (raw) return { ...DEFAULTS, ...(JSON.parse(raw) as Partial<LiveSettings>) };
   } catch {
     /* sessionStorage disabled — fall back to defaults */
   }
@@ -117,7 +117,7 @@ export function LiveDashboard({
             className="mt-6 max-w-md mx-auto space-y-3"
             onSubmit={(e) => {
               e.preventDefault();
-              if (ready && !isRunning) run(settings, prompt);
+              if (ready && !isRunning) void run(settings, prompt);
             }}
           >
             <details className="text-xs text-text-muted">

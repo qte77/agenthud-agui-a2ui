@@ -25,7 +25,7 @@ describe("resolveUpstream", () => {
   it("keeps the host fixed by the allowlist regardless of the sub-path", () => {
     const u = resolveUpstream("/github-models/../../etc/passwd");
     expect(u).not.toBeNull();
-    expect(new URL(u as string).host).toBe("models.github.ai");
+    expect(new URL(u!).host).toBe("models.github.ai");
   });
 });
 

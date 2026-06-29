@@ -22,6 +22,13 @@ export interface StreamPart {
   error?: unknown;
 }
 
+/** Convert an unknown stream error value to a safe string message. */
+function errorText(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  return "unknown error";
+}
+
 /**
  * Pure seam: map one Vercel AI SDK `fullStream` part to the AG-UI event vocabulary
  * the EventStream + `applyA2UIEvent` already consume. A completed `render_ui` tool
@@ -50,7 +57,7 @@ export function streamPartToEvent(part: StreamPart): AgentEvent | null {
     case "finish":
       return { type: "RUN_FINISHED" };
     case "error":
-      return { type: "RUN_ERROR", text: String(part.error ?? "unknown error") };
+      return { type: "RUN_ERROR", text: errorText(part.error) };
     default:
       return null;
   }
@@ -68,7 +75,7 @@ function buildRenderUiTool() {
       "surface. Use only the standard catalog component types.",
     inputSchema: renderUiInput,
     // The UI is carried by the call arguments; nothing meaningful to return.
-    execute: async () => "rendered",
+    execute: () => "rendered",
   });
 }
 
@@ -112,7 +119,7 @@ export async function runLiveAgent(
   });
 
   for await (const part of result.fullStream) {
-    const event = streamPartToEvent(part as StreamPart);
+    const event = streamPartToEvent(part);
     if (event) onEvent(event);
   }
 }
