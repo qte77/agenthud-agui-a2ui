@@ -29,8 +29,13 @@ const DEFAULTS: LiveSettings = import.meta.env.DEV
 // from a static page). `editable` reveals the freeform URL field (Custom, plus Azure's template).
 //
 // PROXY_BASE points at the deployed edge proxy (US-6 / worker/) — the "(via proxy)" options below
-// route GitHub Models + Google through it so they work in-browser despite no upstream CORS.
-const PROXY_BASE = "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
+// route GitHub Models + Google through it so they work in-browser despite no upstream CORS. In dev,
+// VITE_PROXY_BASE (ui/.env) overrides it to target a local `wrangler dev` worker that allows the
+// localhost origin (prod rejects localhost by design); prod ignores it since DEV is false.
+const PROXY_BASE =
+  import.meta.env.DEV && import.meta.env.VITE_PROXY_BASE
+    ? import.meta.env.VITE_PROXY_BASE
+    : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
 const ENDPOINTS: {
   label: string;
   baseURL: string;
