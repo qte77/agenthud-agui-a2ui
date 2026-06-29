@@ -5,10 +5,22 @@ name = "agenthud-proxy"
 main = "src/worker.ts"
 compatibility_date = "2025-01-01"
 
-# Request logs/traces for debugging + spotting abuse (low-traffic proxy -> sample all).
+# Declare workers.dev routing so a clean `wrangler deploy` is deterministic (this was the manual
+# go-live gotcha). preview_urls off keeps the public surface to the single canonical hostname.
+workers_dev = true
+preview_urls = false
+
+# Logs + traces on for debugging + spotting abuse (low-traffic proxy -> sample everything).
 [observability]
 enabled = true
-head_sampling_rate = 1
+
+  [observability.logs]
+  enabled = true
+  head_sampling_rate = 1
+  invocation_logs = true
+
+  [observability.traces]
+  enabled = true
 
 # Per-IP rate limit (abuse lock) — 100 requests / 60s per client IP. Eventually-consistent and
 # per-location; enough to throttle relay farming without blocking real users. Production only
