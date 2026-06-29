@@ -2,6 +2,7 @@
 
 Single source of truth: each topic lives in one doc — link, don't duplicate.
 
+- [Architecture](architecture.md) — end-to-end data flow (app → edge proxy → LLM), ours vs theirs
 - [Agentic Protocols](protocols.md) — AG-UI, A2UI, MCP, A2A reference
 - [Testing](testing.md) — test-layout convention (co-location)
 - [User Stories](UserStory.md) — acceptance criteria and status

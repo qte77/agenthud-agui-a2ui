@@ -1,13 +1,13 @@
-import { resolveUpstream, corsHeaders, isAllowedOrigin } from "./router";
+import { resolveUpstream, corsHeaders, isAllowedOrigin, type Env } from "./router";
 
 // BYOK pass-through CORS proxy (US-6). The static GitHub Pages app POSTs to
 // /<provider>/chat/completions; we forward it server-to-server (where browser CORS
 // doesn't apply) and stream the SSE response back with CORS headers. No secret is held
 // here — the visitor's own Authorization header is forwarded unchanged.
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("origin");
-    const cors = corsHeaders(origin);
+    const cors = corsHeaders(origin, env);
 
     // CORS preflight.
     if (request.method === "OPTIONS") {
@@ -17,7 +17,7 @@ export default {
       return new Response("Method not allowed", { status: 405, headers: cors });
     }
     // Only browsers on an allowlisted origin may use the proxy.
-    if (!isAllowedOrigin(origin)) {
+    if (!isAllowedOrigin(origin, env)) {
       return new Response("Forbidden origin", { status: 403 });
     }
 

@@ -18,7 +18,9 @@ header upstream; the key never lives in the worker.
 | `google` | `https://generativelanguage.googleapis.com/v1beta/openai` |
 
 The first path segment is the only routing key (no open proxy / SSRF). Only `POST`/`OPTIONS`
-from an allowlisted `Origin` (`https://qte77.github.io`, `localhost`) are served.
+from an allowlisted `Origin` are served — **production allows only `https://qte77.github.io`**;
+localhost dev origins are added only when `ALLOW_LOCALHOST="true"` (see Local dev). CORS is the
+worker's sole access gate, since it holds no secret.
 
 ## Deploy
 
@@ -39,6 +41,11 @@ deployed `https://agenthud-proxy.<your-subdomain>.workers.dev` URL — that's wh
 cd worker && npx wrangler dev          # http://localhost:8787
 # point PROXY_BASE at http://localhost:8787, then: npm --prefix ui run dev
 ```
+
+`wrangler dev` rejects a `localhost` origin unless `ALLOW_LOCALHOST="true"` is set — add it to a
+gitignored `worker/.dev.vars` (`wrangler dev` loads it), or deploy the dev env
+(`wrangler deploy --env dev`). Non-browser callers (curl, CI) need no localhost entry: send
+`Origin: https://qte77.github.io` and the `isAllowedOrigin` gate passes (CORS is browser-only).
 
 ## Deferred
 

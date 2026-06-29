@@ -14,20 +14,36 @@ export function resolveUpstream(pathname: string): string | null {
   return rest.length ? `${base}/${rest.join("/")}` : base;
 }
 
-const ALLOWED_ORIGINS = [
-  /^https:\/\/qte77\.github\.io$/,
+/** Worker vars (wrangler `[vars]` / `[env.<name>.vars]` / local `.dev.vars`). */
+export interface Env {
+  /** "true" adds localhost dev origins to the CORS allowlist. Set it only in dev
+   *  (`[env.dev.vars]` or a gitignored `.dev.vars`) — NEVER in the production deploy,
+   *  so prod echoes only the gh-pages origin. */
+  ALLOW_LOCALHOST?: string;
+}
+
+// Production allows ONLY the gh-pages site; localhost dev origins are added when
+// ALLOW_LOCALHOST="true". CORS is the worker's only access gate (it holds no secret).
+const PROD_ORIGINS = [/^https:\/\/qte77\.github\.io$/];
+const LOCALHOST_ORIGINS = [
   /^http:\/\/localhost:\d+$/,
   /^http:\/\/127\.0\.0\.1:\d+$/,
 ];
 
+function allowedOrigins(env?: Env): RegExp[] {
+  return env?.ALLOW_LOCALHOST === "true"
+    ? [...PROD_ORIGINS, ...LOCALHOST_ORIGINS]
+    : PROD_ORIGINS;
+}
+
 /** Is this request `Origin` one we return CORS headers for? */
-export function isAllowedOrigin(origin: string | null): boolean {
-  return origin !== null && ALLOWED_ORIGINS.some((re) => re.test(origin));
+export function isAllowedOrigin(origin: string | null, env?: Env): boolean {
+  return origin !== null && allowedOrigins(env).some((re) => re.test(origin));
 }
 
 /** CORS headers for an allowed origin; empty object when the origin isn't allowed. */
-export function corsHeaders(origin: string | null): Record<string, string> {
-  if (!isAllowedOrigin(origin)) return {};
+export function corsHeaders(origin: string | null, env?: Env): Record<string, string> {
+  if (!isAllowedOrigin(origin, env)) return {};
   return {
     "access-control-allow-origin": origin as string,
     "access-control-allow-methods": "POST, OPTIONS",

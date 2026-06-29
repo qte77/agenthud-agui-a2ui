@@ -4,3 +4,10 @@
 name = "agenthud-proxy"
 main = "src/worker.ts"
 compatibility_date = "2025-01-01"
+
+# Production (`wrangler deploy`) sets no vars, so CORS echoes ONLY https://qte77.github.io.
+# The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
+# localhost origins, for headless/local E2E. For local `wrangler dev`, put
+# ALLOW_LOCALHOST="true" in a gitignored worker/.dev.vars instead.
+[env.dev.vars]
+ALLOW_LOCALHOST = "true"
