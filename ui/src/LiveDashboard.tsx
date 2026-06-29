@@ -150,6 +150,11 @@ export function LiveDashboard({
                   value={settings.apiKey}
                   onChange={(e) => patchSettings({ apiKey: e.target.value })}
                 />
+                <p className="text-[11px] leading-snug text-text-muted">
+                  🔒 Your key is sent only to the chosen provider — proxy endpoints forward it
+                  without storing it, and nothing is kept server-side. It lives only in this
+                  browser tab (sessionStorage) and is cleared when you close the tab.
+                </p>
                 <input
                   className={fieldClass}
                   type="text"
