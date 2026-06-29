@@ -21,6 +21,16 @@ export default {
       return new Response("Forbidden origin", { status: 403 });
     }
 
+    // Per-IP rate limit (abuse lock): the worker holds no secret, so this + the origin
+    // allowlist are the only gates. Eventually-consistent / per-location — fine for throttling.
+    if (env.RATE_LIMITER) {
+      const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
+      const { success } = await env.RATE_LIMITER.limit({ key: ip });
+      if (!success) {
+        return Response.json({ error: "Rate limit exceeded" }, { status: 429, headers: cors });
+      }
+    }
+
     const upstream = resolveUpstream(new URL(request.url).pathname);
     if (!upstream) {
       return new Response("Unknown provider", { status: 404, headers: cors });
@@ -33,11 +43,21 @@ export default {
     const contentType = request.headers.get("content-type");
     if (contentType) fwd.set("content-type", contentType);
 
-    const upstreamRes = await fetch(upstream, {
-      method: "POST",
-      headers: fwd,
-      body: await request.arrayBuffer(),
-    });
+    let upstreamRes: Response;
+    try {
+      upstreamRes = await fetch(upstream, {
+        method: "POST",
+        headers: fwd,
+        body: await request.arrayBuffer(),
+      });
+    } catch (error) {
+      // Upstream unreachable / timeout: return a STRUCTURED error WITH cors headers, so the
+      // browser surfaces the real failure instead of an opaque CORS error.
+      console.error(
+        JSON.stringify({ message: "upstream fetch failed", upstream, error: String(error) })
+      );
+      return Response.json({ error: "Upstream request failed" }, { status: 502, headers: cors });
+    }
 
     // Stream the response back, overlaying CORS so the browser can read it.
     const headers = new Headers(upstreamRes.headers);

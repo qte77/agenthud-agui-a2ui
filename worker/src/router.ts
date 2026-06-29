@@ -14,12 +14,19 @@ export function resolveUpstream(pathname: string): string | null {
   return rest.length ? `${base}/${rest.join("/")}` : base;
 }
 
-/** Worker vars (wrangler `[vars]` / `[env.<name>.vars]` / local `.dev.vars`). */
+/** A Workers Rate Limiting binding (wrangler `[[ratelimits]]`). */
+export interface RateLimit {
+  limit(options: { key: string }): Promise<{ success: boolean }>;
+}
+
+/** Worker bindings + vars (wrangler `[vars]` / `[env.<name>.vars]` / local `.dev.vars`). */
 export interface Env {
   /** "true" adds localhost dev origins to the CORS allowlist. Set it only in dev
    *  (`[env.dev.vars]` or a gitignored `.dev.vars`) — NEVER in the production deploy,
    *  so prod echoes only the gh-pages origin. */
   ALLOW_LOCALHOST?: string;
+  /** Per-IP rate limiter (abuse lock). Absent in local dev / tests → rate-limit skipped. */
+  RATE_LIMITER?: RateLimit;
 }
 
 // Production allows ONLY the gh-pages site; localhost dev origins are added when
