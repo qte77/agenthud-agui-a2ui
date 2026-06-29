@@ -3,7 +3,7 @@
 # resulting https://agenthud-proxy.<your-subdomain>.workers.dev URL. See README.md.
 name = "agenthud-proxy"
 main = "src/worker.ts"
-compatibility_date = "2025-01-01"
+compatibility_date = "2026-06-29"
 
 # Declare workers.dev routing so a clean `wrangler deploy` is deterministic (this was the manual
 # go-live gotcha). preview_urls off keeps the public surface to the single canonical hostname.
