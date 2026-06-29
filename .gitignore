@@ -4,3 +4,10 @@ dist/
 *.tsbuildinfo
 .claude/
 MEMORY.md
+
+# Secrets / local env — never commit. `.env.example` / `.env.<env>.example` are tracked templates.
+.env
+.env.*
+!.env.example
+!.env.*.example
+.dev.vars
