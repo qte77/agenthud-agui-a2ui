@@ -1,11 +1,16 @@
 ---
 date: 2026-06-29
-status: blocked-on-deploy
+status: done
 issues: [97]
 plan: plans/001-edge-proxy-go-live.md
 ---
 
 # Handoff 001 — Edge proxy go-live
+
+> **Resolved 2026-06-29.** Deployed end-to-end from the dev container — the "Claude's shell can't
+> run it" assumption was stale: `wrangler` auto-loads `worker/.env`, so no shell `source` was
+> needed. `PROXY_BASE` in `ui/src/LiveDashboard.tsx` is wired to the live worker and the
+> "(via proxy)" options are active. Closed by the PR for #97.
 
 ## State
 
