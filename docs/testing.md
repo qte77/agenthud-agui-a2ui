@@ -37,7 +37,7 @@ top-level `tests/`, co-located, or under `__tests__/`. Switching layout needs no
 Vitest + Testing Library cover component logic in jsdom. For checks that need a **real browser** —
 confirming a dynamic page actually renders, driving real clicks/inputs, then inspecting the
 resulting DOM or a screenshot — drive the running app with **patchright** (a stealth Playwright
-fork) via the [`polyfetch-scrape`](../../polyfetch-scrape) tool. Unlike a static HTML fetch it
+fork) via the [`polyfetch-scrape`][polyfetch-scrape] tool. Unlike a static HTML fetch it
 executes the app's JS, so it can load SPA state, trigger actions, and evaluate visuals.
 
 ```bash
@@ -68,10 +68,13 @@ with sync_playwright() as pw:
   external tool plus a one-time Chromium install (`make setup_browsers` in `polyfetch-scrape`).
 - **Proxy caveat:** the two "(via proxy)" endpoints are CORS-locked to `https://qte77.github.io`,
   so from `localhost` they fail unless you run the localhost-allowed worker — see
-  [`worker/README.md`](../worker/README.md).
+  [`worker/README.md`][worker-readme].
 
 ## Sources
 
 - Vitest `include` — <https://vitest.dev/config/include>
 - Next.js Vitest guide (notes both `__tests__` and co-location) — <https://nextjs.org/docs/app/guides/testing/vitest>
 - patchright (stealth Playwright fork) — <https://github.com/Kaliiiiiiiiii-Vinyzu/patchright>
+
+[polyfetch-scrape]: https://github.com/qte77/polyfetch-scrape
+[worker-readme]: ../worker/README.md
