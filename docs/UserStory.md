@@ -129,7 +129,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **Acceptance criteria:**
 
 - [x] Inputs for an OpenAI-compatible base URL, API key, and model id
-- [x] Key stored in `sessionStorage` only (never persisted, never logged)
+- [x] API key held in memory only (never written to storage, never logged); base URL + model persist in `sessionStorage`
 - [x] In-browser only — no server; the `render_ui` tool emits contract-validated A2UI
 - [x] Clear indication of the active mode (Demo | Live header toggle + "Live · BYOK" badge)
 
