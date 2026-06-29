@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { streamPartToEvent } from "../src/agent/liveAgent";
+import { streamPartToEvent, toConnectionError } from "../src/agent/liveAgent";
 
 // streamPartToEvent is the pure seam between the Vercel AI SDK fullStream and the
 // AG-UI event vocabulary the EventStream + applyA2UIEvent already consume. Tested
@@ -48,5 +48,24 @@ describe("streamPartToEvent (AI SDK fullStream → AG-UI event)", () => {
     expect(streamPartToEvent({ type: "finish-step" })).toBeNull();
     expect(streamPartToEvent({ type: "tool-input-delta" })).toBeNull();
     expect(streamPartToEvent({ type: "whatever" })).toBeNull();
+  });
+});
+
+describe("toConnectionError", () => {
+  it("adds likely-cause guidance to a generic fetch failure", () => {
+    const out = toConnectionError(
+      new TypeError("NetworkError when attempting to fetch resource"),
+    );
+    expect(out).toContain("NetworkError when attempting to fetch resource");
+    expect(out).toMatch(/blocked or could not connect/i);
+  });
+
+  it("passes a normal error message through unchanged", () => {
+    expect(toConnectionError(new Error("401 Unauthorized"))).toBe("401 Unauthorized");
+  });
+
+  it("handles non-Error values", () => {
+    expect(toConnectionError("boom")).toBe("boom");
+    expect(toConnectionError(undefined)).toBe("unknown error");
   });
 });

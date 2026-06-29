@@ -4,7 +4,8 @@ import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
 import type { LiveSettings } from "./agent/liveAgent";
 
-// BYOK connection — kept in sessionStorage only (cleared on tab close), per US-7.
+// BYOK connection — base URL + model persist in sessionStorage; the API key stays in memory only
+// (never written to storage, so it's gone on reload/close/reopen), per US-7.
 const SETTINGS_KEY = "agenthud-byok";
 
 const BASE_DEFAULTS: LiveSettings = {
@@ -85,7 +86,11 @@ export function LiveDashboard({
     setSettings((prev) => {
       const next = { ...prev, ...patch };
       try {
-        sessionStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+        // Persist only the non-secret fields — the API key stays in memory (gone on reload/close).
+        sessionStorage.setItem(
+          SETTINGS_KEY,
+          JSON.stringify({ baseURL: next.baseURL, model: next.model }),
+        );
       } catch {
         /* ignore */
       }
@@ -163,14 +168,14 @@ export function LiveDashboard({
                   className={fieldClass}
                   type="password"
                   autoComplete="off"
-                  placeholder="API key (kept in sessionStorage only)"
+                  placeholder="API key (in memory only — never stored)"
                   value={settings.apiKey}
                   onChange={(e) => patchSettings({ apiKey: e.target.value })}
                 />
                 <p className="text-[11px] leading-snug text-text-muted">
                   🔒 Your key is sent only to the chosen provider — proxy endpoints forward it
-                  without storing it, and nothing is kept server-side. It lives only in this
-                  browser tab (sessionStorage) and is cleared when you close the tab.
+                  without storing it, and nothing is kept server-side. It's held in memory for this
+                  tab only (never written to storage), so it's gone on refresh or close.
                 </p>
                 <input
                   className={fieldClass}
