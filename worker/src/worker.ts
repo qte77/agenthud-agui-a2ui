@@ -36,6 +36,18 @@ export default {
       return new Response("Unknown provider", { status: 404, headers: cors });
     }
 
+    // Cap the forwarded body — blocks cost/DoS amplification (chat payloads are far smaller than
+    // 1 MiB). Check the declared length first (cheap), then the actual bytes (covers a missing or
+    // spoofed Content-Length).
+    const MAX_BODY_BYTES = 1_048_576;
+    if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+      return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
+    }
+    const body = await request.arrayBuffer();
+    if (body.byteLength > MAX_BODY_BYTES) {
+      return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
+    }
+
     // Forward only what the upstream needs: the visitor's key + content type + body.
     const fwd = new Headers();
     const auth = request.headers.get("authorization");
@@ -48,7 +60,7 @@ export default {
       upstreamRes = await fetch(upstream, {
         method: "POST",
         headers: fwd,
-        body: await request.arrayBuffer(),
+        body,
       });
     } catch (error) {
       // Upstream unreachable / timeout: return a STRUCTURED error WITH cors headers, so the
@@ -59,8 +71,12 @@ export default {
       return Response.json({ error: "Upstream request failed" }, { status: 502, headers: cors });
     }
 
-    // Stream the response back, overlaying CORS so the browser can read it.
+    // Stream the response back, overlaying CORS so the browser can read it. Strip upstream cookies
+    // and hop-by-hop headers so a misbehaving upstream can't set them on the proxy origin.
     const headers = new Headers(upstreamRes.headers);
+    for (const h of ["set-cookie", "set-cookie2", "transfer-encoding", "connection", "keep-alive"]) {
+      headers.delete(h);
+    }
     for (const [k, v] of Object.entries(cors)) headers.set(k, v);
     return new Response(upstreamRes.body, {
       status: upstreamRes.status,
