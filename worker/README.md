@@ -27,8 +27,8 @@ worker's sole access gate, since it holds no secret.
 ```bash
 cd worker
 npm ci
-npm test            # router allowlist + CORS unit tests
-npx wrangler deploy
+npm test                       # router allowlist + CORS unit tests
+npx wrangler deploy --env=""   # top-level (production); use --env dev for the localhost-allowed dev worker
 ```
 
 Then set `PROXY_BASE` in [`ui/src/LiveDashboard.tsx`](../ui/src/LiveDashboard.tsx) to the

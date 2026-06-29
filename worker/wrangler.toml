@@ -5,6 +5,22 @@ name = "agenthud-proxy"
 main = "src/worker.ts"
 compatibility_date = "2025-01-01"
 
+# Request logs/traces for debugging + spotting abuse (low-traffic proxy -> sample all).
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# Per-IP rate limit (abuse lock) — 100 requests / 60s per client IP. Eventually-consistent and
+# per-location; enough to throttle relay farming without blocking real users. Production only
+# (named envs don't inherit bindings; the worker treats it as optional, so dev/tests skip it).
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 100
+  period = 60
+
 # Production (`wrangler deploy`) sets no vars, so CORS echoes ONLY https://qte77.github.io.
 # The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
 # localhost origins, for headless/local E2E. For local `wrangler dev`, put

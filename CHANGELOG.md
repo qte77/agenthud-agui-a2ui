@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the gh-pages + localhost origins. The dropdown gains "GitHub Models (via proxy)" / "Google (via
   proxy)"; set `PROXY_BASE` after `wrangler deploy` (`worker/README.md`). Delivers the CORS-relay
   half of US-6 / ADR-0001; the keyless variant stays deferred.
+- Edge proxy hardening — a per-IP **rate limit** (100/60s) + request **observability** logging, and
+  structured upstream-failure handling (**502** with CORS). Docs: a
+  [Cloudflare/Wrangler runbook](docs/cloudflare-runbook.md) and an end-to-end
+  [architecture diagram](docs/architecture.md).
 
 ### Changed
 
@@ -23,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   footer) instead of duplicating it — no behavior change; the Live tier's AI SDK stays lazy-loaded.
 - Header logo mark adopts the shared `brand-mark` style (neutral `--color-text`, theme-adaptive,
   28px) for parity with the qte77 sibling sites — was amber/22px.
+- Edge proxy CORS allowlist is **environment-gated** — production allows only
+  `https://qte77.github.io`; localhost is added only in dev (`ALLOW_LOCALHOST`).
 
 ### Fixed
 
