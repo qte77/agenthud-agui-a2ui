@@ -32,7 +32,46 @@ top-level `tests/`, co-located, or under `__tests__/`. Switching layout needs no
 | **Co-located** — `Foo.test.tsx` beside `Foo.tsx` | Component-centric apps wanting maximum discoverability; the common Vite default. |
 | **Centralized `src/__tests__/`** | Jest-era habit; a flat `src/` with many shared fixtures. |
 
+## Headless UI checks (dynamic pages, interaction, visuals)
+
+Vitest + Testing Library cover component logic in jsdom. For checks that need a **real browser** —
+confirming a dynamic page actually renders, driving real clicks/inputs, then inspecting the
+resulting DOM or a screenshot — drive the running app with **patchright** (a stealth Playwright
+fork) via the [`polyfetch-scrape`](../../polyfetch-scrape) tool. Unlike a static HTML fetch it
+executes the app's JS, so it can load SPA state, trigger actions, and evaluate visuals.
+
+```bash
+npm --prefix ui run dev    # serve the app → http://localhost:5173/
+```
+
+```python
+# uv run --directory /workspaces/qte77/polyfetch-scrape python <script.py>
+from patchright.sync_api import sync_playwright
+
+with sync_playwright() as pw:
+    page = pw.chromium.launch(headless=True).new_page()
+    errors = []
+    page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+    page.goto("http://localhost:5173/", wait_until="load")
+
+    # trigger an action — page.evaluate is robust when a toggle defeats strict locators
+    page.evaluate("() => [...document.querySelectorAll('button')]"
+                  ".find(b => b.textContent.trim() === 'Live')?.click()")
+
+    # evaluate the DOM, then the visuals
+    opts = page.eval_on_selector_all("option", "els => els.map(e => e.textContent)")
+    print("endpoints:", opts, "| console errors:", errors)
+    page.screenshot(path="/tmp/agenthud.png", full_page=True)
+```
+
+- **Scope:** manual smoke / visual verification — **not** part of `vitest run` CI. It needs the
+  external tool plus a one-time Chromium install (`make setup_browsers` in `polyfetch-scrape`).
+- **Proxy caveat:** the two "(via proxy)" endpoints are CORS-locked to `https://qte77.github.io`,
+  so from `localhost` they fail unless you run the localhost-allowed worker — see
+  [`worker/README.md`](../worker/README.md).
+
 ## Sources
 
 - Vitest `include` — <https://vitest.dev/config/include>
 - Next.js Vitest guide (notes both `__tests__` and co-location) — <https://nextjs.org/docs/app/guides/testing/vitest>
+- patchright (stealth Playwright fork) — <https://github.com/Kaliiiiiiiiii-Vinyzu/patchright>
