@@ -100,7 +100,7 @@ A Component is { "id": string, "component": { <Type>: <props> } } with exactly o
 
 Component shapes — match each Type's props EXACTLY:
 - Text:     { "Text": { "text": { "literalString": "Hi" }, "usageHint": "h1|h2|h3|h4|h5|body|caption" } }
-- Image:    { "Image": { "url": { "literalString": "https://…" }, "usageHint": "icon|avatar|header" } }   (url required)
+- Image:    { "Image": { "url": { "literalString": "asset:qte77-avatar" }, "usageHint": "icon|avatar|header" } }   (url REQUIRED — use EXACTLY "asset:qte77-avatar", the only bundled image available, for any avatar/logo/picture; do not invent other URLs)
 - Divider:  { "Divider": {} }   (optional: "axis": "horizontal|vertical", "thickness": 1)
 - Row / Column / List hold MANY children: { "Column": { "children": { "explicitList": ["id1","id2"] } } }
 - Card:     { "Card": { "child": "id" } }   (exactly ONE child id)
@@ -110,7 +110,10 @@ Component shapes — match each Type's props EXACTLY:
 - Tabs:     { "Tabs": { "tabItems": [ { "title": { "literalString": "Tab 1" }, "child": "id" } ] } }
 
 Bound values are TYPED literals, never a bare "literal": strings → { "literalString": "..." }, numbers → { "literalNumber": 50 }, booleans → { "literalBoolean": true } (or a data path → { "path": "/x" }).
-Define every id you reference in the same call, and never leave a children.explicitList, tabItems, or components list empty. The tree must be ACYCLIC — never make a component reference itself or one of its ancestors (no a→b→a loops). Keep it to a handful of components.`;
+CRITICAL tree rules — break either and the surface fails to render:
+1. Define EVERY id you reference (every child / explicitList entry / tabItems child) as its own component in the SAME call. No dangling references to ids you never define.
+2. The tree must be ACYCLIC — a strict parent→child hierarchy. Never make a component reference itself or any of its ancestors (no a→b→a loops).
+Never leave a children.explicitList, tabItems, or components list empty. Keep it to a handful of components.`;
 
 /**
  * Run a BYOK live agent in the browser and stream AG-UI events to `onEvent`.
