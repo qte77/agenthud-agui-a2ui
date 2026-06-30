@@ -83,7 +83,11 @@ export function LiveDashboard({
   // Connection setup (endpoint / key / model) — pinned to the sidebar, expanded by default,
   // collapses to its summary. Setup chrome lives here so the center stays the A2UI surface.
   const connectionPanel = (
-    <details open className="shrink-0 border-b border-border text-xs text-text-muted">
+    <details
+      open
+      name="sidebar-accordion"
+      className="shrink-0 border-b border-border text-xs text-text-muted"
+    >
       <summary className="px-2 py-2 cursor-pointer select-none marker:text-text-muted">
         <span className="text-xs font-semibold text-primary uppercase tracking-wide">
           Connection
@@ -138,23 +142,18 @@ export function LiveDashboard({
     </details>
   );
 
-  return (
-    <DashboardShell
-      view={mode}
-      onView={onMode}
-      headerMiddle={
-        <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
-          Live · BYOK
-        </span>
-      }
-      surfaceSubtitle="composed live by the agent via the render_ui tool"
-      eventsSubtitle="live protocol stream driving the surface"
-      eventLog={eventLog}
-      asidePanel={connectionPanel}
-      footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
-    >
+  // Prompt composer — second accordion pane (collapsed by default; opening it closes Connection).
+  // Lives in the sidebar so the center column stays purely the A2UI surface.
+  const promptPanel = (
+    <details name="sidebar-accordion" className="shrink-0 border-b border-border">
+      <summary className="px-2 py-2 cursor-pointer select-none marker:text-text-muted">
+        <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+          Prompt
+        </span>{" "}
+        <span className="text-xs text-text-muted">— ask the agent to compose a UI</span>
+      </summary>
       <form
-        className="mt-6 max-w-md mx-auto space-y-3"
+        className="px-2 pb-2 space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
           if (ready && !isRunning) void run(settings, prompt);
@@ -195,6 +194,30 @@ export function LiveDashboard({
           </p>
         )}
       </form>
+    </details>
+  );
+
+  return (
+    <DashboardShell
+      view={mode}
+      onView={onMode}
+      headerMiddle={
+        <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
+          Live · BYOK
+        </span>
+      }
+      surfaceSubtitle="composed live by the agent via the render_ui tool"
+      eventsSubtitle="live protocol stream driving the surface"
+      eventLog={eventLog}
+      asidePanel={
+        <>
+          {connectionPanel}
+          {promptPanel}
+        </>
+      }
+      footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
+    >
+      {null}
     </DashboardShell>
   );
 }

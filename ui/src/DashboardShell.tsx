@@ -71,9 +71,11 @@ export function DashboardShell({
         </main>
         <aside className="w-96 border-l border-border flex flex-col min-h-0">
           {asidePanel}
-          {/* Events log: collapsible; fills the panel when open, shrinks to its summary when closed. */}
+          {/* Events log: part of the sidebar accordion in Live (opening Connection/Prompt closes it);
+              open by default in Demo, which has no asidePanel and so no accordion peer. */}
           <details
-            open
+            name="sidebar-accordion"
+            open={!asidePanel}
             className="flex-1 min-h-0 flex flex-col [&:not([open])]:flex-none"
           >
             <summary className="px-2 py-2 border-b border-border cursor-pointer select-none marker:text-text-muted">
