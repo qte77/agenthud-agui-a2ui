@@ -15,6 +15,10 @@ New ADR: copy the most recent file, increment the number, and fill in
 | ADR | Title | Status |
 |---|---|---|
 | [0001][adr-0001] | Agent runtime stack | Accepted |
+| [0002][adr-0002] | Edge proxy platform: Cloudflare Workers | Accepted |
+| [0003][adr-0003] | Live-agent catalog instruction | Accepted |
 
 [madr]: https://adr.github.io/madr/
 [adr-0001]: 0001-agent-runtime-stack.md
+[adr-0002]: 0002-edge-proxy-platform.md
+[adr-0003]: 0003-live-catalog-instruction.md

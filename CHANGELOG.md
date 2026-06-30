@@ -71,6 +71,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Live agent: the `SYSTEM_PROMPT` now documents the **exact prop shapes for the full A2UI catalog**
+  (Button `child` + `action` object, Image `url`, Slider bare `minValue`/`maxValue`, Tabs `tabItems`,
+  CheckBox), so the model emits valid A2UI for rich UIs instead of mis-shaping the interactive/media
+  components. Decision recorded in [ADR-0003](docs/decisions/0003-live-catalog-instruction.md)
+  (curated reference vs `@a2ui` schema injection). Part of #129.
 - Live agent: the `SYSTEM_PROMPT` now requires the **top component's id to be `root`** (matching
   `beginRendering.root`). A live GitHub Models run on gh-pages showed the model setting `root: "root"`
   while naming its top component `card1`, so the renderer found no root and painted a **blank surface

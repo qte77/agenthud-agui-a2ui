@@ -14,6 +14,7 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 - [User Stories][user-stories] — acceptance criteria and status
 - [ADR-0001: Agent runtime stack][adr-0001] — TS-only, BYOK in-browser
 - [ADR-0002: Edge proxy platform][adr-0002] — Cloudflare Workers (vs Supabase / Vercel)
+- [ADR-0003: Live-agent catalog instruction][adr-0003] — curated prompt reference (vs schema injection)
 
 [architecture]: architecture.md
 [cloudflare-runbook]: cloudflare-runbook.md
@@ -22,3 +23,4 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 [user-stories]: UserStory.md
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0002]: decisions/0002-edge-proxy-platform.md
+[adr-0003]: decisions/0003-live-catalog-instruction.md

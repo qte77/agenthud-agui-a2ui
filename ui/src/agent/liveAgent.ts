@@ -97,12 +97,19 @@ A Component is { "id": string, "component": { <Type>: <props> } } with exactly o
 - CRITICAL: exactly ONE component must have id "root" — the top of the tree that beginRendering.root
   points at. If nothing has id "root", the surface renders blank. e.g. a single card UI →
   { "id": "root", "component": { "Card": { "child": "body" } } }, then define "body", etc.
-- Row / Column / List hold MANY children by id: { "Column": { "children": { "explicitList": ["a","b"] } } }
-- Card holds ONE child by id: { "Card": { "child": "an-id" } } — to group several items in a Card, point its child at a Column.
-- Text uses a typed literal: { "Text": { "text": { "literalString": "Hello" }, "usageHint": "h2" } }
-- Bound values use a TYPED literal, never a bare "literal": strings → { "literalString": "..." }, numbers (e.g. Slider value) → { "literalNumber": 50 }, booleans (e.g. CheckBox value) → { "literalBoolean": true }.
 
-Catalog types: Text, Image, Divider, Row, Column, Card, Button, CheckBox, Slider, Tabs.
+Component shapes — match each Type's props EXACTLY:
+- Text:     { "Text": { "text": { "literalString": "Hi" }, "usageHint": "h1|h2|h3|h4|h5|body|caption" } }
+- Image:    { "Image": { "url": { "literalString": "https://…" }, "usageHint": "icon|avatar|header" } }   (url required)
+- Divider:  { "Divider": {} }   (optional: "axis": "horizontal|vertical", "thickness": 1)
+- Row / Column / List hold MANY children: { "Column": { "children": { "explicitList": ["id1","id2"] } } }
+- Card:     { "Card": { "child": "id" } }   (exactly ONE child id)
+- Button:   { "Button": { "child": "id", "action": { "name": "doThing" } } }   (child = id of its label component, e.g. a Text; action is an OBJECT, not a string)
+- CheckBox: { "CheckBox": { "label": { "literalString": "Agree" }, "value": { "literalBoolean": true } } }
+- Slider:   { "Slider": { "value": { "literalNumber": 5 }, "minValue": 0, "maxValue": 10 } }   (minValue/maxValue are PLAIN numbers)
+- Tabs:     { "Tabs": { "tabItems": [ { "title": { "literalString": "Tab 1" }, "child": "id" } ] } }
+
+Bound values are TYPED literals, never a bare "literal": strings → { "literalString": "..." }, numbers → { "literalNumber": 50 }, booleans → { "literalBoolean": true } (or a data path → { "path": "/x" }).
 Keep it to a handful of components.`;
 
 /**
