@@ -24,6 +24,8 @@ interface DashboardShellProps {
   surfaceSubtitle: string;
   eventsSubtitle: string;
   eventLog: EventLogEntry[];
+  /** Optional collapsible panel pinned to the top of the right sidebar (Live: connection settings). */
+  asidePanel?: ReactNode;
   /** Lead text before the shared repo link in the footer. */
   footerLead: string;
   /** Mode-specific main body, rendered below the A2UI surface. */
@@ -38,6 +40,7 @@ export function DashboardShell({
   surfaceSubtitle,
   eventsSubtitle,
   eventLog,
+  asidePanel,
   footerLead,
   children,
 }: DashboardShellProps) {
@@ -66,16 +69,23 @@ export function DashboardShell({
           <A2UISurface />
           {children}
         </main>
-        <aside className="w-96 border-l border-border flex flex-col">
-          <div className="flex items-center gap-2 px-2 py-2 border-b border-border">
-            <span className="text-xs font-semibold text-data-positive uppercase tracking-wide">
-              AG-UI Events
-            </span>
-            <span className="text-xs text-text-muted">— {eventsSubtitle}</span>
-          </div>
-          <div className="flex-1 min-h-0">
-            <EventStream events={eventLog} />
-          </div>
+        <aside className="w-96 border-l border-border flex flex-col min-h-0">
+          {asidePanel}
+          {/* Events log: collapsible; fills the panel when open, shrinks to its summary when closed. */}
+          <details
+            open
+            className="flex-1 min-h-0 flex flex-col [&:not([open])]:flex-none"
+          >
+            <summary className="px-2 py-2 border-b border-border cursor-pointer select-none marker:text-text-muted">
+              <span className="text-xs font-semibold text-data-positive uppercase tracking-wide">
+                AG-UI Events
+              </span>{" "}
+              <span className="text-xs text-text-muted">— {eventsSubtitle}</span>
+            </summary>
+            <div className="flex-1 min-h-0">
+              <EventStream events={eventLog} />
+            </div>
+          </details>
         </aside>
       </div>
       <footer className="px-4 py-2 border-t border-border text-center text-xs text-text-muted">
