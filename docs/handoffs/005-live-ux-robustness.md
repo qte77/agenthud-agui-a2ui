@@ -1,6 +1,6 @@
 ---
 date: 2026-06-30
-status: planned
+status: shipped
 issues: [129]
 plan: plans/005-live-ux-robustness.md
 title: Handoff 005 — Live UX + robustness batch
