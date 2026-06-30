@@ -80,6 +80,64 @@ export function LiveDashboard({
   const selected =
     ENDPOINTS.find((e) => e.baseURL === settings.baseURL) ?? CUSTOM;
 
+  // Connection setup (endpoint / key / model) — pinned to the sidebar, expanded by default,
+  // collapses to its summary. Setup chrome lives here so the center stays the A2UI surface.
+  const connectionPanel = (
+    <details open className="shrink-0 border-b border-border text-xs text-text-muted">
+      <summary className="px-2 py-2 cursor-pointer select-none marker:text-text-muted">
+        <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+          Connection
+        </span>{" "}
+        <span className="text-text-muted">— OpenAI-compatible · BYOK</span>
+      </summary>
+      <div className="px-2 pb-2 space-y-2">
+        <select
+          className={fieldClass}
+          value={selected.label}
+          onChange={(e) => {
+            const next = ENDPOINTS.find((x) => x.label === e.target.value);
+            if (next) patchSettings({ baseURL: next.baseURL });
+          }}
+        >
+          {ENDPOINTS.map((e) => (
+            <option key={e.label} value={e.label}>
+              {e.label}
+            </option>
+          ))}
+        </select>
+        {selected.editable && (
+          <input
+            className={fieldClass}
+            type="url"
+            placeholder="Base URL (e.g. https://openrouter.ai/api/v1)"
+            value={settings.baseURL}
+            onChange={(e) => patchSettings({ baseURL: e.target.value })}
+          />
+        )}
+        <input
+          className={fieldClass}
+          type="password"
+          autoComplete="off"
+          placeholder="API key (in memory only — never stored)"
+          value={settings.apiKey}
+          onChange={(e) => patchSettings({ apiKey: e.target.value })}
+        />
+        <p className="text-[11px] leading-snug text-text-muted">
+          🔒 Your key is sent only to the chosen provider — proxy endpoints forward it without
+          storing it, and nothing is kept server-side. It's held in memory for this tab only (never
+          written to storage), so it's gone on refresh or close.
+        </p>
+        <input
+          className={fieldClass}
+          type="text"
+          placeholder="Model id (e.g. openai/gpt-4o-mini)"
+          value={settings.model}
+          onChange={(e) => patchSettings({ model: e.target.value })}
+        />
+      </div>
+    </details>
+  );
+
   return (
     <DashboardShell
       view={mode}
@@ -92,104 +150,51 @@ export function LiveDashboard({
       surfaceSubtitle="composed live by the agent via the render_ui tool"
       eventsSubtitle="live protocol stream driving the surface"
       eventLog={eventLog}
+      asidePanel={connectionPanel}
       footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
     >
+      <form
+        className="mt-6 max-w-md mx-auto space-y-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (ready && !isRunning) void run(settings, prompt);
+        }}
+      >
+        <textarea
+          className={`${fieldClass} resize-none`}
+          rows={3}
+          placeholder="Ask the agent to compose a UI — e.g. “show a card with a title and two buttons”"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
 
-          <form
-            className="mt-6 max-w-md mx-auto space-y-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (ready && !isRunning) void run(settings, prompt);
-            }}
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            disabled={!ready || isRunning}
+            className="px-3 py-1.5 rounded bg-primary text-primary-on text-sm transition-opacity disabled:opacity-40"
           >
-            <details className="text-xs text-text-muted">
-              <summary className="cursor-pointer select-none">
-                Connection (OpenAI-compatible · BYOK)
-              </summary>
-              <div className="mt-2 space-y-2">
-                <select
-                  className={fieldClass}
-                  value={selected.label}
-                  onChange={(e) => {
-                    const next = ENDPOINTS.find((x) => x.label === e.target.value);
-                    if (next) patchSettings({ baseURL: next.baseURL });
-                  }}
-                >
-                  {ENDPOINTS.map((e) => (
-                    <option key={e.label} value={e.label}>
-                      {e.label}
-                    </option>
-                  ))}
-                </select>
-                {selected.editable && (
-                  <input
-                    className={fieldClass}
-                    type="url"
-                    placeholder="Base URL (e.g. https://openrouter.ai/api/v1)"
-                    value={settings.baseURL}
-                    onChange={(e) => patchSettings({ baseURL: e.target.value })}
-                  />
-                )}
-                <input
-                  className={fieldClass}
-                  type="password"
-                  autoComplete="off"
-                  placeholder="API key (in memory only — never stored)"
-                  value={settings.apiKey}
-                  onChange={(e) => patchSettings({ apiKey: e.target.value })}
-                />
-                <p className="text-[11px] leading-snug text-text-muted">
-                  🔒 Your key is sent only to the chosen provider — proxy endpoints forward it
-                  without storing it, and nothing is kept server-side. It's held in memory for this
-                  tab only (never written to storage), so it's gone on refresh or close.
-                </p>
-                <input
-                  className={fieldClass}
-                  type="text"
-                  placeholder="Model id (e.g. openai/gpt-4o-mini)"
-                  value={settings.model}
-                  onChange={(e) => patchSettings({ model: e.target.value })}
-                />
-              </div>
-            </details>
+            {isRunning ? "Running…" : "Run"}
+          </button>
+          {isRunning && (
+            <button
+              type="button"
+              onClick={stop}
+              className="px-3 py-1.5 rounded border border-border bg-surface text-text text-sm hover:border-primary"
+            >
+              Stop
+            </button>
+          )}
+        </div>
 
-            <textarea
-              className={`${fieldClass} resize-none`}
-              rows={3}
-              placeholder="Ask the agent to compose a UI — e.g. “show a card with a title and two buttons”"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-
-            <div className="flex items-center gap-2">
-              <button
-                type="submit"
-                disabled={!ready || isRunning}
-                className="px-3 py-1.5 rounded bg-primary text-primary-on text-sm transition-opacity disabled:opacity-40"
-              >
-                {isRunning ? "Running…" : "Run"}
-              </button>
-              {isRunning && (
-                <button
-                  type="button"
-                  onClick={stop}
-                  className="px-3 py-1.5 rounded border border-border bg-surface text-text text-sm hover:border-primary"
-                >
-                  Stop
-                </button>
-              )}
-            </div>
-
-            {error && (
-              <p className="text-xs text-data-negative break-words">{error}</p>
-            )}
-            {!settings.apiKey.trim() && (
-              <p className="text-xs text-text-muted">
-                Bring your own key for any CORS-friendly OpenAI-compatible endpoint.
-                Demo mode needs no key.
-              </p>
-            )}
-          </form>
+        {error && <p className="text-xs text-data-negative break-words">{error}</p>}
+        {!settings.apiKey.trim() && (
+          <p className="text-xs text-text-muted">
+            Bring your own key for any CORS-friendly OpenAI-compatible endpoint. Demo mode needs no
+            key.
+          </p>
+        )}
+      </form>
     </DashboardShell>
   );
 }

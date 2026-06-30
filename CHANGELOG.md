@@ -40,6 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- **Live layout:** the BYOK **connection settings** (endpoint / key / model) move from the center to
+  the right sidebar, so the center stays the A2UI surface (content) + the prompt composer. The
+  sidebar now stacks two **collapsible** sections — Connection and AG-UI Events — both expanded by
+  default, each collapsing to its header. `ui/src/DashboardShell.tsx` + `ui/src/LiveDashboard.tsx`.
 - The Demo and Live dashboards now share one `DashboardShell` (header, A2UI surface, event sidebar,
   footer) instead of duplicating it — no behavior change; the Live tier's AI SDK stays lazy-loaded.
 - Header logo mark adopts the shared `brand-mark` style (neutral `--color-text`, theme-adaptive,
