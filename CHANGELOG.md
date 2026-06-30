@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `VITE_BUILD_SHA`; local builds show `dev`), so deployed builds are distinguishable.
 - Header links to the GitHub **Repo** and **Issues** (octocat icon + text), on both the Demo and
   Live pages.
+- `ui/src/EventStream.tsx`: the AG-UI events panel shows a one-line hint ("Run a prompt to see the
+  live event stream") before the first run, instead of an empty box. Closes #118.
 - Edge proxy (`worker/`): a BYOK pass-through Cloudflare Worker that relays the non-CORS endpoints
   (GitHub Models, Google) server-to-server, so they work in-browser from the static site with the
   visitor's own key. Holds no secret; fixed upstream allowlist (no open proxy); CORS limited to

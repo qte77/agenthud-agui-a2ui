@@ -33,6 +33,11 @@ export function EventStream({ events }: EventStreamProps) {
       ref={containerRef}
       className="h-full overflow-y-auto bg-surface font-mono text-xs p-2 space-y-1.5"
     >
+      {events.length === 0 && (
+        <p className="text-text-muted">
+          Run a prompt to see the live event stream.
+        </p>
+      )}
       {events.map((entry, i) => (
         <div key={i}>
           <div className="flex items-start gap-2">
