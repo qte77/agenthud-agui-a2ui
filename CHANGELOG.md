@@ -67,6 +67,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- A2UI **value bindings** now use typed literals — `literalString` / `literalNumber` /
+  `literalBoolean` — instead of a bare `literal`. The `@a2ui` message schema rejects bare `literal`
+  on typed bindings (`Slider.value`, `CheckBox.value`), so interactive components **threw mid-render
+  and never painted** (demo + live). Fixed across `ui/src/recordings/overview.json` and the live
+  system prompt; guarded by a real-`@a2ui` contract test. See `docs/protocols.md` (v0.8). Part of #129.
 - GitHub octocat uses GitHub's actual **black/white** marks (vendored `#181717`/white SVGs from the
   qte77 brand kit), swapped by theme per GitHub's brand guidelines — never recolored.
 - Demo replay: a single-segment path now keeps its **cumulative** root, so a chosen decision
