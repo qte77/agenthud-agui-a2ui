@@ -69,22 +69,29 @@ export function DashboardShell({
           <A2UISurface />
           {children}
         </main>
-        <aside className="w-96 border-l border-border flex flex-col min-h-0">
+        <aside className="w-96 border-l border-border flex flex-col min-h-0 overflow-hidden">
           {asidePanel}
           {/* Events log: part of the sidebar accordion in Live (opening Connection/Prompt closes it);
-              open by default in Demo, which has no asidePanel and so no accordion peer. */}
+              open by default in Demo, which has no asidePanel and so no accordion peer.
+              overflow-hidden on the <details> + wrapper is required: a native <details> flex parent
+              doesn't otherwise bound its children, so the stream would grow past the footer instead
+              of scrolling internally. */}
+          {/* A native <details> lays its content out at intrinsic height regardless of its own
+              (flex-bounded) box, so neither flex nor grid bounds the scroll region. Position the
+              stream absolutely instead — it then sizes to the details box (h-10 summary offset) and
+              scrolls internally rather than spilling past the footer. */}
           <details
             name="sidebar-accordion"
             open={!asidePanel}
-            className="flex-1 min-h-0 flex flex-col [&:not([open])]:flex-none"
+            className="relative flex-1 min-h-0 overflow-hidden [&:not([open])]:flex-none"
           >
-            <summary className="px-2 py-2 border-b border-border cursor-pointer select-none marker:text-text-muted">
+            <summary className="flex h-10 items-center gap-1 px-2 border-b border-border cursor-pointer select-none marker:text-text-muted">
               <span className="text-xs font-semibold text-data-positive uppercase tracking-wide">
                 AG-UI Events
               </span>{" "}
-              <span className="text-xs text-text-muted">— {eventsSubtitle}</span>
+              <span className="text-xs text-text-muted truncate">— {eventsSubtitle}</span>
             </summary>
-            <div className="flex-1 min-h-0">
+            <div className="absolute inset-x-0 bottom-0 top-10 overflow-hidden">
               <EventStream events={eventLog} />
             </div>
           </details>
