@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { applyA2UIEvent } from "../src/agent/applyA2UIEvent";
+import { applyA2UIEvent, appendLogEntry } from "../src/agent/applyA2UIEvent";
 
 describe("applyA2UIEvent", () => {
   it("renders a valid batch and logs the component summary", () => {
@@ -82,5 +82,51 @@ describe("applyA2UIEvent", () => {
     expect(entry.text).toContain("A2UI render error");
     expect(entry.text).toContain("Card child required");
     spy.mockRestore();
+  });
+});
+
+describe("appendLogEntry (coalescing text deltas)", () => {
+  it("merges consecutive TEXT_MESSAGE_CONTENT into one entry", () => {
+    const log = [{ type: "TEXT_MESSAGE_CONTENT", timestamp: 1, text: "Hel" }];
+
+    const next = appendLogEntry(log, { type: "TEXT_MESSAGE_CONTENT", timestamp: 2, text: "lo" });
+
+    expect(next).toHaveLength(1);
+    expect(next[0]?.text).toBe("Hello");
+    expect(next[0]?.timestamp).toBe(1); // keep the first delta's timestamp
+  });
+
+  it("does not merge when a different event type separates two text entries", () => {
+    const log = [
+      { type: "TEXT_MESSAGE_CONTENT", timestamp: 1, text: "a" },
+      { type: "TOOL_CALL_START", timestamp: 2, text: "render_ui" },
+    ];
+
+    const next = appendLogEntry(log, { type: "TEXT_MESSAGE_CONTENT", timestamp: 3, text: "b" });
+
+    expect(next).toHaveLength(3);
+  });
+
+  it("appends a non-text entry unchanged", () => {
+    const log = [{ type: "TEXT_MESSAGE_CONTENT", timestamp: 1, text: "a" }];
+
+    const next = appendLogEntry(log, { type: "RUN_FINISHED", timestamp: 2 });
+
+    expect(next).toHaveLength(2);
+    expect(next[1]?.type).toBe("RUN_FINISHED");
+  });
+
+  it("appends to an empty log", () => {
+    const next = appendLogEntry([], { type: "TEXT_MESSAGE_CONTENT", timestamp: 0, text: "a" });
+    expect(next).toEqual([{ type: "TEXT_MESSAGE_CONTENT", timestamp: 0, text: "a" }]);
+  });
+
+  it("does not mutate the original log or its entries", () => {
+    const log = [{ type: "TEXT_MESSAGE_CONTENT", timestamp: 1, text: "a" }];
+
+    appendLogEntry(log, { type: "TEXT_MESSAGE_CONTENT", timestamp: 2, text: "b" });
+
+    expect(log).toHaveLength(1);
+    expect(log[0]?.text).toBe("a");
   });
 });
