@@ -71,6 +71,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Live agent robustness: `ui/src/agent/applyA2UIEvent.ts` now **surfaces A2UI contract violations in
+  the event log** (Red-tested) instead of skipping a rejected batch silently — a failed live batch no
+  longer blanks the surface with no explanation. The `SYSTEM_PROMPT` also asks for **one complete
+  `render_ui` call** and forbids empty `children`/`tabItems`/`components` (gpt-4o-mini sometimes split
+  the UI across partial calls or left an array empty, which `@a2ui` rejects). Part of #129.
 - Live agent: the `SYSTEM_PROMPT` now documents the **exact prop shapes for the full A2UI catalog**
   (Button `child` + `action` object, Image `url`, Slider bare `minValue`/`maxValue`, Tabs `tabItems`,
   CheckBox), so the model emits valid A2UI for rich UIs instead of mis-shaping the interactive/media

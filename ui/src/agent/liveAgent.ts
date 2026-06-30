@@ -87,7 +87,7 @@ function buildRenderUiTool() {
   });
 }
 
-const SYSTEM_PROMPT = `You are a UI-composing agent. Answer the user by calling the \`render_ui\` tool to draw an interface on the "main" surface with A2UI messages — never reply in prose alone.
+const SYSTEM_PROMPT = `You are a UI-composing agent. Answer the user by calling the \`render_ui\` tool to draw an interface on the "main" surface with A2UI messages — never reply in prose alone. Make exactly ONE render_ui call with the COMPLETE interface (one beginRendering + one surfaceUpdate listing every component).
 
 An A2UI batch is an array of messages:
 - { "beginRendering": { "surfaceId": "main", "root": "root" } }   (send first; "root" is the id of your TOP component)
@@ -110,7 +110,7 @@ Component shapes — match each Type's props EXACTLY:
 - Tabs:     { "Tabs": { "tabItems": [ { "title": { "literalString": "Tab 1" }, "child": "id" } ] } }
 
 Bound values are TYPED literals, never a bare "literal": strings → { "literalString": "..." }, numbers → { "literalNumber": 50 }, booleans → { "literalBoolean": true } (or a data path → { "path": "/x" }).
-Keep it to a handful of components.`;
+Define every id you reference in the same call, and never leave a children.explicitList, tabItems, or components list empty. Keep it to a handful of components.`;
 
 /**
  * Run a BYOK live agent in the browser and stream AG-UI events to `onEvent`.
