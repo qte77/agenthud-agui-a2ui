@@ -78,10 +78,14 @@ export function applyA2UIEvent(
 
   const parsed = A2UIMessageBatchSchema.safeParse(event.a2uiMessages);
   if (!parsed.success) {
-    console.warn(
-      "A2UI contract violation — skipping render:",
-      parsed.error.issues
-    );
+    // Surface the violation in the event log instead of skipping silently (a blank surface with no
+    // log entry once hid a live model emitting a batch that fails our contract). Mirrors the
+    // render-error surfacing below.
+    console.warn("A2UI contract violation — skipping render:", parsed.error.issues);
+    const first = parsed.error.issues[0];
+    entry.text = `A2UI contract violation (skipped): ${
+      first ? `${first.path.join(".")} — ${first.message}` : "invalid batch"
+    }`;
     return entry;
   }
 

@@ -40,6 +40,21 @@ describe("applyA2UIEvent", () => {
     expect(entry.a2uiComponentCount).toBeUndefined();
   });
 
+  it("surfaces a contract violation in the log entry instead of skipping silently", () => {
+    const spy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const render = vi.fn();
+
+    const entry = applyA2UIEvent(
+      { type: "TOOL_CALL_END", a2uiMessages: [{ bogus: true }] },
+      0,
+      render
+    );
+
+    expect(render).not.toHaveBeenCalled();
+    expect(entry.text).toContain("A2UI contract violation");
+    spy.mockRestore();
+  });
+
   it("passes non-A2UI lifecycle events through untouched", () => {
     const render = vi.fn();
     const entry = applyA2UIEvent({ type: "RUN_STARTED" }, 5, render);
