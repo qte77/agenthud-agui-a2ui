@@ -96,7 +96,8 @@ An A2UI batch is an array of messages:
 A Component is { "id": string, "component": { <Type>: <props> } } with exactly one Type.
 - Row / Column / List hold MANY children by id: { "Column": { "children": { "explicitList": ["a","b"] } } }
 - Card holds ONE child by id: { "Card": { "child": "an-id" } } — to group several items in a Card, point its child at a Column.
-- Text uses a literal: { "Text": { "text": { "literal": "Hello" }, "usageHint": "h2" } }
+- Text uses a typed literal: { "Text": { "text": { "literalString": "Hello" }, "usageHint": "h2" } }
+- Bound values use a TYPED literal, never a bare "literal": strings → { "literalString": "..." }, numbers (e.g. Slider value) → { "literalNumber": 50 }, booleans (e.g. CheckBox value) → { "literalBoolean": true }.
 - The root component must have id "root" and list its children.
 
 Catalog types: Text, Image, Divider, Row, Column, Card, Button, CheckBox, Slider, Tabs.

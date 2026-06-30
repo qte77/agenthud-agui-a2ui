@@ -124,6 +124,26 @@ AGENT LOGIC  — LLM + orchestration (Vercel AI SDK / Google ADK / LangGraph …
 - **Relation:** a transport-agnostic payload, usually delivered over AG-UI. The client's
   catalog maps `"Card"` → a native widget; unknown types are rejected.
 
+### What this project implements (v0.8)
+
+This app uses `@a2ui/react`'s **v0.8** default export, whose message shapes **differ from the
+v0.9/v1.0 spec shown above** (`createSurface`/`updateComponents`/bare values). Verify against the
+installed renderer, not the spec:
+
+- **Messages:** `beginRendering` (`{ surfaceId, root }`) + `surfaceUpdate` (`{ surfaceId, components }`)
+  — not `createSurface`/`updateComponents`.
+- **Component:** `{ id, component: { <Type>: <props> } }` (the type is the key) — not a flat
+  `type` + `props`.
+- **Containers:** `Card` holds one `child` (an id); `Row`/`Column`/`List` hold `children.explicitList`.
+- **Bound values:** **typed literals** — `{ literalString }` / `{ literalNumber }` /
+  `{ literalBoolean }` (or `{ path }`). A bare `{ literal }` is non-standard: the runtime resolver
+  tolerates it for some fields, but the message **schema rejects it** on typed bindings (e.g.
+  `Slider.value`, `CheckBox.value`) — always use the typed key.
+- **Not used:** the data-model channel (`dataModelUpdate` / `path` / `template`) — the live agent
+  emits static, literal-only UIs for now.
+
+Our zod envelope lives in `ui/src/agent/contract.ts`; examples in `ui/src/recordings/`.
+
 ## Adjacent
 
 - **ACP (IBM / BeeAI):** agent↔agent (JSON-RPC over HTTP/WS); **merged into A2A** (Aug 2025)
