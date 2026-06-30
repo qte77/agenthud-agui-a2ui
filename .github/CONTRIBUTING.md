@@ -35,7 +35,9 @@ npm run build      # tsc -b && vite build
 ```
 
 Run `npm run typecheck && npm run lint && npm test` (from `ui/`) before opening a PR.
-Test layout: [docs/testing.md](../docs/testing.md).
+Test layout: [docs/testing.md](../docs/testing.md). Non-trivial module logic is **test-first**
+(Red-Green-Refactor); config/prompt changes are verified by effect — see
+[AGENTS.md](../AGENTS.md#tests).
 
 ## Pull requests
 
