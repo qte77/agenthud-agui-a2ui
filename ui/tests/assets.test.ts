@@ -25,6 +25,18 @@ describe("resolveAssets", () => {
     expect(json).not.toContain("asset:qte77-avatar");
   });
 
+  it("resolves every token in ASSET_MAP (so the prompt's choices all render)", () => {
+    for (const name of Object.keys(ASSET_MAP)) {
+      const json = JSON.stringify(
+        resolveAssets([
+          { surfaceUpdate: { surfaceId: "main", components: [{ id: "i", component: { Image: { url: { literalString: `asset:${name}` } } } }] } },
+        ]),
+      );
+      expect(json, `token ${name}`).not.toContain(`asset:${name}`);
+      expect(json, `token ${name}`).toContain(ASSET_MAP[name]!);
+    }
+  });
+
   it("leaves a non-asset literalString untouched", () => {
     const messages = [
       { surfaceUpdate: { surfaceId: "main", components: [{ id: "t", component: { Text: { text: { literalString: "hello" } } } }] } },
