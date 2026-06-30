@@ -20,7 +20,7 @@ TypeScript-only stack (Vercel AI SDK + AG-UI SDK + zod).
 
 Use the **TypeScript-only** stack. The simplest real path is **BYOK in-browser**:
 `ai` + `@ai-sdk/openai` call an OpenAI-compatible endpoint; a `render_ui` tool whose
-`inputSchema` is the zod A2UI contract (`src/agent/contract.ts`) produces validated
+`inputSchema` is the zod A2UI contract (`ui/src/agent/contract.ts`) produces validated
 A2UI component batches that feed the existing `applyA2UIEvent` seam. `zod` is the
 single contract for both internal (recordings) and external (live agent) data.
 
@@ -48,7 +48,8 @@ splits the repo into two languages.
 - BYOK in-browser is the live tier (PR2). The keyless GitHub-Models path (GitHub Models
   has no browser CORS) and the `@ag-ui/client` `HttpAgent` SSE transport are **deferred**
   (YAGNI) to an optional Cloudflare Worker, built only if a no-key public demo is wanted.
-- The BYOK key is held in `sessionStorage` only (never persisted), per US-7.
+- The BYOK key is held **in memory only** (never written to storage — gone on reload/close); the
+  base URL + model persist in `sessionStorage`, per US-7.
 - The three replay tiers degrade gracefully: Live (BYOK) → Demo (offline replay).
 
 ## Amendment (2026-06-22)

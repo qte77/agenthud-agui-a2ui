@@ -71,6 +71,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Live agent: the `SYSTEM_PROMPT` now requires the **top component's id to be `root`** (matching
+  `beginRendering.root`). A live GitHub Models run on gh-pages showed the model setting `root: "root"`
+  while naming its top component `card1`, so the renderer found no root and painted a **blank surface
+  with no error**. Also corrected stale docs (`docs/architecture.md` `PROXY_BASE` location + a new
+  "A2UI render pipeline" section; ADR-0001 in-memory key + `ui/` path). Part of #129.
 - A2UI **value bindings** now use typed literals — `literalString` / `literalNumber` /
   `literalBoolean` — instead of a bare `literal`. The `@a2ui` message schema rejects bare `literal`
   on typed bindings (`Slider.value`, `CheckBox.value`), so interactive components **threw mid-render

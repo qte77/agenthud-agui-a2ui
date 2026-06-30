@@ -48,13 +48,32 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
 > workers.dev subdomain) is defined in [`ui/src/config.ts`](../ui/src/config.ts) — the single
 > source of truth for the URL.
 
+## A2UI render pipeline (model → components)
+
+The final box above expands to the translation that turns a model reply into rendered widgets:
+
+1. The live model returns a **`render_ui` tool call** whose arguments are an A2UI message batch — the
+   tool's `inputSchema` is the zod contract in `ui/src/agent/contract.ts`, so the SDK validates (and
+   can repair) the model's output.
+2. `streamPartToEvent` maps the SDK stream to AG-UI events; the completed tool call carries the batch
+   as `a2uiMessages`.
+3. `applyA2UIEvent` (the seam shared with replay) re-validates the batch against the contract, then
+   hands it to `@a2ui`'s `processMessages`.
+4. `processMessages` builds a component tree for the `main` surface **starting at
+   `beginRendering.root`**, resolving `Card.child` / `Column.children`; `<A2UIRenderer surfaceId="main">`
+   maps each typed component (`Card`, `Text`, …) to a catalog widget and resolves bound values
+   (`literalString` / `literalNumber` / `literalBoolean`).
+
+> Gotcha: `beginRendering.root` **must equal the id of the top component** — a missing root id paints a
+> blank surface with no error. The live `SYSTEM_PROMPT` (`ui/src/agent/liveAgent.ts`) enforces this.
+
 ## The ours / theirs line
 
 - **Ours:** the GitHub Pages static app **and** the worker *source* (`worker/`), plus
   `wrangler.toml` — which *is* the worker's infrastructure-as-code.
 - **Theirs:** Cloudflare's edge *runtime* (executes our worker; the only thing `wrangler deploy`
   creates) and the upstream LLM APIs.
-- **The seam** is two strings: `PROXY_BASE` (app → worker, in `ui/src/LiveDashboard.tsx`) and the
+- **The seam** is two strings: `PROXY_BASE` (app → worker, in `ui/src/config.ts`) and the
   fixed upstream allowlist (worker → API, in `worker/src/router.ts`). **No secret crosses into
   "theirs" that the user didn't already own** — BYOK pass-through.
 
