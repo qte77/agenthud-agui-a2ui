@@ -17,20 +17,31 @@ export interface Segment {
   componentHint: string;
 }
 
-/** Collect component catalog types from one event into the per-segment type set. */
-function trackComponentTypes(event: RecordingEvent, types: Set<string>): void {
+interface RecordingComponent {
+  id: string;
+  component?: Record<string, unknown>;
+}
+
+/** Run `fn` over each surfaceUpdate's components array in an event's A2UI messages. */
+function forEachComponentList(
+  event: RecordingEvent,
+  fn: (components: RecordingComponent[]) => void,
+): void {
   if (!event.a2uiMessages) return;
   for (const msg of event.a2uiMessages as Record<string, unknown>[]) {
-    const update = msg.surfaceUpdate as
-      | { components?: { component?: Record<string, unknown> }[] }
-      | undefined;
-    if (!update?.components) continue;
-    for (const comp of update.components) {
-      if (!comp.component) continue;
-      const type = Object.keys(comp.component)[0];
+    const update = msg.surfaceUpdate as { components?: RecordingComponent[] } | undefined;
+    if (update?.components) fn(update.components);
+  }
+}
+
+/** Collect component catalog types from one event into the per-segment type set. */
+function trackComponentTypes(event: RecordingEvent, types: Set<string>): void {
+  forEachComponentList(event, (components) => {
+    for (const comp of components) {
+      const type = comp.component && Object.keys(comp.component)[0];
       if (type) types.add(type);
     }
-  }
+  });
 }
 
 /** Derive segments from STEP_STARTED events with segment field */
@@ -100,24 +111,19 @@ function patchRootChildren(
   if (!event.a2uiMessages) return event;
 
   const patched = structuredClone(event);
-  for (const msg of patched.a2uiMessages as Record<string, unknown>[]) {
-    const update = msg.surfaceUpdate as
-      | { components?: { id: string; component?: Record<string, unknown> }[] }
-      | undefined;
-    if (!update?.components) continue;
-
-    for (const c of update.components) definedIds.add(c.id);
-    const root = update.components.find((c) => c.id === "root");
-    if (!root?.component) continue;
+  forEachComponentList(patched, (components) => {
+    for (const c of components) definedIds.add(c.id);
+    const root = components.find((c) => c.id === "root");
+    if (!root?.component) return;
 
     // root.component is a non-empty map (one catalog type per component)
     const rootType = Object.keys(root.component)[0]!;
     const rootProps = root.component[rootType] as Record<string, unknown> | undefined;
     const children = rootProps?.children as { explicitList?: string[] } | undefined;
-    if (!children?.explicitList) continue;
+    if (!children?.explicitList) return;
 
     children.explicitList = children.explicitList.filter((id) => definedIds.has(id));
-  }
+  });
   return patched;
 }
 
