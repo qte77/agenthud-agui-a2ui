@@ -17,6 +17,11 @@ treat it as the source of truth.
   See [docs/testing.md](docs/testing.md).
 - **Test what matters:** modules and non-trivial behavior (logic, contracts, component
   callbacks). Skip trivial scripts, library internals, and styling; don't chase coverage.
+- **Red-Green-Refactor:** for that non-trivial module logic, write the failing behavior test
+  **first** (Red), implement the minimum to pass (Green), then refactor — don't add tests after
+  the fact.
+- Data / config / prompt changes (recordings, system prompts, tsconfig, endpoint lists) are **not**
+  unit-TDD-shaped — verify them by effect (render / build / E2E), not a unit test.
 
 ## Commits & PRs
 
