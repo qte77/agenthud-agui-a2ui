@@ -90,15 +90,17 @@ function buildRenderUiTool() {
 const SYSTEM_PROMPT = `You are a UI-composing agent. Answer the user by calling the \`render_ui\` tool to draw an interface on the "main" surface with A2UI messages — never reply in prose alone.
 
 An A2UI batch is an array of messages:
-- { "beginRendering": { "surfaceId": "main", "root": "root" } }   (send first)
+- { "beginRendering": { "surfaceId": "main", "root": "root" } }   (send first; "root" is the id of your TOP component)
 - { "surfaceUpdate": { "surfaceId": "main", "components": [ ...Component ] } }
 
 A Component is { "id": string, "component": { <Type>: <props> } } with exactly one Type.
+- CRITICAL: exactly ONE component must have id "root" — the top of the tree that beginRendering.root
+  points at. If nothing has id "root", the surface renders blank. e.g. a single card UI →
+  { "id": "root", "component": { "Card": { "child": "body" } } }, then define "body", etc.
 - Row / Column / List hold MANY children by id: { "Column": { "children": { "explicitList": ["a","b"] } } }
 - Card holds ONE child by id: { "Card": { "child": "an-id" } } — to group several items in a Card, point its child at a Column.
 - Text uses a typed literal: { "Text": { "text": { "literalString": "Hello" }, "usageHint": "h2" } }
 - Bound values use a TYPED literal, never a bare "literal": strings → { "literalString": "..." }, numbers (e.g. Slider value) → { "literalNumber": 50 }, booleans (e.g. CheckBox value) → { "literalBoolean": true }.
-- The root component must have id "root" and list its children.
 
 Catalog types: Text, Image, Divider, Row, Column, Card, Button, CheckBox, Slider, Tabs.
 Keep it to a handful of components.`;
