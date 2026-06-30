@@ -59,7 +59,7 @@ export function EventStream({ events }: EventStreamProps) {
                 processMessages →{" "}
               </span>
               <span className="text-text-muted text-[10px]">
-                {entry.a2uiComponentCount} components:{" "}
+                {entry.a2uiComponentCount} components, {entry.a2uiComponentTypes.length} types:{" "}
               </span>
               <span className="text-primary text-[10px]">
                 {entry.a2uiComponentTypes.join(", ")}
