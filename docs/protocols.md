@@ -165,7 +165,7 @@ agenthud already sits at the **AG-UI + A2UI** layers:
   `TOOL_CALL_*`) via `useReplayEngine` and the shared `applyA2UIEvent` seam.
 - `@a2ui/react` — renders A2UI catalog components on the surface.
 
-A live **BYOK** agent (planned) adds the **agent-logic** layer (Vercel AI SDK) emitting the
+A live **BYOK** agent (shipped) adds the **agent-logic** layer (Vercel AI SDK) emitting the
 same AG-UI events a real agent would — the replay engine and a live SSE stream share one
 event schema. **MCP** (tools) and **A2A** (multi-agent) are natural future layers, not yet
 wired in. See [ADR-0001][adr-0001].

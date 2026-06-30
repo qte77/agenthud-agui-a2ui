@@ -37,13 +37,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Strict typing + type-checked linting** — `noUncheckedIndexedAccess` / `exactOptionalPropertyTypes`
   (+ more) on both tsconfigs, and `strictTypeChecked` ESLint with a complexity gate on `ui/` and
   `worker/`.
+- **Self-hosted live images** — `ui/src/agent/assets.ts` (`ASSET_MAP` + `resolveAssets`) maps
+  `asset:<name>` tokens to bundled, base-path-correct URLs (the runtime counterpart to the demo's
+  build-time replace; zero external requests). Tokens: `asset:qte77-avatar`, `asset:github-mark`; the
+  live `SYSTEM_PROMPT` lists them so the model references a real bundled image instead of inventing a
+  URL. Part of #129.
 
 ### Changed
 
-- **Live layout:** the BYOK **connection settings** (endpoint / key / model) move from the center to
-  the right sidebar, so the center stays the A2UI surface (content) + the prompt composer. The
-  sidebar now stacks two **collapsible** sections — Connection and AG-UI Events — both expanded by
-  default, each collapsing to its header. `ui/src/DashboardShell.tsx` + `ui/src/LiveDashboard.tsx`.
+- **Live layout:** the right sidebar is now a **3-pane exclusive accordion** (native `<details name>`)
+  — **Connection / Prompt / Events**; opening one collapses the others. The BYOK connection settings
+  *and* the prompt composer both live in the sidebar, so the center column is **only the A2UI
+  surface**. The events panel scrolls **internally** (absolute-positioned within its `<details>`)
+  instead of overflowing past the footer; its log summary now reads "{n} components, {m} types".
+  `ui/src/DashboardShell.tsx` + `ui/src/LiveDashboard.tsx` + `ui/src/EventStream.tsx`.
+- **Live model field** is now a `<select>` of curated per-provider models + a **Custom…** option that
+  reveals a free-text input (mirrors the provider picker; any id still accepted) — was a bare
+  free-text input. `ui/src/config.ts` `Endpoint` gains `models?: string[]` with per-provider
+  `verified <date>` freshness markers. `ui/src/LiveDashboard.tsx`. Part of #129.
 - The Demo and Live dashboards now share one `DashboardShell` (header, A2UI surface, event sidebar,
   footer) instead of duplicating it — no behavior change; the Live tier's AI SDK stays lazy-loaded.
 - Header logo mark adopts the shared `brand-mark` style (neutral `--color-text`, theme-adaptive,
@@ -97,6 +108,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   renders **all** of its cards, not just the last. The per-event root patch was stripping cards
   added by earlier batches in the same segment (additive `surfaceUpdate`s rely on the @a2ui
   processor's cumulative component map).
+- Live robustness: `streamText` now forces **exactly one `render_ui` call** —
+  `toolChoice:{type:'tool',toolName:'render_ui'}` + `stopWhen: stepCountIs(1)` — so the model can't
+  print the A2UI batch as prose (token flood, nothing renders) or split it across calls. The contract
+  (`ui/src/agent/contract.ts`) also rejects a **cyclic** component tree (3-colour DFS over the
+  child-reference graph), and the `SYSTEM_PROMPT` adds no-cycles / define-every-id rules. Consecutive
+  `TEXT_MESSAGE_CONTENT` deltas are coalesced into one event-log row. Part of #129.
+- Demo replay no longer floods the log with `@a2ui` **"references non-existent component ID"** errors:
+  `@a2ui` validates each `surfaceUpdate` **in isolation** (every referenced id must be in that same
+  message), but the demo replays incremental deltas that reference cards defined in earlier batches.
+  `ui/src/replaySnapshot.ts` folds each delta into a running snapshot and re-emits one **self-contained**
+  `surfaceUpdate` per step. Recorded in
+  [ADR-0004](docs/decisions/0004-self-contained-replay-snapshots.md). Closes #141.
 
 ## [0.2.0] - 2026-06-21
 

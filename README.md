@@ -48,8 +48,9 @@ npm run dev
 Pick a path from the decision tree or press **Play All**; click **Catalog** to browse the
 A2UI components.
 
-**Live (BYOK)** — toggle **Demo → Live** in the header and supply an OpenAI-compatible base
-URL + API key + model id (e.g. an OpenRouter key). Your **API key is held in memory only**
+**Live (BYOK)** — toggle **Demo → Live** in the header, pick an OpenAI-compatible provider
+(or **Custom…** for any base URL), paste your API key, and choose a model from the curated
+dropdown (**Custom…** accepts any id). Your **API key is held in memory only**
 (never stored — gone on reload); the base URL + model persist in `sessionStorage`. GitHub Models
 and Google route through the deployed edge proxy ([worker/README.md](worker/README.md)); the dev
 prefill + proxy env vars are documented in [ui/.env.example](ui/.env.example). The demo needs no
