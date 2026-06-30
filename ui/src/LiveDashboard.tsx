@@ -43,6 +43,64 @@ const fieldClass =
   "w-full rounded border border-border bg-bg px-2 py-1 text-sm text-text " +
   "focus:border-primary focus:outline-none";
 
+const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-4o-mini)";
+
+// Show the model free-text field when the user explicitly picked Custom…, or the persisted model
+// isn't one of the provider's suggestions. Pure helper so it stays out of LiveDashboard's complexity.
+function isCustomModel(explicit: boolean, model: string, models: string[]): boolean {
+  return explicit || (model.trim() !== "" && !models.includes(model));
+}
+
+// Model picker — mirrors the provider <select> + Custom… reveal: a dropdown of the provider's models
+// plus Custom…, which shows a free-text field (any id still accepted). Providers with no curated list
+// fall back to the plain free-text input. Extracted to keep LiveDashboard under the complexity gate.
+function ModelPicker({
+  models,
+  value,
+  isCustom,
+  onPick,
+  onCustom,
+  onType,
+}: {
+  models: string[];
+  value: string;
+  isCustom: boolean;
+  onPick: (model: string) => void;
+  onCustom: () => void;
+  onType: (model: string) => void;
+}) {
+  const freeText = (
+    <input
+      className={fieldClass}
+      type="text"
+      placeholder={MODEL_PLACEHOLDER}
+      value={value}
+      onChange={(e) => onType(e.target.value)}
+    />
+  );
+  if (models.length === 0) return freeText;
+  return (
+    <>
+      <select
+        className={fieldClass}
+        value={isCustom ? "__custom__" : value}
+        onChange={(e) => (e.target.value === "__custom__" ? onCustom() : onPick(e.target.value))}
+      >
+        <option value="" disabled>
+          Select a model…
+        </option>
+        {models.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+        <option value="__custom__">Custom…</option>
+      </select>
+      {isCustom && freeText}
+    </>
+  );
+}
+
 export function LiveDashboard({
   mode,
   onMode,
@@ -52,6 +110,9 @@ export function LiveDashboard({
 }) {
   const [settings, setSettings] = useState<LiveSettings>(loadSettings);
   const [prompt, setPrompt] = useState("");
+  // Tracks an explicit "Custom…" model choice — mirrors the provider's editable reveal (the provider
+  // uses a static `editable` flag; a model id can't, so we remember the Custom selection).
+  const [modelCustom, setModelCustom] = useState(false);
   const { eventLog, isRunning, error, run, stop } = useLiveAgent();
 
   function patchSettings(patch: Partial<LiveSettings>) {
@@ -80,6 +141,11 @@ export function LiveDashboard({
   const selected =
     ENDPOINTS.find((e) => e.baseURL === settings.baseURL) ?? CUSTOM;
 
+  // Model field mirrors the provider's <select> + Custom… reveal: show the free-text input when the
+  // user chose "Custom…" or the persisted model isn't one of this provider's suggestions.
+  const modelOptions = selected.models ?? [];
+  const modelIsCustom = isCustomModel(modelCustom, settings.model, modelOptions);
+
   // Connection setup (endpoint / key / model) — pinned to the sidebar, expanded by default,
   // collapses to its summary. Setup chrome lives here so the center stays the A2UI surface.
   const connectionPanel = (
@@ -100,7 +166,10 @@ export function LiveDashboard({
           value={selected.label}
           onChange={(e) => {
             const next = ENDPOINTS.find((x) => x.label === e.target.value);
-            if (next) patchSettings({ baseURL: next.baseURL });
+            if (next) {
+              setModelCustom(false);
+              patchSettings({ baseURL: next.baseURL });
+            }
           }}
         >
           {ENDPOINTS.map((e) => (
@@ -131,21 +200,17 @@ export function LiveDashboard({
           storing it, and nothing is kept server-side. It's held in memory for this tab only (never
           written to storage), so it's gone on refresh or close.
         </p>
-        <input
-          className={fieldClass}
-          type="text"
-          list="model-suggestions"
-          placeholder="Model id (e.g. openai/gpt-4o-mini)"
+        <ModelPicker
+          models={modelOptions}
           value={settings.model}
-          onChange={(e) => patchSettings({ model: e.target.value })}
+          isCustom={modelIsCustom}
+          onPick={(m) => {
+            setModelCustom(false);
+            patchSettings({ model: m });
+          }}
+          onCustom={() => setModelCustom(true)}
+          onType={(m) => patchSettings({ model: m })}
         />
-        {/* Per-provider suggestions (native combobox) — re-derived from `selected` on endpoint
-            switch; free-form is still accepted. */}
-        <datalist id="model-suggestions">
-          {(selected.models ?? []).map((m) => (
-            <option key={m} value={m} />
-          ))}
-        </datalist>
       </div>
     </details>
   );
