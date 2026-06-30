@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
-import { applyA2UIEvent, type EventLogEntry } from "./applyA2UIEvent";
+import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
@@ -36,7 +36,7 @@ export function useLiveAgent() {
           prompt,
           (event) => {
             const entry = applyA2UIEvent(event, Date.now() - start, render);
-            setEventLog((prev) => [...prev, entry]);
+            setEventLog((prev) => appendLogEntry(prev, entry));
           },
           { signal: ac.signal }
         );

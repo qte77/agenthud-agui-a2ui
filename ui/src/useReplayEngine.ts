@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
-import { applyA2UIEvent, type EventLogEntry } from "./agent/applyA2UIEvent";
+import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./agent/applyA2UIEvent";
 import type { Recording } from "./recordings";
 
 interface ReplayState {
@@ -53,7 +53,7 @@ export function useReplayEngine(
         const event = events[index]!;
         timerRef.current = setTimeout(() => {
           const entry = applyA2UIEvent(event, Date.now() - startTime, render);
-          setEventLog((prev) => [...prev, entry]);
+          setEventLog((prev) => appendLogEntry(prev, entry));
           step(index + 1);
         }, event.delayMs);
       };

@@ -104,3 +104,22 @@ export function applyA2UIEvent(
   }
   return entry;
 }
+
+/**
+ * Append a log entry, coalescing consecutive `TEXT_MESSAGE_CONTENT` deltas into one row.
+ * A streaming agent emits many tiny text deltas; merging them keeps the event log readable
+ * (one row per message, not per token). Immutable — returns a new array (and a new merged
+ * entry), never mutating `log` or the entries already held in React state.
+ */
+export function appendLogEntry(
+  log: EventLogEntry[],
+  entry: EventLogEntry
+): EventLogEntry[] {
+  const last = log[log.length - 1];
+  if (entry.type === "TEXT_MESSAGE_CONTENT" && last?.type === "TEXT_MESSAGE_CONTENT") {
+    // Spread `last` so the merged row keeps the first delta's timestamp.
+    const merged: EventLogEntry = { ...last, text: (last.text ?? "") + (entry.text ?? "") };
+    return [...log.slice(0, -1), merged];
+  }
+  return [...log, entry];
+}
