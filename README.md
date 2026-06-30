@@ -49,8 +49,11 @@ Pick a path from the decision tree or press **Play All**; click **Catalog** to b
 A2UI components.
 
 **Live (BYOK)** — toggle **Demo → Live** in the header and supply an OpenAI-compatible base
-URL + API key + model id (e.g. an OpenRouter key). Credentials stay in `sessionStorage`
-only; the demo needs no key. Rationale: [ADR-0001](docs/decisions/0001-agent-runtime-stack.md).
+URL + API key + model id (e.g. an OpenRouter key). Your **API key is held in memory only**
+(never stored — gone on reload); the base URL + model persist in `sessionStorage`. GitHub Models
+and Google route through the deployed edge proxy ([worker/README.md](worker/README.md)); the dev
+prefill + proxy env vars are documented in [ui/.env.example](ui/.env.example). The demo needs no
+key. Rationale: [ADR-0001](docs/decisions/0001-agent-runtime-stack.md).
 
 **Build & develop** — the local loop:
 

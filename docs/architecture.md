@@ -44,6 +44,10 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
         └────────────────────────────────────────────────────────────────┘
 ```
 
+> `PROXY_BASE` (the deployed `agenthud-proxy.<sub>.workers.dev` URL, where `<sub>` is the
+> workers.dev subdomain) is defined in [`ui/src/config.ts`](../ui/src/config.ts) — the single
+> source of truth for the URL.
+
 ## The ours / theirs line
 
 - **Ours:** the GitHub Pages static app **and** the worker *source* (`worker/`), plus

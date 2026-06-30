@@ -49,6 +49,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `Together` provider base URL → `api.together.ai/v1` (the `.xyz` host is no longer documented).
 - Docs: YAML frontmatter + reference-style links across `docs/`; headless UI testing via patchright
   documented in `docs/testing.md`.
+- Docs: proxy URL references now point at `ui/src/config.ts` (the single source of truth) instead of
+  a placeholder host; the README links the edge proxy ([`worker/README.md`](worker/README.md)) +
+  env-var docs ([`ui/.env.example`](ui/.env.example)) and corrects the BYOK key note — the API key is
+  held **in memory only**, not `sessionStorage`.
 
 ### Removed
 

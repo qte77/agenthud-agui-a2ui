@@ -31,9 +31,10 @@ npm test                       # router allowlist + CORS unit tests
 npx wrangler deploy --env=""   # top-level (production); use --env dev for the localhost-allowed dev worker
 ```
 
-Then set `PROXY_BASE` in [`ui/src/LiveDashboard.tsx`](../ui/src/LiveDashboard.tsx) to the
-deployed `https://agenthud-proxy.<your-subdomain>.workers.dev` URL — that's what the
-**GitHub Models (via proxy)** / **Google (via proxy)** dropdown entries point at.
+Then set `PROXY_BASE` in [`ui/src/config.ts`](../ui/src/config.ts) to the deployed
+`https://agenthud-proxy.<your-subdomain>.workers.dev` URL — `config.ts` is the single source of
+truth for that URL, and the **GitHub Models (via proxy)** / **Google (via proxy)** dropdown entries
+point at it.
 
 ## Local dev
 
