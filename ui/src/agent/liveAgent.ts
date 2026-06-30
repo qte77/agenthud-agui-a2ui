@@ -110,7 +110,7 @@ Component shapes — match each Type's props EXACTLY:
 - Tabs:     { "Tabs": { "tabItems": [ { "title": { "literalString": "Tab 1" }, "child": "id" } ] } }
 
 Bound values are TYPED literals, never a bare "literal": strings → { "literalString": "..." }, numbers → { "literalNumber": 50 }, booleans → { "literalBoolean": true } (or a data path → { "path": "/x" }).
-Define every id you reference in the same call, and never leave a children.explicitList, tabItems, or components list empty. Keep it to a handful of components.`;
+Define every id you reference in the same call, and never leave a children.explicitList, tabItems, or components list empty. The tree must be ACYCLIC — never make a component reference itself or one of its ancestors (no a→b→a loops). Keep it to a handful of components.`;
 
 /**
  * Run a BYOK live agent in the browser and stream AG-UI events to `onEvent`.
@@ -132,7 +132,11 @@ export async function runLiveAgent(
     system: SYSTEM_PROMPT,
     prompt,
     tools: { render_ui: buildRenderUiTool() },
-    stopWhen: stepCountIs(3),
+    // Force exactly one render_ui call: toolChoice removes the "print the batch as prose" failure
+    // (token flood, nothing renders) at the source; stepCountIs(1) stops after that one call so the
+    // model can't emit JSON-as-text or chain extra calls.
+    toolChoice: { type: "tool", toolName: "render_ui" },
+    stopWhen: stepCountIs(1),
     // exactOptionalPropertyTypes: only include abortSignal when defined
     ...(opts?.signal ? { abortSignal: opts.signal } : {}),
   });

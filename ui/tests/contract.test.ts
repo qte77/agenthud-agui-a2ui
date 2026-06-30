@@ -65,3 +65,72 @@ describe("A2UI batch contract (external data)", () => {
     expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(true);
   });
 });
+
+describe("A2UI batch contract — acyclic component tree", () => {
+  // A circular reference (a → … → a) can make the renderer recurse forever and freeze the tab,
+  // which the downstream try/catch can't catch. Reject it at the contract boundary instead.
+  it("rejects a component that references itself", () => {
+    const batch = [
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [{ id: "root", component: { Card: { child: "root" } } }],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(false);
+  });
+
+  it("rejects a multi-node cycle (root → a → root)", () => {
+    const batch = [
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [
+            { id: "root", component: { Column: { children: { explicitList: ["a"] } } } },
+            { id: "a", component: { Card: { child: "root" } } },
+          ],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(false);
+  });
+
+  it("accepts a shared child referenced by two parents (a DAG, not a cycle)", () => {
+    const batch = [
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [
+            { id: "root", component: { Column: { children: { explicitList: ["a", "b"] } } } },
+            { id: "a", component: { Card: { child: "shared" } } },
+            { id: "b", component: { Card: { child: "shared" } } },
+            { id: "shared", component: { Text: { text: { literalString: "hi" } } } },
+          ],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(true);
+  });
+
+  it("accepts a cross-message tree (Tabs child defined in a later surfaceUpdate)", () => {
+    const batch = [
+      { beginRendering: { surfaceId: "main", root: "root" } },
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [
+            { id: "root", component: { Tabs: { tabItems: [{ title: { literalString: "T" }, child: "panel" }] } } },
+          ],
+        },
+      },
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [{ id: "panel", component: { Text: { text: { literalString: "hi" } } } }],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(true);
+  });
+});
