@@ -14,14 +14,15 @@ export const PROXY_BASE =
     ? import.meta.env.VITE_PROXY_BASE
     : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
 
-// OpenAI-compatible BYOK endpoints. The CORS-friendly ones work in-browser as-is.
-// GitHub Models + Google have no browser CORS, so they route through the edge proxy
-// (US-6 / ADR-0001 — see worker/README.md). Mammouth + Azure stay `experimental` (still fail
-// from a static page). `editable` reveals the freeform URL field (Custom, plus Azure's template).
+// OpenAI-compatible BYOK endpoints offered in the Live connection dropdown. The CORS-friendly ones
+// work in-browser as-is; GitHub Models + Google have no browser CORS, so they route through the edge
+// proxy (US-6 / ADR-0001 — see worker/README.md). `editable` reveals the freeform URL field (Custom).
+// Only endpoints that actually work from the static site are listed — providers with no browser CORS
+// and no safe fixed proxy upstream (e.g. Azure's per-resource host, an SSRF risk) are not offered;
+// point Custom… at your own if you proxy them yourself.
 export interface Endpoint {
   label: string;
   baseURL: string;
-  experimental?: boolean;
   editable?: boolean;
 }
 
@@ -33,12 +34,5 @@ export const ENDPOINTS: Endpoint[] = [
   { label: "DeepSeek", baseURL: "https://api.deepseek.com" },
   { label: "GitHub Models (via proxy)", baseURL: `${PROXY_BASE}/github-models` },
   { label: "Google (via proxy)", baseURL: `${PROXY_BASE}/google` },
-  { label: "Mammouth", baseURL: "https://api.mammouth.ai/v1", experimental: true },
-  {
-    label: "Azure OpenAI",
-    baseURL: "https://<resource>.openai.azure.com/openai/v1",
-    experimental: true,
-    editable: true,
-  },
   { label: "Custom…", baseURL: "", editable: true },
 ];

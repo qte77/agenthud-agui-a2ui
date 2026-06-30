@@ -117,7 +117,7 @@ export function LiveDashboard({
                 >
                   {ENDPOINTS.map((e) => (
                     <option key={e.label} value={e.label}>
-                      {e.experimental ? `${e.label} (experimental)` : e.label}
+                      {e.label}
                     </option>
                   ))}
                 </select>
@@ -129,12 +129,6 @@ export function LiveDashboard({
                     value={settings.baseURL}
                     onChange={(e) => patchSettings({ baseURL: e.target.value })}
                   />
-                )}
-                {selected.experimental && (
-                  <p className="text-data-negative">
-                    ⚠ Experimental — not browser-callable from a static page (CORS).
-                    Likely fails without the deferred proxy (ADR-0001 / US-6).
-                  </p>
                 )}
                 <input
                   className={fieldClass}

@@ -48,6 +48,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Docs: YAML frontmatter + reference-style links across `docs/`; headless UI testing via patchright
   documented in `docs/testing.md`.
 
+### Removed
+
+- `ui/src/config.ts`: the Live connection dropdown no longer offers **Mammouth** or **Azure OpenAI**
+  — neither works from the static site (no browser CORS, and no safe fixed proxy upstream: Azure's
+  per-resource host would be an SSRF risk). Don't offer broken choices; use **Custom…** to point at
+  your own endpoint. Closes #117.
+
 ### Fixed
 
 - GitHub octocat uses GitHub's actual **black/white** marks (vendored `#181717`/white SVGs from the
