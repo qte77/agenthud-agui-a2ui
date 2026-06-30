@@ -38,4 +38,30 @@ describe("A2UI batch contract (external data)", () => {
       false
     );
   });
+
+  it("rejects a Card that uses `children` instead of a single `child`", () => {
+    const batch = [
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [
+            { id: "card", component: { Card: { children: { explicitList: ["x"] } } } },
+          ],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(false);
+  });
+
+  it("accepts a Card with a single string `child`", () => {
+    const batch = [
+      {
+        surfaceUpdate: {
+          surfaceId: "main",
+          components: [{ id: "card", component: { Card: { child: "card-body" } } }],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(true);
+  });
 });

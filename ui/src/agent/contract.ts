@@ -15,18 +15,34 @@ import { z } from "zod";
 // ---- A2UI payload (EXTERNAL: agent → UI) ----
 
 /**
+ * @a2ui v0.10: a Card holds exactly ONE child by id — `{ Card: { child: "an-id" } }`, never
+ * `children`. Validate that one prop so a model's malformed Card is rejected at the contract
+ * boundary with a clear error, instead of throwing mid-render and blanking the surface (#127).
+ * Non-strict: extra props are tolerated; only `child` (a non-empty id string) is required.
+ */
+const CardPropsSchema = z.object({ child: z.string().min(1) });
+
+/**
  * One catalog component: `{ id, component: { <Type>: <props> } }`.
  * Props stay open (the A2UI standard catalog has 18 component types); we validate
- * the envelope — an id and exactly one named type — not every prop.
+ * the envelope — an id and exactly one named type — plus the one known-fragile prop (Card.child).
  */
-export const A2UIComponentSchema = z.object({
-  id: z.string().min(1),
-  component: z
-    .record(z.string(), z.unknown())
-    .refine((c) => Object.keys(c).length === 1, {
-      message: "component must name exactly one A2UI type",
-    }),
-});
+export const A2UIComponentSchema = z
+  .object({
+    id: z.string().min(1),
+    component: z
+      .record(z.string(), z.unknown())
+      .refine((c) => Object.keys(c).length === 1, {
+        message: "component must name exactly one A2UI type",
+      }),
+  })
+  .refine(
+    (comp) => {
+      const card = comp.component.Card;
+      return card === undefined || CardPropsSchema.safeParse(card).success;
+    },
+    { message: "Card requires a single `child` (a component id string), not `children`" }
+  );
 
 export const BeginRenderingMessageSchema = z.object({
   beginRendering: z.object({
