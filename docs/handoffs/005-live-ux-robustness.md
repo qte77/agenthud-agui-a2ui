@@ -9,9 +9,11 @@ description: Actionable state for the 4-commit live-tab cluster; not started —
 
 # Handoff 005 — Live UX + robustness batch
 
-> **Planned, not started.** A 4-part live-tab cluster; the **sidebar 3-pane accordion +
-> prompt-in-sidebar** ships first as its own PR, then robustness, model suggestions, and log
-> coalescing. Pick up at item 1 below.
+> **Shipped** (PRs #146–#149, squash-merged). A 4-part live-tab cluster — sidebar 3-pane accordion +
+> prompt-in-sidebar, robustness, model suggestions, log coalescing. The sketch below diverged slightly
+> in the build: `toolChoice` shipped as `{type:'tool',toolName:'render_ui'}` (not `"required"`), and
+> the model field shipped as a `<select>` + Custom… (not a `<datalist>`, which #152 then replaced).
+> See [handoff 006](006-live-demo-followups.md) for the follow-on cluster.
 
 ## Order + status
 

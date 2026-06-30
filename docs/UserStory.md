@@ -128,12 +128,12 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 **Acceptance criteria:**
 
-- [x] Inputs for an OpenAI-compatible base URL, API key, and model id
+- [x] Inputs for an OpenAI-compatible base URL, API key, and a model — a curated per-provider `<select>` with a **Custom…** free-text fallback
 - [x] API key held in memory only (never written to storage, never logged); base URL + model persist in `sessionStorage`
-- [x] In-browser only — no server; the `render_ui` tool emits contract-validated A2UI
+- [x] In-browser only — no server; the `render_ui` tool emits contract-validated A2UI (forced to exactly one call; cyclic trees rejected)
 - [x] Clear indication of the active mode (Demo | Live header toggle + "Live · BYOK" badge)
 
-**Status:** Done — in-browser Vercel AI SDK agent; the AI SDK is code-split to the Live tier. See [ADR-0001][adr-0001].
+**Status:** Done — in-browser Vercel AI SDK agent (one forced `render_ui` call; curated model picker; self-hosted `asset:` image tokens); the AI SDK is code-split to the Live tier. See [ADR-0001][adr-0001] · [ADR-0004][adr-0004].
 
 ---
 
@@ -188,3 +188,4 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 9. US-9: Arbitrary accounts
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
+[adr-0004]: decisions/0004-self-contained-replay-snapshots.md
