@@ -134,10 +134,18 @@ export function LiveDashboard({
         <input
           className={fieldClass}
           type="text"
+          list="model-suggestions"
           placeholder="Model id (e.g. openai/gpt-4o-mini)"
           value={settings.model}
           onChange={(e) => patchSettings({ model: e.target.value })}
         />
+        {/* Per-provider suggestions (native combobox) — re-derived from `selected` on endpoint
+            switch; free-form is still accepted. */}
+        <datalist id="model-suggestions">
+          {(selected.models ?? []).map((m) => (
+            <option key={m} value={m} />
+          ))}
+        </datalist>
       </div>
     </details>
   );
