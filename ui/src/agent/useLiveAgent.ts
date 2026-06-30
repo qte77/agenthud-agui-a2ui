@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
+import { resolveAssets } from "./assets";
 import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
@@ -15,7 +16,8 @@ export function useLiveAgent() {
 
   const render = useCallback(
     (messages: unknown[]) =>
-      processMessages(messages as Parameters<typeof processMessages>[0]),
+      // Resolve `asset:<name>` image tokens to bundled URLs before rendering (self-hosted images).
+      processMessages(resolveAssets(messages) as Parameters<typeof processMessages>[0]),
     [processMessages]
   );
 
