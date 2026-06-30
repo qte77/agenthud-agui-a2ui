@@ -2,7 +2,7 @@
 title: Plan 005 — Live UX + robustness batch
 description: Sidebar 3-pane accordion (prompt in sidebar), force one render_ui call (toolChoice), event-log coalescing, and per-provider model suggestions (free-form).
 date: 2026-06-30
-status: planned
+status: shipped
 issues: [129]
 handoff: handoffs/005-live-ux-robustness.md
 ---
