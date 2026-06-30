@@ -53,6 +53,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   a placeholder host; the README links the edge proxy ([`worker/README.md`](worker/README.md)) +
   env-var docs ([`ui/.env.example`](ui/.env.example)) and corrects the BYOK key note — the API key is
   held **in memory only**, not `sessionStorage`.
+- `ui/src/agent/contract.ts`: the A2UI contract now validates that a `Card` carries a single string
+  `child` (not `children`), so a model's malformed Card is rejected at the boundary with a clear
+  error instead of throwing mid-render and silently blanking the surface (the #127 bug class).
+  Part of #129.
 
 ### Removed
 
