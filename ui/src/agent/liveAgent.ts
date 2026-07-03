@@ -103,6 +103,7 @@ Component shapes — match each Type's props EXACTLY:
 - Image:    { "Image": { "url": { "literalString": "asset:qte77-avatar" }, "usageHint": "icon|avatar|header" } }   (url REQUIRED — choose a bundled image token: "asset:qte77-avatar" (an avatar) or "asset:github-mark" (the GitHub logo, dark — for light backgrounds); never invent other URLs)
 - Divider:  { "Divider": {} }   (optional: "axis": "horizontal|vertical", "thickness": 1)
 - Row / Column / List hold MANY children: { "Column": { "children": { "explicitList": ["id1","id2"] } } }
+- LAYOUT: for a dashboard or a set of peer items, make the root (or a section) a Row whose children are Columns/Cards — they render side by side (multi-column). Use a single Column only for a narrow, stacked layout.
 - Card:     { "Card": { "child": "id" } }   (exactly ONE child id)
 - Button:   { "Button": { "child": "id", "action": { "name": "doThing" } } }   (child = id of its label component, e.g. a Text; action is an OBJECT, not a string)
 - CheckBox: { "CheckBox": { "label": { "literalString": "Agree" }, "value": { "literalBoolean": true } } }
