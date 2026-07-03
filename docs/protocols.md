@@ -170,6 +170,22 @@ same AG-UI events a real agent would — the replay engine and a live SSE stream
 event schema. **MCP** (tools) and **A2A** (multi-agent) are natural future layers, not yet
 wired in. See [ADR-0001][adr-0001].
 
+## A2UI/AG-UI gotchas (hard-won)
+
+Traps from building the live + demo render paths on `@a2ui` v0.8 — each links to its detailed home:
+
+- **Every `surfaceUpdate` must be self-contained** — `@a2ui` validates child refs against *only that
+  message's* components, so incremental deltas referencing earlier ids fail. See [ADR-0004][adr-0004].
+- **Failures blank the surface silently** — `@a2ui` throws (missing refs, cycles, wrong shapes) but the
+  surface just goes blank; surface render errors explicitly (`applyA2UIEvent`, since #145).
+- **`@a2ui` already guards cycles + missing refs** (it throws, doesn't hang) — don't over-build defenses.
+- **Small models fight the tool contract** — force one `render_ui` call (`toolChoice` + `stepCountIs(1)`)
+  and teach the catalog with a curated prompt reference, not the raw schema. See [ADR-0003][adr-0003].
+- **Exact shapes:** typed literals (`literalString/Number/Boolean`, never bare `literal`); top id must be
+  `root`; `Card.child` (single) not `children`; `Slider` min/max are plain numbers.
+- **Buttons need `onAction`** on the provider or clicks do nothing (#156); images need a token→URL
+  resolver to self-host (`ui/src/agent/assets.ts`).
+
 ## Sources
 
 Primary specs: MCP <https://modelcontextprotocol.io> · A2A <https://a2a-protocol.org> ·
@@ -180,3 +196,5 @@ Linux Foundation, CopilotKit, and the Google Developers Blog.
 > evolving — verify message shapes against the live spec before relying on them.
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
+[adr-0003]: decisions/0003-live-catalog-instruction.md
+[adr-0004]: decisions/0004-self-contained-replay-snapshots.md
