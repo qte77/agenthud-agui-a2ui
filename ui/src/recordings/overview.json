@@ -1403,6 +1403,18 @@
                       "explicitList": [
                         "results-header",
                         "results-divider",
+                        "results-grid"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "id": "results-grid",
+                "component": {
+                  "Row": {
+                    "children": {
+                      "explicitList": [
                         "results-card-1",
                         "results-card-2",
                         "results-card-3"
