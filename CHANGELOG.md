@@ -62,6 +62,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Edge proxy CORS allowlist is **environment-gated** — production allows only
   `https://qte77.github.io`; localhost is added only in dev (`ALLOW_LOCALHOST`).
 - `Together` provider base URL → `api.together.ai/v1` (the `.xyz` host is no longer documented).
+- `ui/src/config.ts`: refreshed the curated BYOK model-id suggestions to current provider ids
+  (`verified 2026-07-04`) — the prior 2024-era ids had gone stale and 404'd (e.g. OpenRouter
+  `anthropic/claude-3.5-sonnet` → "No endpoints found"). DeepSeek switched to `deepseek-v4-*`
+  (`deepseek-chat`/`-reasoner` retire 2026-07-24); "GitHub Models (via proxy)" ids refreshed but
+  flagged in-code + `ui/.env.example` as retiring 2026-07-30. Also synced the two out-of-band model-id
+  examples in `ui/.env.example` and `ui/src/LiveDashboard.tsx` (`MODEL_PLACEHOLDER`).
 - Docs: YAML frontmatter + reference-style links across `docs/`; headless UI testing via patchright
   documented in `docs/testing.md`.
 - Docs: proxy URL references now point at `ui/src/config.ts` (the single source of truth) instead of

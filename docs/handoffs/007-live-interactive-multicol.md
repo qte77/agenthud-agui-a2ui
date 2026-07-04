@@ -4,7 +4,7 @@ status: in-progress
 issues: [129, 156, 128]
 plan: plans/007-live-interactive-multicol.md
 title: Handoff 007 — Interactive live agent + multi-column
-description: PR1 (multi-col) shipped; PR2 (onAction MVP) is blocked on the live-stream quirk. Onboards the next session with a one-step gate then the build.
+description: PR1 (multi-col) shipped; the live-stream quirk is RESOLVED (agent streams in a real browser) so PR2 (onAction MVP) is unblocked and ready to build.
 ---
 
 # Handoff 007 — Interactive live agent + multi-column
@@ -17,16 +17,15 @@ description: PR1 (multi-col) shipped; PR2 (onAction MVP) is blocked on the live-
   the demo's filtered-results render 3 cards side by side.
 - ✅ **#140 resolved** — `@a2ui` v0.9 is a **major redesign** (no `onAction`/provider/registry). **Build
   on v0.8.** (Eval on issue #140.)
-- ⏸️ **PR 2 (interactive buttons / onAction MVP) — not started, blocked.**
+- ▶️ **PR 2 (interactive buttons / onAction MVP) — not started, unblocked** (gate resolved — see below).
 
-## Do this first — the gate (5 min)
-PR 2 can't be verified until we know the **deployed live agent actually streams**. From a **real
-browser** (the sandbox headless can't observe the SSE stream), open the
-deployed **Live** tab and run any prompt:
-- **Renders components** → the quirk is harness-only → build PR 2 (below).
-- **Hangs** (proxy 200, nothing renders) → #147's forced `toolChoice:{type:'tool',…}` likely regressed
-  GitHub-Models streaming. **Fix first:** try `toolChoice:'required'`, or drop `toolChoice` and lean on
-  the existing "make exactly ONE render_ui call" `SYSTEM_PROMPT` rule + `stepCountIs(1)`. Re-verify, then PR 2.
+## The gate — RESOLVED (2026-07-04)
+The live agent **does stream and render** in a real browser (verified on the deployed **Live** tab). The
+earlier "proxy 200, nothing renders" was a **sandbox-headless limitation, not a hang**: the failures seen
+live were a **stale model id → 404** (`anthropic/claude-3.5-sonnet` → "No endpoints found") and an
+**OpenRouter 402 no-credits** — config/account issues, not code. #147's forced
+`toolChoice:{type:'tool',…}` + `stepCountIs(1)` **stands unchanged** (cleared of suspicion). No agent-code
+fix is needed — proceed straight to PR 2 (below).
 
 ## Then build PR 2 (KISS MVP, v0.8, TDD) — per plan §"PR 2"
 A button click → **one follow-up agent turn** → re-render. On the **current tab structure** (no #128 unify).

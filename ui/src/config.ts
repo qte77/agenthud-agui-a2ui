@@ -35,53 +35,61 @@ export const ENDPOINTS: Endpoint[] = [
   {
     label: "OpenRouter",
     baseURL: "https://openrouter.ai/api/v1",
-    // verified 2026-06-30
+    // verified 2026-07-04
     models: [
-      "openai/gpt-4o-mini",
-      "openai/gpt-4o",
-      "anthropic/claude-3.5-sonnet",
-      "google/gemini-2.0-flash-001",
-      "meta-llama/llama-3.3-70b-instruct",
+      "anthropic/claude-sonnet-5",
+      "anthropic/claude-haiku-4.5",
+      "openai/gpt-5.5",
+      "openai/gpt-5.4-mini",
+      "google/gemini-3.5-flash",
+      "meta-llama/llama-4-maverick",
     ],
   },
   {
     label: "Groq",
     baseURL: "https://api.groq.com/openai/v1",
-    // verified 2026-06-30
-    models: ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+    // verified 2026-07-04 (llama-3.3-70b-versatile deprecates 2026-08-16)
+    models: ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.3-70b-versatile"],
   },
   {
     label: "Together",
     baseURL: "https://api.together.ai/v1",
-    // verified 2026-06-30
+    // verified 2026-07-04
     models: [
       "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-      "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "Qwen/Qwen3.5-9B",
+      "deepseek-ai/DeepSeek-V4-Pro",
     ],
   },
   {
     label: "Fireworks",
     baseURL: "https://api.fireworks.ai/inference/v1",
-    // verified 2026-06-30
-    models: ["accounts/fireworks/models/llama-v3p3-70b-instruct"],
+    // verified 2026-07-04
+    models: [
+      "accounts/fireworks/models/deepseek-v4-pro",
+      "accounts/fireworks/models/llama-v3p3-70b-instruct",
+      "accounts/fireworks/models/qwen3-235b-a22b-instruct-2507",
+    ],
   },
   {
     label: "DeepSeek",
     baseURL: "https://api.deepseek.com",
-    // verified 2026-06-30
-    models: ["deepseek-chat", "deepseek-reasoner"],
+    // verified 2026-07-04 (deepseek-chat/deepseek-reasoner retire 2026-07-24 → use v4 ids)
+    models: ["deepseek-v4-pro", "deepseek-v4-flash"],
   },
   {
-    label: "GitHub Models (via proxy)",
+    // ⚠️ GitHub Models is fully RETIRED 2026-07-30 (brownouts 07-16 / 07-23): this endpoint — and
+    // the worker `github-models` route — will 404 after that. Drop both once it goes dark (#140-adjacent).
+    label: "GitHub Models (via proxy) · retires 2026-07-30",
     baseURL: `${PROXY_BASE}/github-models`,
-    // verified 2026-06-30
-    models: ["openai/gpt-4o-mini", "openai/gpt-4o"],
+    // verified 2026-07-04
+    models: ["openai/gpt-4.1", "openai/gpt-4o-mini"],
   },
   {
     label: "Google (via proxy)",
     baseURL: `${PROXY_BASE}/google`,
-    // verified 2026-06-30
-    models: ["gemini-2.0-flash", "gemini-1.5-pro"],
+    // verified 2026-07-04
+    models: ["gemini-3.5-flash", "gemini-2.5-pro", "gemini-3.1-flash-lite"],
   },
   { label: "Custom…", baseURL: "", editable: true },
 ];

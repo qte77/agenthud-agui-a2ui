@@ -1,6 +1,6 @@
 ---
 title: Plan 007 — Interactive live agent (onAction) + multi-column
-description: Multi-col shipped (#159); the onAction MVP is blocked on the live-stream quirk; #140 v0.9 = major migration (stay v0.8). Carries a full source map so the next session need not re-explore.
+description: Multi-col shipped (#159); the onAction MVP is unblocked (live-stream quirk RESOLVED); #140 v0.9 = major migration (stay v0.8). Carries a full source map so the next session need not re-explore.
 date: 2026-07-04
 status: in-progress
 issues: [129, 156, 128]
@@ -14,7 +14,7 @@ handoff: handoffs/007-live-interactive-multicol.md
   filtered-results render 3 cards side by side. Render-verified.
 - ✅ **#140 v0.9 watch — resolved**: v0.9 is a **major API redesign** (no `onAction`/`A2UIProvider`/
   `ComponentRegistry`) → **build on v0.8**. Recorded on issue #140.
-- ⏸️ **PR 2 — interactive buttons (onAction MVP)** — BLOCKED on the **live-stream quirk** (below).
+- ▶️ **PR 2 — interactive buttons (onAction MVP)** — not started, **unblocked** (live-stream quirk RESOLVED, below).
 - **Deferred:** full multi-turn, #128 (unify Demo/Live), speculative pre-render.
 
 ## Context
@@ -66,13 +66,11 @@ Deliberately KISS: no unify (#128), no full conversation yet — those are separ
 
 ## PR 2 — onAction MVP (#156, TDD)
 
-**PREREQUISITE — settle the live-stream quirk first.** The deployed live agent returns proxy **200 but
-no SSE parts were observed from the sandbox headless browser**, so we don't know if it renders. A
-**manual browser check** settles it: open the deployed Live tab, run any prompt.
-- **Renders** → quirk is harness-only → proceed.
-- **Hangs** → #147's forced `toolChoice:{type:'tool',…}` likely regressed GitHub-Models streaming →
-  fix first: try `toolChoice:'required'`, or drop `toolChoice` and rely on the existing "make exactly
-  ONE render_ui call" `SYSTEM_PROMPT` rule + `stepCountIs(1)`. Re-verify live.
+**PREREQUISITE — SETTLED (2026-07-04).** A real-browser check on the deployed Live tab confirms the agent
+**streams and renders**; the "no SSE parts observed" result was a sandbox-headless limitation, not a hang.
+Root cause of the observed failures was a **stale model id (404)** + an **OpenRouter 402 no-credits**
+response — config/account, not code. #147's `toolChoice:{type:'tool',…}` + `stepCountIs(1)` is
+**unchanged** (not the cause). No agent-code change needed — build PR 2 directly.
 
 **Implementation (KISS, v0.8, on the current tab structure — no unify):**
 1. **`agent/conversation.ts` (new) — TDD Red-first** (`ui/tests/conversation.test.ts`):
@@ -107,7 +105,7 @@ post-quirk-settle). Gates: `cd ui && npm run typecheck && npm run lint && npm te
 cd ui && npm run typecheck && npm run lint && npm test
 npm run build && npm run preview     # render via ../polyfetch-scrape chromium patchright
 ```
-- **PR 2 (live, after quirk settled):** click a rendered Button → agent re-renders (one `render_ui` call).
+- **PR 2 (live):** click a rendered Button → agent re-renders (one `render_ui` call).
 
 ## Workflow
 Topic branch off `origin/main`, squash-merge on green CI (unset `GH_TOKEN`/`GITHUB_TOKEN`). Live E2E is
