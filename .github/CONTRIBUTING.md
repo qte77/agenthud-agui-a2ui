@@ -32,9 +32,12 @@ npm test           # vitest
 npm run typecheck  # tsc -b --noEmit
 npm run lint       # eslint
 npm run build      # tsc -b && vite build
+npm run preview    # serve the production build (port 4173) — for by-effect verification
 ```
 
-Run `npm run typecheck && npm run lint && npm test` (from `ui/`) before opening a PR.
+Run `npm run typecheck && npm run lint && npm test` (from `ui/`) before opening a PR. Editing
+`worker/`? Run its gate too — `cd worker && npm run typecheck && npm run lint && npm test` (CI
+enforces both jobs).
 Test layout: [docs/testing.md](../docs/testing.md). Non-trivial module logic is **test-first**
 (Red-Green-Refactor); config/prompt changes are verified by effect — see
 [AGENTS.md](../AGENTS.md#tests).
