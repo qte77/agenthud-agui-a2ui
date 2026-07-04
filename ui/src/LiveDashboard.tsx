@@ -43,7 +43,7 @@ const fieldClass =
   "w-full rounded border border-border bg-bg px-2 py-1 text-sm text-text " +
   "focus:border-primary focus:outline-none";
 
-const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-4o-mini)";
+const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-5.4-mini)";
 
 // Show the model free-text field when the user explicitly picked Custom…, or the persisted model
 // isn't one of the provider's suggestions. Pure helper so it stays out of LiveDashboard's complexity.
