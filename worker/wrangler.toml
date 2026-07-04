@@ -1,5 +1,5 @@
 # BYOK pass-through CORS proxy (US-6). Holds no secret — forwards the visitor's key.
-# Deploy: `wrangler deploy`, then set PROXY_BASE in ui/src/LiveDashboard.tsx to the
+# Deploy: `wrangler deploy`, then set PROXY_BASE in ui/src/config.ts to the
 # resulting https://agenthud-proxy.<your-subdomain>.workers.dev URL. See README.md.
 name = "agenthud-proxy"
 main = "src/worker.ts"
