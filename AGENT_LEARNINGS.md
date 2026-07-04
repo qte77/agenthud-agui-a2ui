@@ -34,3 +34,16 @@ description: Non-obvious patterns that prevent repeated mistakes across sprints
   screenshots are still written. Do **not** rename tokens to bare names (breaks Tailwind utilities).
 - **Example**: `uv run --directory ../polyfetch-scrape python ../qte77/brand/scripts/gui-check.py --url http://localhost:4173 --out /tmp/shots`
 - **References**: `ui/src/index.css` (`@theme` tokens), `brand/scripts/gui-check.py`.
+
+### Provider/account errors masquerade as a live-agent "silent hang"
+
+- **Context**: Debugging the live BYOK agent (`ui/src/agent/liveAgent.ts`) when a run appears to do nothing.
+- **Problem**: A stale model id (404 "No endpoints found") or an out-of-credits key (402) presents like a
+  code regression — the proxy returns 200, the SSE stream carries only an error part, and the headless
+  sandbox can't observe it, so it reads as a hang. Handoff/plan 007 nearly reverted #147's `toolChoice`
+  on this false signal before a real-browser check showed the agent streams fine.
+- **Solution**: Before suspecting streaming / `toolChoice` / `stepCountIs` code, read the browser console
+  for the actual `AI_APICallError` — a 404/402 is almost always a config/account issue (dead model id or
+  no credits), fixable in `ui/src/config.ts`, not in agent code.
+- **Example**: `anthropic/claude-3.5-sonnet` → 404 "No endpoints found"; an OpenRouter key with 0 credits → 402.
+- **References**: `ui/src/config.ts` (model lists + `verified` dates), `docs/plans/007-live-interactive-multicol.md`.
