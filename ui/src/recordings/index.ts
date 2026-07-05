@@ -153,6 +153,14 @@ function maybeInjectBeginRendering(
   return true;
 }
 
+/** Resolve which of a tree node's choices a rendered Button's A2UI action name triggers. */
+export function findChoiceByAction(
+  node: TreeNode | undefined,
+  action: string
+): TreeChoice | null {
+  return node?.choices.find((c) => c.action === action) ?? null;
+}
+
 /** Collect every component id defined by the given segments' events. */
 function collectSegmentIds(rec: Recording, segmentIds: readonly string[]): Set<string> {
   const wanted = new Set(segmentIds);

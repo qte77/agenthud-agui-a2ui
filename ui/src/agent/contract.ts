@@ -58,9 +58,23 @@ export const SurfaceUpdateMessageSchema = z.object({
   }),
 });
 
+/**
+ * Data-model seeding for two-way bindings (CheckBox/Slider `value: { path }`): envelope-level
+ * validation only — `contents` entries stay open (ValueMap shapes belong to @a2ui), consistent
+ * with the file's philosophy of validating envelopes plus known-fragile props.
+ */
+export const DataModelUpdateMessageSchema = z.object({
+  dataModelUpdate: z.object({
+    surfaceId: z.string().min(1),
+    path: z.string().optional(),
+    contents: z.array(z.record(z.string(), z.unknown())),
+  }),
+});
+
 export const A2UIMessageSchema = z.union([
   BeginRenderingMessageSchema,
   SurfaceUpdateMessageSchema,
+  DataModelUpdateMessageSchema,
 ]);
 
 // ---- Acyclic-tree guard ----
@@ -146,6 +160,8 @@ export const TreeChoiceSchema = z.object({
   hint: z.string(),
   segment: z.string(),
   next: z.string().nullable(),
+  /** A2UI action name that triggers this choice when a rendered Button dispatches it. */
+  action: z.string().optional(),
 });
 
 export const TreeNodeSchema = z.object({

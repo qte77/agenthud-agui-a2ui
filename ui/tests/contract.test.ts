@@ -7,6 +7,31 @@ describe("recording contract (internal data)", () => {
     const result = RecordingSchema.safeParse(overview);
     expect(result.success).toBe(true);
   });
+
+  it("tree choices may declare the A2UI action name that triggers them", () => {
+    const rec = {
+      meta: { title: "t", description: "d" },
+      events: [],
+      tree: {
+        "after-apply": {
+          prompt: "See results?",
+          choices: [
+            {
+              label: "Show results",
+              hint: "Card",
+              segment: "results",
+              next: null,
+              action: "applyFilters",
+            },
+          ],
+        },
+      },
+    };
+    const result = RecordingSchema.safeParse(rec);
+    expect(result.success).toBe(true);
+    // The action must survive parsing (zod strips undeclared keys — declared optional keeps it).
+    expect(result.data?.tree?.["after-apply"]?.choices[0]?.action).toBe("applyFilters");
+  });
 });
 
 describe("A2UI batch contract (external data)", () => {
@@ -37,6 +62,23 @@ describe("A2UI batch contract (external data)", () => {
     expect(A2UIMessageBatchSchema.safeParse([{ mysteryMessage: { foo: 1 } }]).success).toBe(
       false
     );
+  });
+
+  it("accepts a dataModelUpdate message (data-model seeding for two-way bindings)", () => {
+    const batch = [
+      {
+        dataModelUpdate: {
+          surfaceId: "main",
+          contents: [{ key: "filters", valueMap: [{ key: "active", valueBoolean: true }] }],
+        },
+      },
+    ];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(true);
+  });
+
+  it("rejects a dataModelUpdate without a surfaceId", () => {
+    const batch = [{ dataModelUpdate: { contents: [] } }];
+    expect(A2UIMessageBatchSchema.safeParse(batch).success).toBe(false);
   });
 
   it("rejects a Card that uses `children` instead of a single `child`", () => {
