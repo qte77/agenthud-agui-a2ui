@@ -42,8 +42,11 @@ Inter type ramp, avatar sized to 44px (was unconstrained).
   (`agent/conversation.ts` TDD Red-first; `agent/actionBridge.ts` module registry — chosen over a
   React context since one provider serves even a future multi-surface transcript, the payload carries
   `userAction.surfaceId`; `runLiveAgent` is `messages`-based). Spec: [plan 007](007-live-interactive-multicol.md) §PR 2.
-- **PR3 — motion/alive states**: CSS-only entrance animation + indeterminate pending skeleton + a
-  streaming cursor in the event log; reduced-motion gated. Polish, not required to de-"boring" it.
+- **PR3 — motion/alive states**: ✅ **shipped** — CSS-only entrance animation (`qte-enter` on the
+  chunky wrappers; stable-id keying animates only new mounts) + Live pending-render skeleton
+  (`SurfaceSkeleton` via `A2UIRenderer`'s `fallback` — shows only while the surface is empty and a
+  run streams). The streaming-log cursor was **cut** per KISS review (redundant with the growing
+  event log). Reduced-motion gated by the existing global rule.
 - **PR4 — multi-turn transcript** (#156 Stage 2): per-turn surfaces + a chat transcript layout. Biggest/
   riskiest (IA rebuild, overlaps #128) — explicitly YAGNI until proven wanted.
 
