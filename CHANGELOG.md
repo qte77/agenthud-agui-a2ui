@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `ui/src/index.css`: **A2UI tab buttons no longer show a whitish block** in either theme — the
+  controls are `<button>`s whose UA chrome (ButtonFace bg, black border) survived the library's
+  `all: revert` reset; fully stripped + `:focus-visible` outline (#177).
+- `ui/src/replaySnapshot.ts`: replay no longer emits an **empty `surfaceUpdate` for begin-only
+  "(surface init)" events** (rejected by `@a2ui`'s `min(1)` → "A2UI render error" in the log) (#177).
+- `ui/src/CatalogViewer.tsx`: the Catalog modal **closes on Escape and backdrop click** (inner clicks
+  stay open) and gains dialog a11y — `role=dialog`, `aria-modal`, accessible names (#178).
+- `ui/src/ModeToggle.tsx`: the Demo|Live switch uses **`aria-pressed` toggle buttons** — the previous
+  `tablist/tab` markup was an incomplete ARIA pattern that hid the buttons from `role=button`
+  queries (#179).
+
 - `ui/src/index.css` + `ui/src/agent/prompts.ts`: the **q7_ avatar no longer renders oversized on the
   Live tab** — live models often omit `Image.usageHint`, so all surface images are now capped at 280px
   (hint-specific sizes still apply) and the system prompt requires `usageHint` (`avatar` for
@@ -23,6 +34,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `ui/src/LiveDashboard.tsx`: **submittable default prompt** — "Output an interactive fairytale"
+  ships as the field's initial value (Run works untouched; first focus clears it; typed text survives
+  refocus). `DEFAULT_PROMPT` exported for tests (#179).
+- `ui/src/DashboardShell.tsx` + `ui/src/index.css`: **follow-up-turn feedback** — while a live turn
+  streams over an existing surface, it dims (`pointer-events: none`, so stale buttons can't be
+  clicked) and a pulsing branded "Generating…" chip shows; reduced-motion gated (#180).
+- `docs/testing.md`: **headless live-BYOK E2E recipe** — dev server + `ui/.env` prefill + patchright;
+  retires the "live E2E is manual-only" constraint (the old "no SSE observable" was a 404/402
+  misdiagnosis). Verified: prompt → render → rendered-button click → second agent turn.
 - **Demo controls are now interactive** — rendered A2UI **Buttons drive the decision tree** (the
   recording's tree choices declare their triggering action via a new optional `TreeChoice.action`;
   clicks route through the same `actionBridge` Live uses — e.g. the rendered "Apply" plays the

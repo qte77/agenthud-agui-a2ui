@@ -75,6 +75,21 @@ with sync_playwright() as pw:
   so from `localhost` they fail unless you run the localhost-allowed worker — see
   [`worker/README.md`][worker-readme].
 
+## Live BYOK E2E (headless — works since 2026-07-05)
+
+The full **live agent loop is verifiable headlessly** (the earlier "sandbox can't observe the live
+SSE stream" belief was a misdiagnosis — the real failures were a stale model id / no-credits key):
+
+1. Copy `ui/.env.example` → `ui/.env` (gitignored) and set `VITE_BYOK_*` with a **CORS-friendly**
+   provider (e.g. Groq — works direct from localhost, no worker needed).
+2. `npm --prefix ui run dev` — dev builds prefill the Live connection from `ui/.env`.
+3. Drive with patchright: switch to Live (`get_by_role("button", name="Live")`), open the Prompt
+   panel, click **Run** (the submittable default prompt works untouched), then
+   `wait_for_selector(".a2ui-surface .qte-card", timeout=90000)` — generous timeouts for model
+   latency. Click a rendered `.qte-button` and poll for a second `RUN_FINISHED`.
+4. **Probe the event log via `textContent`, not `innerText`** — the log sits in a `<details>`
+   accordion and hidden text is invisible to `innerText`.
+
 ## Sources
 
 - Vitest `include` — <https://vitest.dev/config/include>

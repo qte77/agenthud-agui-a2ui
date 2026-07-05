@@ -109,4 +109,5 @@ npm run build && npm run preview     # render via ../polyfetch-scrape chromium p
 
 ## Workflow
 Topic branch off `origin/main`, squash-merge on green CI (unset `GH_TOKEN`/`GITHUB_TOKEN`). Live E2E is
-manual (the sandbox headless browser can't observe the live SSE stream).
+**headless-automatable since 2026-07-05** (dev server + `ui/.env` prefill + patchright — see
+[docs/testing.md](../testing.md); the old "can't observe live SSE" was a 404/402 misdiagnosis).
