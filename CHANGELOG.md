@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `ui/src/index.css` + `ui/src/agent/prompts.ts`: the **q7_ avatar no longer renders oversized on the
+  Live tab** — live models often omit `Image.usageHint`, so all surface images are now capped at 280px
+  (hint-specific sizes still apply) and the system prompt requires `usageHint` (`avatar` for
+  `asset:qte77-avatar`).
 - `ui/src/recordings/index.ts`: Demo **tree-mode replay no longer breaks on unvisited branches** —
   append-mode root patching is now seeded with the segments the visitor actually played, so a path
   like repos → details → plugins → filters renders instead of failing the processor's referential
