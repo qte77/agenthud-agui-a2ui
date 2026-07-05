@@ -49,6 +49,10 @@ Inter type ramp, avatar sized to 44px (was unconstrained).
   event log). Reduced-motion gated by the existing global rule.
 - **PR4 — multi-turn transcript** (#156 Stage 2): per-turn surfaces + a chat transcript layout. Biggest/
   riskiest (IA rebuild, overlaps #128) — explicitly YAGNI until proven wanted.
+- **Addendum (user-reported, shipped as follow-up): Demo controls wired** — rendered Buttons drive the
+  decision tree via `TreeChoice.action` + the PR2 `actionBridge` (Demo's pre-baked analog of #156's
+  interaction story); CheckBoxes/Slider became locally interactive via `path` bindings +
+  `dataModelUpdate` seeding (contract union extended) + a real Slider range.
 
 ## Decisions
 

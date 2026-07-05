@@ -3,7 +3,9 @@ import {
   segments,
   decisionTree,
   getSegmentEvents,
+  findChoiceByAction,
   type Recording,
+  type TreeNode,
 } from "../src/recordings";
 
 describe("recording registry", () => {
@@ -279,6 +281,20 @@ describe("recording registry", () => {
     // …while visited sections keep stacking.
     expect(refs.has("card-agents-eval")).toBe(true);
     expect(refs.has("cc-section")).toBe(true);
+  });
+
+  it("findChoiceByAction resolves a node's choice by its declared action name", () => {
+    const node: TreeNode = {
+      prompt: "See results?",
+      choices: [
+        { label: "Show results", hint: "Card", segment: "results", next: null, action: "applyFilters" },
+        { label: "Adjust filters", hint: "CheckBox", segment: "filters-checkboxes", next: null },
+      ],
+    };
+
+    expect(findChoiceByAction(node, "applyFilters")?.segment).toBe("results");
+    expect(findChoiceByAction(node, "unknownAction")).toBeNull();
+    expect(findChoiceByAction(undefined, "applyFilters")).toBeNull();
   });
 
   it("every event has delayMs and type fields", () => {

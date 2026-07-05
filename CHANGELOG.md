@@ -19,6 +19,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **Demo controls are now interactive** — rendered A2UI **Buttons drive the decision tree** (the
+  recording's tree choices declare their triggering action via a new optional `TreeChoice.action`;
+  clicks route through the same `actionBridge` Live uses — e.g. the rendered "Apply" plays the
+  results segment), and **CheckBoxes/Slider actually toggle/slide**: `overview.json` switched from
+  literal to **`path` bindings** with `dataModelUpdate` seeding (contract union extended — TDD
+  Red-first), letting the renderer's built-in two-way binding do the work; the Slider also gained a
+  real `minValue`/`maxValue` range (the library defaults `max` to 0, pinning it). Input state is
+  local demo state (results stay pre-baked).
 - **Motion / alive states (CSS-only, no new deps)** — newly-mounted A2UI cards/images/buttons get a
   subtle entrance animation (`qte-enter`, 220ms; only NEW components animate thanks to stable-id
   keying), and the Live surface shows a **branded shimmer skeleton** (`ui/src/SurfaceSkeleton.tsx`,
