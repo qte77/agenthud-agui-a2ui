@@ -153,19 +153,58 @@ function maybeInjectBeginRendering(
   return true;
 }
 
+/** Collect every component id defined by the given segments' events. */
+function collectSegmentIds(rec: Recording, segmentIds: readonly string[]): Set<string> {
+  const wanted = new Set(segmentIds);
+  const ids = new Set<string>();
+  let current: string | null = null;
+  for (const event of rec.events) {
+    if (event.type === "STEP_STARTED" && event.segment) current = event.segment;
+    else if (event.type === "STEP_FINISHED") current = null;
+    else if (current && wanted.has(current)) {
+      forEachComponentList(event, (components) => {
+        for (const c of components) ids.add(c.id);
+      });
+    }
+  }
+  return ids;
+}
+
+interface RootPatchMode {
+  patch: boolean;
+  definedIds: Set<string>;
+}
+
+/** Resolve how root refs are patched: fresh mode patches from an empty seed; append mode patches
+ *  seeded with the played segments' ids, or (legacy, no `playedSegments`) passes events through. */
+function resolveRootPatchMode(
+  rec: Recording,
+  options?: { append?: boolean; playedSegments?: readonly string[] }
+): RootPatchMode {
+  if (options?.append) {
+    if (options.playedSegments === undefined) return { patch: false, definedIds: new Set() };
+    return { patch: true, definedIds: collectSegmentIds(rec, options.playedSegments) };
+  }
+  return { patch: true, definedIds: new Set() };
+}
+
 /** Filter recording events to only those in the given segment.
- *  When append=true, skip root patching (tree mode accumulates). */
+ *  Tree mode (append=true) accumulates the surface across the segments the visitor actually
+ *  played, so root patching is seeded with `playedSegments`' component ids: refs to visited
+ *  sections keep stacking, while refs to never-played segments are stripped (the recording's
+ *  roots optimistically list ALL prior sections — dangling ids fail the processor's referential
+ *  check and nothing renders). Without `playedSegments`, append keeps the legacy raw pass-through. */
 export function getSegmentEvents(
   rec: Recording,
   segmentId: string | null,
-  options?: { append?: boolean }
+  options?: { append?: boolean; playedSegments?: readonly string[] }
 ): RecordingEvent[] {
   if (!segmentId) return rec.events;
 
   const filtered: RecordingEvent[] = [];
   let inSegment = false;
   let foundBeginRendering = false;
-  const definedIds = new Set<string>();
+  const { patch, definedIds } = resolveRootPatchMode(rec, options);
 
   for (const event of rec.events) {
     if (event.type === "RUN_STARTED" || event.type === "RUN_FINISHED") {
@@ -179,7 +218,7 @@ export function getSegmentEvents(
       }
     } else if (inSegment) {
       foundBeginRendering = maybeInjectBeginRendering(event, foundBeginRendering, filtered);
-      filtered.push(options?.append ? event : patchRootChildren(event, definedIds));
+      filtered.push(patch ? patchRootChildren(event, definedIds) : event);
     }
   }
 

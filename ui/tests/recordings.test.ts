@@ -152,6 +152,135 @@ describe("recording registry", () => {
     expect(rootLists.at(-1)).toEqual(["a", "b"]);
   });
 
+  it("append mode strips root refs to unplayed segments but keeps played + own ids", () => {
+    // Three segments: "first" defines x1; "third" defines t1; "second" (current) defines s1 and
+    // roots [x1, t1, s1]. With only "first" played, t1 is a dangling ref and must be stripped —
+    // x1 (played) and s1 (own) must survive so visited sections keep stacking.
+    const rec: Recording = {
+      meta: { title: "t", description: "d" },
+      events: [
+        { delayMs: 0, type: "RUN_STARTED" },
+        { delayMs: 0, type: "STEP_STARTED", segment: "first" },
+        {
+          delayMs: 0,
+          type: "TOOL_CALL_START",
+          a2uiMessages: [
+            { beginRendering: { surfaceId: "main", root: "root" } },
+            {
+              surfaceUpdate: {
+                surfaceId: "main",
+                components: [
+                  { id: "root", component: { Column: { children: { explicitList: ["x1"] } } } },
+                  { id: "x1", component: { Text: { text: { literal: "X1" } } } },
+                ],
+              },
+            },
+          ],
+        },
+        { delayMs: 0, type: "STEP_FINISHED" },
+        { delayMs: 0, type: "STEP_STARTED", segment: "third" },
+        {
+          delayMs: 0,
+          type: "TOOL_CALL_START",
+          a2uiMessages: [
+            {
+              surfaceUpdate: {
+                surfaceId: "main",
+                components: [
+                  { id: "t1", component: { Text: { text: { literal: "T1" } } } },
+                ],
+              },
+            },
+          ],
+        },
+        { delayMs: 0, type: "STEP_FINISHED" },
+        { delayMs: 0, type: "STEP_STARTED", segment: "second" },
+        {
+          delayMs: 0,
+          type: "TOOL_CALL_START",
+          a2uiMessages: [
+            {
+              surfaceUpdate: {
+                surfaceId: "main",
+                components: [
+                  {
+                    id: "root",
+                    component: { Column: { children: { explicitList: ["x1", "t1", "s1"] } } },
+                  },
+                  { id: "s1", component: { Text: { text: { literal: "S1" } } } },
+                ],
+              },
+            },
+          ],
+        },
+        { delayMs: 0, type: "STEP_FINISHED" },
+        { delayMs: 0, type: "RUN_FINISHED" },
+      ],
+    };
+
+    const result = getSegmentEvents(rec, "second", {
+      append: true,
+      playedSegments: ["first"],
+    });
+
+    const lastRootList = result
+      .flatMap((e) => (e.a2uiMessages ?? []) as Record<string, unknown>[])
+      .map(
+        (m) =>
+          m.surfaceUpdate as
+            | {
+                components?: {
+                  id: string;
+                  component: Record<string, { children?: { explicitList?: string[] } }>;
+                }[];
+              }
+            | undefined
+      )
+      .map((u) => u?.components?.find((c) => c.id === "root"))
+      .filter((r): r is NonNullable<typeof r> => Boolean(r))
+      .map((r) => {
+        const type = Object.keys(r.component)[0]!;
+        return r.component[type]!.children?.explicitList ?? [];
+      })
+      .at(-1);
+
+    expect(lastRootList).toEqual(["x1", "s1"]);
+  });
+
+  it("real recording: filters after overview→detail→plugins drops navigation-only refs", () => {
+    // Regression for the reported render error: reaching filters-checkboxes without visiting the
+    // navigation (tabs) segment must not leave root referencing divider-3 / tabs-section.
+    const result = getSegmentEvents(fullRecording, "filters-checkboxes", {
+      append: true,
+      playedSegments: ["overview", "detail", "plugins"],
+    });
+
+    const refs = new Set<string>();
+    for (const e of result) {
+      for (const m of (e.a2uiMessages ?? []) as Record<string, unknown>[]) {
+        const update = m.surfaceUpdate as
+          | {
+              components?: {
+                id: string;
+                component: Record<string, { children?: { explicitList?: string[] } }>;
+              }[];
+            }
+          | undefined;
+        const root = update?.components?.find((c) => c.id === "root");
+        if (!root) continue;
+        const type = Object.keys(root.component)[0]!;
+        for (const id of root.component[type]!.children?.explicitList ?? []) refs.add(id);
+      }
+    }
+
+    // Navigation-segment ids must be stripped (never played)…
+    expect(refs.has("divider-3")).toBe(false);
+    expect(refs.has("tabs-section")).toBe(false);
+    // …while visited sections keep stacking.
+    expect(refs.has("card-agents-eval")).toBe(true);
+    expect(refs.has("cc-section")).toBe(true);
+  });
+
   it("every event has delayMs and type fields", () => {
     for (const event of fullRecording.events) {
       expect(event).toHaveProperty("delayMs");
