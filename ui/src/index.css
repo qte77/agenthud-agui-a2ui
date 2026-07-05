@@ -205,12 +205,23 @@ body {
   color: inherit;
 }
 
-/* Tabs — the library ships empty tab class maps, so give the active tab a clear state. */
+/* Tabs — the library ships empty tab class maps, so give the active tab a clear state.
+ * The tab controls are <button>s whose UA chrome (whitish ButtonFace bg, black border) survives
+ * the library's `all: revert` reset — strip it fully or inactive tabs read as a "white overlay"
+ * in both themes. */
 .a2ui-surface .qte-tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font: inherit;
   padding: 0.5rem 0.75rem;
   color: var(--color-text-muted);
-  border-bottom: 2px solid transparent;
   cursor: pointer;
+}
+.a2ui-surface .qte-tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 .a2ui-surface .qte-tab-active {
   color: var(--color-primary);
