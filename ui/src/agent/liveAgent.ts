@@ -4,7 +4,7 @@ import { z } from "zod";
 import { A2UIMessageBatchSchema } from "./contract";
 import type { AgentEvent } from "./applyA2UIEvent";
 import type { UserTurn } from "./conversation";
-import { SYSTEM_PROMPT } from "./systemPrompt";
+import { SYSTEM_PROMPT, RENDER_UI_TOOL_DESCRIPTION } from "./prompts";
 
 // BYOK connection details — supplied by the visitor. The API key is held in memory only (never
 // persisted); base URL + model persist in sessionStorage. Per US-7. Any CORS-friendly
@@ -80,9 +80,7 @@ const renderUiInput = z.object({ messages: A2UIMessageBatchSchema });
 
 function buildRenderUiTool() {
   return tool({
-    description:
-      "Draw the on-screen UI by emitting a batch of A2UI messages on the 'main' " +
-      "surface. Use only the standard catalog component types.",
+    description: RENDER_UI_TOOL_DESCRIPTION,
     inputSchema: renderUiInput,
     // The UI is carried by the call arguments; nothing meaningful to return.
     execute: () => "rendered",

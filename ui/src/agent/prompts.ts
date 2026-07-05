@@ -1,11 +1,20 @@
 /*
- * The live agent's system prompt — a hand-curated A2UI catalog reference per ADR-0003
+ * ALL model-facing prompt text for the live agent lives here (prompt-craft edits get isolated
+ * diffs; liveAgent.ts stays logic-only). The one deliberate exception: conversation.ts's
+ * actionToTurn turn template — it's the tested output of a reducer and stays with its logic.
+ *
+ * SYSTEM_PROMPT is a hand-curated A2UI catalog reference per ADR-0003
  * (docs/decisions/0003-live-catalog-instruction.md): the exact prop shape per component Type,
  * transcribed from @a2ui/web_core's v0.8 schema. Deliberately NOT derived/injected (token cost on
  * the visitor's BYOK key; small models follow a tight reference better). Hand-maintained — re-check
- * against the schema on @a2ui bumps. Kept out of liveAgent.ts so prompt-craft edits get isolated
- * diffs and the agent module stays logic-only.
+ * against the schema on @a2ui bumps.
  */
+
+/** Model-facing description of the agent's single tool. */
+export const RENDER_UI_TOOL_DESCRIPTION =
+  "Draw the on-screen UI by emitting a batch of A2UI messages on the 'main' " +
+  "surface. Use only the standard catalog component types.";
+
 export const SYSTEM_PROMPT = `You are a UI-composing agent. Answer the user by calling the \`render_ui\` tool to draw an interface on the "main" surface with A2UI messages — never reply in prose alone. Make exactly ONE render_ui call with the COMPLETE interface (one beginRendering + one surfaceUpdate listing every component).
 
 An A2UI batch is an array of messages:
