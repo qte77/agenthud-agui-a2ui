@@ -3,7 +3,7 @@ import { streamText, tool, stepCountIs } from "ai";
 import { z } from "zod";
 import { A2UIMessageBatchSchema } from "./contract";
 import type { AgentEvent } from "./applyA2UIEvent";
-import type { UserTurn } from "./conversation";
+import type { ConversationTurn } from "./conversation";
 import { SYSTEM_PROMPT, RENDER_UI_TOOL_DESCRIPTION } from "./prompts";
 
 // BYOK connection details — supplied by the visitor. The API key is held in memory only (never
@@ -93,7 +93,7 @@ function buildRenderUiTool() {
  */
 export async function runLiveAgent(
   settings: LiveSettings,
-  messages: UserTurn[],
+  messages: ConversationTurn[],
   onEvent: (event: AgentEvent) => void,
   opts?: { signal?: AbortSignal }
 ): Promise<void> {
