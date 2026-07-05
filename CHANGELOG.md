@@ -34,6 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `ui/src/agent/conversation.ts` + `ui/src/agent/useLiveAgent.ts`: **live turn memory** — after each
+  turn a compact assistant summary of the render (Text literals + Button action names, ≤1200 chars)
+  is appended to the history, so follow-up turns actually see what was rendered (real continuity
+  instead of "multiple single-turns"). #156 Stage 2 (memory half).
 - `ui/src/LiveDashboard.tsx`: **submittable default prompt** — "Output an interactive fairytale"
   ships as the field's initial value (Run works untouched; first focus clears it; typed text survives
   refocus). `DEFAULT_PROMPT` exported for tests (#179).
