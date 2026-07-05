@@ -9,17 +9,19 @@ export function ModeToggle({
   onChange: (mode: ViewMode) => void;
 }) {
   return (
+    // Plain aria-pressed toggle buttons: the previous role="tablist"/"tab" markup was an
+    // INCOMPLETE tabs pattern (no aria-controls/tabpanel), which also hid the buttons from
+    // role=button queries (screen readers + testing tools alike).
     <div
       className="flex rounded border border-border overflow-hidden text-sm"
-      role="tablist"
+      role="group"
       aria-label="Agent mode"
     >
       {(["demo", "live"] as ViewMode[]).map((m) => (
         <button
           key={m}
           type="button"
-          role="tab"
-          aria-selected={mode === m}
+          aria-pressed={mode === m}
           onClick={() => onChange(m)}
           className={
             mode === m
