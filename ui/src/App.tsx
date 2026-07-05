@@ -100,6 +100,9 @@ function DemoDashboard({
   const [path, setPath] = useState<string[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [playTrigger, setPlayTrigger] = useState(0);
+  // Segment ids the visitor has already played — seeds append-mode root patching so refs to
+  // visited sections keep stacking while never-played refs are stripped.
+  const [playedSegments, setPlayedSegments] = useState<string[]>([]);
   const appendRef = useRef(false);
   const lastHandledTrigger = useRef(0);
 
@@ -113,6 +116,7 @@ function DemoDashboard({
         events: getSegmentEvents(activeRecording, currentSegmentId, {
           // eslint-disable-next-line react-hooks/refs -- deliberate latest-value side channel; recompute is driven by playTrigger
           append: appendRef.current,
+          playedSegments,
         }),
       };
     }
@@ -153,6 +157,10 @@ function DemoDashboard({
       ]);
     }
     const isAppend = path.length > 0;
+    // The outgoing segment has fully played by the time the next choice is made.
+    if (currentSegmentId) {
+      setPlayedSegments((prev) => [...prev, currentSegmentId]);
+    }
     setCurrentSegmentId(choice.segment);
     setPath((prev) => [...prev, choice.label]);
     setCurrentNode(choice.next ?? "__leaf__");
@@ -166,6 +174,7 @@ function DemoDashboard({
     setCurrentNode("root");
     setPath([]);
     setHistory([]);
+    setPlayedSegments([]);
     triggerPlay(false);
   }
 
@@ -176,6 +185,7 @@ function DemoDashboard({
     setCurrentSegmentId(null);
     setPath([]);
     setHistory([]);
+    setPlayedSegments([]);
     setShowChoices(true);
   }
 
@@ -184,12 +194,15 @@ function DemoDashboard({
       view={view}
       onView={onView}
       headerMiddle={
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/15 text-primary">
             Replay
           </span>
           {path.length > 0 && (
-            <span className="text-xs text-text-muted">{path.join(" → ")}</span>
+            // Truncate long paths (loops make them unbounded); full path stays legible via title.
+            <span className="min-w-0 truncate text-xs text-text-muted" title={path.join(" → ")}>
+              {path.join(" → ")}
+            </span>
           )}
         </div>
       }

@@ -47,10 +47,12 @@ export function DashboardShell({
   const build = formatBuildInfo(__APP_VERSION__, __BUILD_SHA__);
   return (
     <div className="h-screen flex flex-col max-w-7xl mx-auto w-full">
-      <header className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
+      <header className="flex items-center justify-between gap-3 px-4 py-3 bg-surface border-b border-border">
         <BrandHeader />
-        {headerMiddle}
-        <div className="flex items-center gap-2">
+        {/* Shrinkable middle slot: long content (e.g. the replay breadcrumb) truncates instead of
+            pushing the brand/controls — header layout stays constant. */}
+        <div className="flex-1 min-w-0 overflow-hidden">{headerMiddle}</div>
+        <div className="flex items-center gap-2 shrink-0">
           <ModeToggle mode={view} onChange={onView} />
           {extraControls}
           <CatalogViewer />

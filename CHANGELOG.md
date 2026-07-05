@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ui/src/recordings/index.ts`: Demo **tree-mode replay no longer breaks on unvisited branches** —
+  append-mode root patching is now seeded with the segments the visitor actually played, so a path
+  like repos → details → plugins → filters renders instead of failing the processor's referential
+  check on ids from the never-played tabs segment ("references non-existent component ID
+  'divider-3'/'tabs-section'"). TDD Red-first (synthetic + real-recording regression tests).
+- `ui/src/DashboardShell.tsx` + `ui/src/App.tsx`: the replay **breadcrumb no longer pushes/compresses
+  the header** on deep paths — the middle header slot is shrinkable and the path truncates with an
+  ellipsis (full path on hover via `title`); header height and controls stay constant.
+
 ### Added
 
 - **Interactive live agent (onAction MVP)** — rendered A2UI **Buttons now work** on the Live tab:
