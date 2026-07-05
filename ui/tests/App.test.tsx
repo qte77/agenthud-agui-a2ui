@@ -11,6 +11,8 @@ vi.mock("@a2ui/react", () => ({
     processMessages: vi.fn(),
     clearSurfaces: vi.fn(),
   }),
+  // theme/a2uiTheme.ts spreads defaultTheme (+ .components.Tabs) — minimal stub keeps the mock valid.
+  defaultTheme: { components: { Tabs: {} } },
 }));
 
 import { App } from "../src/App";
