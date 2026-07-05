@@ -240,7 +240,7 @@ function DemoDashboard({
       surfaceSubtitle="components selected by user intent from standard catalog"
       eventsSubtitle="protocol stream driving the surface"
       eventLog={eventLog}
-      footerLead="AG-UI event replay + A2UI rendering"
+      footerLead="Interactive AG-UI replay + A2UI rendering"
     >
 
           {mode === "idle" && (
