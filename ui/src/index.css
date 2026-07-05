@@ -198,6 +198,12 @@ body {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+/* A Button wraps a child Text component whose .qte-text color (page text — near-white in
+ * dark) would otherwise override the button's dark-on-amber label → illegible. Inherit. */
+.a2ui-surface .qte-button .qte-text,
+.a2ui-surface .qte-button [class*="qte-text"] {
+  color: inherit;
+}
 
 /* Tabs — the library ships empty tab class maps, so give the active tab a clear state. */
 .a2ui-surface .qte-tab {
