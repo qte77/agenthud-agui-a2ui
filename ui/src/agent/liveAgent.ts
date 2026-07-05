@@ -3,6 +3,7 @@ import { streamText, tool, stepCountIs } from "ai";
 import { z } from "zod";
 import { A2UIMessageBatchSchema } from "./contract";
 import type { AgentEvent } from "./applyA2UIEvent";
+import type { UserTurn } from "./conversation";
 
 // BYOK connection details — supplied by the visitor. The API key is held in memory only (never
 // persisted); base URL + model persist in sessionStorage. Per US-7. Any CORS-friendly
@@ -122,7 +123,7 @@ Never leave a children.explicitList, tabItems, or components list empty. Keep it
  */
 export async function runLiveAgent(
   settings: LiveSettings,
-  prompt: string,
+  messages: UserTurn[],
   onEvent: (event: AgentEvent) => void,
   opts?: { signal?: AbortSignal }
 ): Promise<void> {
@@ -134,7 +135,9 @@ export async function runLiveAgent(
   const result = streamText({
     model: openai.chat(settings.model),
     system: SYSTEM_PROMPT,
-    prompt,
+    // Full conversation history (user turns only in the MVP) — a button click appends a
+    // follow-up turn and re-runs with context. One render_ui call per turn (below).
+    messages,
     tools: { render_ui: buildRenderUiTool() },
     // Force exactly one render_ui call: toolChoice removes the "print the batch as prose" failure
     // (token flood, nothing renders) at the source; stepCountIs(1) stops after that one call so the

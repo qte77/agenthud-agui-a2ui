@@ -4,14 +4,36 @@
  * path is caught in CI. The rest of the suite mocks @a2ui/react; this file
  * deliberately does not.
  */
-import { describe, it, expect } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { render, screen, act, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { useA2UIActions } from "@a2ui/react";
 import { A2UISurfaceProvider, A2UISurface } from "../src/A2UISurface";
+import { setActionHandler } from "../src/agent/actionBridge";
 import overview from "../src/recordings/overview.json";
 
 const SMOKE_TEXT = "SmokeTestUniqueText__a2ui";
+const BUTTON_LABEL = "SmokeButton__a2ui";
+
+// Minimal batch with one actionable Button wrapping a Text label.
+const BUTTON_BATCH = [
+  { beginRendering: { surfaceId: "main", root: "b1" } },
+  {
+    surfaceUpdate: {
+      surfaceId: "main",
+      components: [
+        {
+          id: "b1",
+          component: { Button: { child: "t1", action: { name: "do_thing" } } },
+        },
+        {
+          id: "t1",
+          component: { Text: { text: { literalString: BUTTON_LABEL }, usageHint: "body" as const } },
+        },
+      ],
+    },
+  },
+];
 
 // Smallest valid A2UI batch that renders one Text component on surface "main".
 const MINIMAL_BATCH = [
@@ -68,6 +90,28 @@ function CaptureActions({
 }
 
 describe("A2UISurface (real @a2ui/react)", () => {
+  afterEach(() => setActionHandler(null));
+
+  it("dispatches a clicked Button's action name to the bridge handler", () => {
+    // ARRANGE
+    const spy = vi.fn();
+    setActionHandler(spy);
+    let processMessages!: ReturnType<typeof useA2UIActions>["processMessages"];
+    render(
+      <A2UISurfaceProvider>
+        <CaptureActions onReady={(fn) => (processMessages = fn)} />
+        <A2UISurface />
+      </A2UISurfaceProvider>,
+    );
+    act(() => processMessages(BUTTON_BATCH));
+
+    // ACT — click the rendered A2UI Button
+    fireEvent.click(screen.getByText(BUTTON_LABEL));
+
+    // ASSERT — our provider→bridge wiring forwarded the action name
+    expect(spy).toHaveBeenCalledWith("do_thing");
+  });
+
   it("renders a Text component's literal text", () => {
     let processMessages!: ReturnType<typeof useA2UIActions>["processMessages"];
 

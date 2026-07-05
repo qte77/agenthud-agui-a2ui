@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardShell } from "./DashboardShell";
 import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
+import { setActionHandler } from "./agent/actionBridge";
 import type { LiveSettings } from "./agent/liveAgent";
 import { ENDPOINTS } from "./config";
 
@@ -113,7 +114,14 @@ export function LiveDashboard({
   // Tracks an explicit "Custom…" model choice — mirrors the provider's editable reveal (the provider
   // uses a static `editable` flag; a model id can't, so we remember the Custom selection).
   const [modelCustom, setModelCustom] = useState(false);
-  const { eventLog, isRunning, error, run, stop } = useLiveAgent();
+  const { eventLog, isRunning, error, run, sendAction, stop } = useLiveAgent();
+
+  // Route rendered-Button clicks (A2UISurface onAction → actionBridge) into a follow-up
+  // agent turn. Unregistered on unmount, so Demo mode clicks stay no-ops.
+  useEffect(() => {
+    setActionHandler((name) => void sendAction(settings, name));
+    return () => setActionHandler(null);
+  }, [sendAction, settings]);
 
   function patchSettings(patch: Partial<LiveSettings>) {
     setSettings((prev) => {
