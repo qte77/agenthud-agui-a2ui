@@ -18,6 +18,8 @@ export function A2UISurfaceProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function A2UISurface() {
-  return <A2UIRenderer surfaceId="main" />;
+export function A2UISurface({ fallback }: { fallback?: ReactNode }) {
+  // `fallback` renders while the surface doesn't exist (e.g. Live's pending-render skeleton
+  // between Run-click and the first render_ui batch). Spread keeps exactOptionalPropertyTypes happy.
+  return <A2UIRenderer surfaceId="main" {...(fallback !== undefined ? { fallback } : {})} />;
 }

@@ -26,6 +26,8 @@ interface DashboardShellProps {
   eventLog: EventLogEntry[];
   /** Optional collapsible panel pinned to the top of the right sidebar (Live: connection settings). */
   asidePanel?: ReactNode;
+  /** Optional content shown while the A2UI surface doesn't exist (Live: pending-render skeleton). */
+  surfaceFallback?: ReactNode;
   /** Lead text before the shared repo link in the footer. */
   footerLead: string;
   /** Mode-specific main body, rendered below the A2UI surface. */
@@ -41,6 +43,7 @@ export function DashboardShell({
   eventsSubtitle,
   eventLog,
   asidePanel,
+  surfaceFallback,
   footerLead,
   children,
 }: DashboardShellProps) {
@@ -68,7 +71,7 @@ export function DashboardShell({
             </span>
             <span className="text-xs text-text-muted">— {surfaceSubtitle}</span>
           </div>
-          <A2UISurface />
+          <A2UISurface {...(surfaceFallback != null ? { fallback: surfaceFallback } : {})} />
           {children}
         </main>
         <aside className="w-96 border-l border-border flex flex-col min-h-0 overflow-hidden">

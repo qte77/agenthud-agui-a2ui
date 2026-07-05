@@ -19,6 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **Motion / alive states (CSS-only, no new deps)** — newly-mounted A2UI cards/images/buttons get a
+  subtle entrance animation (`qte-enter`, 220ms; only NEW components animate thanks to stable-id
+  keying), and the Live surface shows a **branded shimmer skeleton** (`ui/src/SurfaceSkeleton.tsx`,
+  via `A2UIRenderer`'s `fallback`) from Run-click until the first `render_ui` batch lands — never over
+  an existing surface on follow-up turns. Gated by the existing global `prefers-reduced-motion` rule.
+  Plan 008 PR3 (the streaming-log cursor was cut as redundant per KISS review).
 - **Interactive live agent (onAction MVP)** — rendered A2UI **Buttons now work** on the Live tab:
   a click routes through `A2UIProvider`'s `onAction` → `ui/src/agent/actionBridge.ts` → one
   follow-up agent turn with the full conversation history (`ui/src/agent/conversation.ts`,
