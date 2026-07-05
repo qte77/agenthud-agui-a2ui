@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Interactive live agent (onAction MVP)** — rendered A2UI **Buttons now work** on the Live tab:
+  a click routes through `A2UIProvider`'s `onAction` → `ui/src/agent/actionBridge.ts` → one
+  follow-up agent turn with the full conversation history (`ui/src/agent/conversation.ts`,
+  TDD Red-first), re-rendering the surface. `runLiveAgent` switched `prompt` → `messages`
+  (one forced `render_ui` call per turn unchanged). Demo clicks stay no-ops (no handler
+  registered). #156 Stage 1, per plans 007/008.
+
 ### Changed
 
 - `ui/src/theme/a2uiTheme.ts` + `ui/src/index.css`: the **A2UI render surface is now themed**

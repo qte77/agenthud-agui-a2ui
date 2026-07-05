@@ -38,8 +38,10 @@ Inter type ramp, avatar sized to 44px (was unconstrained).
 
 ## Deferred roadmap — reassess after PR1 (NOT committed)
 
-- **PR2 — interactive onAction MVP** (#156 Stage 1): buttons drive one follow-up turn (already speced +
-  unblocked in [plan 007](007-live-interactive-multicol.md); the one TDD piece — `agent/conversation.ts`).
+- **PR2 — interactive onAction MVP** (#156 Stage 1): ✅ **shipped** — buttons drive one follow-up turn
+  (`agent/conversation.ts` TDD Red-first; `agent/actionBridge.ts` module registry — chosen over a
+  React context since one provider serves even a future multi-surface transcript, the payload carries
+  `userAction.surfaceId`; `runLiveAgent` is `messages`-based). Spec: [plan 007](007-live-interactive-multicol.md) §PR 2.
 - **PR3 — motion/alive states**: CSS-only entrance animation + indeterminate pending skeleton + a
   streaming cursor in the event log; reduced-motion gated. Polish, not required to de-"boring" it.
 - **PR4 — multi-turn transcript** (#156 Stage 2): per-turn surfaces + a chat transcript layout. Biggest/

@@ -3,6 +3,7 @@ import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { resolveAssets } from "./assets";
 import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
+import { actionToTurn, appendUserTurn, type UserTurn } from "./conversation";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
@@ -13,6 +14,8 @@ export function useLiveAgent() {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Conversation history (user turns only in the MVP) — seeded by run(), grown by sendAction().
+  const messagesRef = useRef<UserTurn[]>([]);
 
   const render = useCallback(
     (messages: unknown[]) =>
@@ -21,13 +24,11 @@ export function useLiveAgent() {
     [processMessages]
   );
 
-  const run = useCallback(
-    async (settings: LiveSettings, prompt: string) => {
-      if (isRunning) return;
+  // Shared one-turn stream routine (run + sendAction differ only in how history is prepared).
+  const stream = useCallback(
+    async (settings: LiveSettings, messages: UserTurn[]) => {
       setIsRunning(true);
       setError(null);
-      setEventLog([]);
-      clearSurfaces();
 
       const start = Date.now();
       const ac = new AbortController();
@@ -35,7 +36,7 @@ export function useLiveAgent() {
       try {
         await runLiveAgent(
           settings,
-          prompt,
+          messages,
           (event) => {
             const entry = applyA2UIEvent(event, Date.now() - start, render);
             setEventLog((prev) => appendLogEntry(prev, entry));
@@ -50,10 +51,33 @@ export function useLiveAgent() {
         setIsRunning(false);
       }
     },
-    [isRunning, clearSurfaces, render]
+    [render]
+  );
+
+  const run = useCallback(
+    async (settings: LiveSettings, prompt: string) => {
+      if (isRunning) return;
+      // Fresh conversation: reset log, surface, and history.
+      setEventLog([]);
+      clearSurfaces();
+      messagesRef.current = [{ role: "user", content: prompt }];
+      await stream(settings, messagesRef.current);
+    },
+    [isRunning, clearSurfaces, stream]
+  );
+
+  // Button click → one follow-up turn with the FULL history. No clearSurfaces(): the new
+  // beginRendering replaces the surface, avoiding a blank flash. No-op before the first run.
+  const sendAction = useCallback(
+    async (settings: LiveSettings, name: string) => {
+      if (isRunning || messagesRef.current.length === 0) return;
+      messagesRef.current = appendUserTurn(messagesRef.current, actionToTurn(name).content);
+      await stream(settings, messagesRef.current);
+    },
+    [isRunning, stream]
   );
 
   const stop = useCallback(() => abortRef.current?.abort(), []);
 
-  return { eventLog, isRunning, error, run, stop };
+  return { eventLog, isRunning, error, run, sendAction, stop };
 }
