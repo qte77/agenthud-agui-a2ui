@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CatalogEntry {
   name: string;
@@ -37,6 +37,16 @@ const LINKS = [
 export function CatalogViewer() {
   const [open, setOpen] = useState(false);
 
+  // Standard modal dismissal: Escape closes while open (✕ and backdrop click below).
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   return (
     <>
       <button
@@ -46,12 +56,25 @@ export function CatalogViewer() {
         {open ? "Hide" : "Catalog"}
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-surface rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] flex flex-col m-4">
+        <div
+          data-testid="catalog-backdrop"
+          onClick={(e) => {
+            // Outside click: only when the backdrop itself is the target (not dialog content).
+            if (e.target === e.currentTarget) setOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="A2UI Standard Component Catalog"
+            className="bg-surface rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] flex flex-col m-4"
+          >
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <h2 className="text-sm font-semibold text-primary">A2UI Standard Component Catalog</h2>
               <button
                 onClick={() => setOpen(false)}
+                aria-label="Close catalog"
                 className="text-text-muted hover:text-text text-lg leading-none"
               >
                 &times;
