@@ -317,6 +317,7 @@ export function LiveDashboard({
         </>
       }
       surfaceFallback={pendingSurfaceFallback(isRunning)}
+      surfaceBusy={isRunning}
       footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
     >
       {null}

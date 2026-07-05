@@ -2,11 +2,12 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-// Stub the agent hook (network/AI SDK) — this suite tests the prompt-field behavior only.
+// Stub the agent hook (network/AI SDK) — parametrizable so tests can flip isRunning.
+const hookState = { isRunning: false };
 vi.mock("../src/agent/useLiveAgent", () => ({
   useLiveAgent: () => ({
     eventLog: [],
-    isRunning: false,
+    isRunning: hookState.isRunning,
     error: null,
     run: vi.fn(),
     sendAction: vi.fn(),
@@ -28,6 +29,23 @@ function renderLive() {
 function promptField(): HTMLTextAreaElement {
   return screen.getByPlaceholderText(/compose a UI/i);
 }
+
+describe("LiveDashboard turn-busy indicator", () => {
+  it("shows a Generating chip while a run streams", () => {
+    hookState.isRunning = true;
+    renderLive();
+
+    expect(screen.getByText(/generating/i)).toBeInTheDocument();
+    hookState.isRunning = false;
+  });
+
+  it("shows no Generating chip when idle", () => {
+    hookState.isRunning = false;
+    renderLive();
+
+    expect(screen.queryByText(/generating/i)).toBeNull();
+  });
+});
 
 describe("LiveDashboard default prompt", () => {
   it("starts with the submittable default prompt", () => {

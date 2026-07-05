@@ -28,6 +28,8 @@ interface DashboardShellProps {
   asidePanel?: ReactNode;
   /** Optional content shown while the A2UI surface doesn't exist (Live: pending-render skeleton). */
   surfaceFallback?: ReactNode;
+  /** Dim the existing surface + show a Generating chip while a follow-up turn streams (Live). */
+  surfaceBusy?: boolean;
   /** Lead text before the shared repo link in the footer. */
   footerLead: string;
   /** Mode-specific main body, rendered below the A2UI surface. */
@@ -44,6 +46,7 @@ export function DashboardShell({
   eventLog,
   asidePanel,
   surfaceFallback,
+  surfaceBusy,
   footerLead,
   children,
 }: DashboardShellProps) {
@@ -71,7 +74,16 @@ export function DashboardShell({
             </span>
             <span className="text-xs text-text-muted">— {surfaceSubtitle}</span>
           </div>
-          <A2UISurface {...(surfaceFallback != null ? { fallback: surfaceFallback } : {})} />
+          <div className="relative">
+            {surfaceBusy && (
+              <span className="qte-generating-chip" role="status">
+                Generating…
+              </span>
+            )}
+            <div className={surfaceBusy ? "qte-surface-busy" : undefined}>
+              <A2UISurface {...(surfaceFallback != null ? { fallback: surfaceFallback } : {})} />
+            </div>
+          </div>
           {children}
         </main>
         <aside className="w-96 border-l border-border flex flex-col min-h-0 overflow-hidden">

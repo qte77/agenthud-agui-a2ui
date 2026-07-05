@@ -328,6 +328,38 @@ body {
   margin-bottom: 0;
 }
 
+/* Follow-up-turn feedback (Live): dim the existing surface while the agent regenerates —
+ * context stays readable, stale buttons can't be clicked — plus a small Generating chip. */
+.qte-surface-busy {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.qte-generating-chip {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  z-index: 10;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  animation: qte-chip-pulse 1.6s ease-in-out infinite;
+}
+@keyframes qte-chip-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
 /* Image — size by usage hint (the catalog leaves images unconstrained → a giant avatar).
  * Classes may land on the wrapper or the <img>, so target both. The first rule is the universal
  * safety net: live agents often omit usageHint entirely, so cap ALL images at a sane size —
