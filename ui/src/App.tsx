@@ -13,11 +13,13 @@ const LiveDashboard = lazy(() =>
 import {
   tours,
   getSegmentEvents,
+  findChoiceByAction,
   type TreeChoice,
   type TreeNode,
   type Recording,
   type DecisionTree,
 } from "./recordings";
+import { setActionHandler } from "./agent/actionBridge";
 
 type Mode = "idle" | "tree" | "all";
 
@@ -108,13 +110,23 @@ function DemoDashboard({
 
   const activeTree: DecisionTree = activeRecording.tree ?? {};
 
+  // Rendered A2UI Buttons drive the tree: the recording's choices declare which action name
+  // triggers them (TreeChoice.action), and clicks arrive via the same actionBridge Live uses.
+  // Unregistered on unmount, so Live re-registers its own handler cleanly on view switch.
+  useEffect(() => {
+    setActionHandler((name) => {
+      const choice = findChoiceByAction(activeTree[currentNode], name);
+      if (choice) handleChoice(choice);
+    });
+    return () => setActionHandler(null);
+  });
+
   const filteredRecording = useMemo((): Pick<Recording, "meta" | "events"> => {
     if (mode === "all") return activeRecording;
     if (mode === "tree" && currentSegmentId) {
       return {
         meta: activeRecording.meta,
         events: getSegmentEvents(activeRecording, currentSegmentId, {
-          // eslint-disable-next-line react-hooks/refs -- deliberate latest-value side channel; recompute is driven by playTrigger
           append: appendRef.current,
           playedSegments,
         }),

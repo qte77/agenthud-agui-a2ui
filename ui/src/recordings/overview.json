@@ -921,6 +921,34 @@
       "text": "renderCheckBoxFilters()",
       "a2uiMessages": [
         {
+          "dataModelUpdate": {
+            "surfaceId": "main",
+            "contents": [
+              {
+                "key": "filters",
+                "valueMap": [
+                  {
+                    "key": "active",
+                    "valueBoolean": true
+                  },
+                  {
+                    "key": "python",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "forks",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "minStars",
+                    "valueNumber": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "surfaceUpdate": {
             "surfaceId": "main",
             "components": [
@@ -1004,7 +1032,7 @@
                       "literalString": "Active only"
                     },
                     "value": {
-                      "literalBoolean": true
+                      "path": "/filters/active"
                     }
                   }
                 }
@@ -1017,7 +1045,7 @@
                       "literalString": "Python repos"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/python"
                     }
                   }
                 }
@@ -1030,7 +1058,7 @@
                       "literalString": "Include forks"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/forks"
                     }
                   }
                 }
@@ -1059,6 +1087,34 @@
       "type": "TOOL_CALL_START",
       "text": "renderSlider(min-stars)",
       "a2uiMessages": [
+        {
+          "dataModelUpdate": {
+            "surfaceId": "main",
+            "contents": [
+              {
+                "key": "filters",
+                "valueMap": [
+                  {
+                    "key": "active",
+                    "valueBoolean": true
+                  },
+                  {
+                    "key": "python",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "forks",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "minStars",
+                    "valueNumber": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
         {
           "surfaceUpdate": {
             "surfaceId": "main",
@@ -1119,7 +1175,7 @@
                       "literalString": "Active only"
                     },
                     "value": {
-                      "literalBoolean": true
+                      "path": "/filters/active"
                     }
                   }
                 }
@@ -1132,7 +1188,7 @@
                       "literalString": "Python repos"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/python"
                     }
                   }
                 }
@@ -1145,7 +1201,7 @@
                       "literalString": "Include forks"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/forks"
                     }
                   }
                 }
@@ -1166,8 +1222,10 @@
                 "component": {
                   "Slider": {
                     "value": {
-                      "literalNumber": 5
-                    }
+                      "path": "/filters/minStars"
+                    },
+                    "minValue": 0,
+                    "maxValue": 10
                   }
                 }
               }
@@ -1195,6 +1253,34 @@
       "type": "TOOL_CALL_START",
       "text": "renderButton(applyFilters)",
       "a2uiMessages": [
+        {
+          "dataModelUpdate": {
+            "surfaceId": "main",
+            "contents": [
+              {
+                "key": "filters",
+                "valueMap": [
+                  {
+                    "key": "active",
+                    "valueBoolean": true
+                  },
+                  {
+                    "key": "python",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "forks",
+                    "valueBoolean": false
+                  },
+                  {
+                    "key": "minStars",
+                    "valueNumber": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
         {
           "surfaceUpdate": {
             "surfaceId": "main",
@@ -1256,7 +1342,7 @@
                       "literalString": "Active only"
                     },
                     "value": {
-                      "literalBoolean": true
+                      "path": "/filters/active"
                     }
                   }
                 }
@@ -1269,7 +1355,7 @@
                       "literalString": "Python repos"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/python"
                     }
                   }
                 }
@@ -1282,7 +1368,7 @@
                       "literalString": "Include forks"
                     },
                     "value": {
-                      "literalBoolean": false
+                      "path": "/filters/forks"
                     }
                   }
                 }
@@ -1303,8 +1389,10 @@
                 "component": {
                   "Slider": {
                     "value": {
-                      "literalNumber": 5
-                    }
+                      "path": "/filters/minStars"
+                    },
+                    "minValue": 0,
+                    "maxValue": 10
                   }
                 }
               },
@@ -1752,13 +1840,15 @@
           "label": "Show results",
           "hint": "Card, Text, Divider",
           "segment": "results",
-          "next": "after-results"
+          "next": "after-results",
+          "action": "applyFilters"
         },
         {
           "label": "Adjust filters",
           "hint": "CheckBox",
           "segment": "filters-checkboxes",
-          "next": "after-checkboxes"
+          "next": "after-checkboxes",
+          "action": "resetFilters"
         }
       ]
     },
