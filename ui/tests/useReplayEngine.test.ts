@@ -20,8 +20,15 @@ const testRecording: Recording = {
     {
       delayMs: 100,
       type: "TOOL_CALL_START",
+      // A valid non-empty batch — @a2ui rejects empty components, and accumulate() now omits
+      // a surfaceUpdate until components exist.
       a2uiMessages: [
-        { surfaceUpdate: { surfaceId: "main", components: [] } },
+        {
+          surfaceUpdate: {
+            surfaceId: "main",
+            components: [{ id: "t1", component: { Text: { text: { literalString: "hi" } } } }],
+          },
+        },
       ],
     },
     { delayMs: 0, type: "RUN_FINISHED" },

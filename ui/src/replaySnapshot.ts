@@ -37,8 +37,12 @@ export function accumulate(snapshot: SurfaceSnapshot, messages: unknown[]): unkn
 
   const batch: unknown[] = [];
   if (snapshot.begin) batch.push(snapshot.begin);
-  batch.push({
-    surfaceUpdate: { surfaceId: snapshot.surfaceId, components: [...snapshot.components.values()] },
-  });
+  // Only emit a surfaceUpdate once components exist — @a2ui rejects an empty components array
+  // (min 1), which a begin-only "(surface init)" event would otherwise produce on a fresh path.
+  if (snapshot.components.size > 0) {
+    batch.push({
+      surfaceUpdate: { surfaceId: snapshot.surfaceId, components: [...snapshot.components.values()] },
+    });
+  }
   return batch;
 }
