@@ -261,6 +261,62 @@ body {
   color: var(--color-text-muted);
 }
 
+/* ---- Motion / alive states (Plan 008 · PR3, CSS-only) ----
+ * Entrance on newly-mounted chunky components only (cards/images/buttons — animating every Text
+ * would flicker-storm long lists). Children are keyed by stable component id, so replay stacking
+ * animates just the NEW section; existing ones never re-trigger. The global
+ * prefers-reduced-motion rule above collapses all durations, gating this for free. */
+@keyframes qte-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.a2ui-surface .a2ui-card,
+.a2ui-surface .a2ui-image,
+.a2ui-surface .a2ui-button {
+  animation: qte-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Pending-render skeleton (Live): card-shaped shimmer shown via A2UIRenderer's fallback while
+ * the surface is empty and a run is streaming. Brand tokens only. */
+@keyframes qte-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+.qte-skeleton {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
+  max-width: 36rem;
+}
+.qte-skeleton-bar {
+  height: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(
+      90deg,
+      var(--color-border) 25%,
+      color-mix(in srgb, var(--color-border) 45%, var(--color-surface)) 50%,
+      var(--color-border) 75%
+    )
+    0 0 / 200% 100%;
+  animation: qte-shimmer 1.4s linear infinite;
+}
+.qte-skeleton-bar:last-child {
+  margin-bottom: 0;
+}
+
 /* Image — size by usage hint (the catalog leaves images unconstrained → a giant avatar).
  * Classes may land on the wrapper or the <img>, so target both; the first rule is a safety net. */
 .a2ui-surface .a2ui-image img {
