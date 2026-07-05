@@ -37,6 +37,17 @@ describe("accumulate (self-contained replay snapshot)", () => {
     expect(ids(out).sort()).toEqual(["a", "b", "root"]);
   });
 
+  it("omits the surfaceUpdate while no components have accumulated (begin-only init)", () => {
+    // A segment's injected "(surface init)" event carries only beginRendering. Emitting an empty
+    // surfaceUpdate for it fails @a2ui's `components: min(1)` and logs a render error.
+    const snap = emptySnapshot();
+
+    const out = accumulate(snap, [{ beginRendering: { surfaceId: "main", root: "root" } }]);
+
+    expect(out).toHaveLength(1);
+    expect((out[0] as { beginRendering?: unknown }).beginRendering).toBeDefined();
+  });
+
   it("preserves a leading beginRendering and the surfaceId", () => {
     const snap = emptySnapshot();
     const out = accumulate(snap, [
