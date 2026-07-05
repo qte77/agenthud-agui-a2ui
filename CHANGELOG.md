@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- `ui/src/theme/a2uiTheme.ts` + `ui/src/index.css`: the **A2UI render surface is now themed**
+  (EyeRest-branded). The `@a2ui` catalog rendered unstyled because its default theme references CSS
+  vars this app never defined; we route Card/Button/Tabs/Text/Image to our own `qte-*` class hooks
+  (via `A2UIProvider`'s `theme` prop) and style them from the existing `@theme` tokens — elevated
+  rounded cards, a real type ramp (Inter), hover/tab-active states, and usage-hint-sized images
+  (the demo avatar was rendering unconstrained). Dark/light aware; `.qte-*` scoped to `.a2ui-surface`.
+  Plan [008](docs/plans/008-a2ui-generative-ui-parity.md) (PR1 of the generative-UI parity roadmap).
+
 ## [0.3.0] - 2026-07-04
 
 ### Added

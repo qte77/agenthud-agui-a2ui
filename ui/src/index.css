@@ -26,6 +26,12 @@
   /* Inter (UI/prose) + JetBrains Mono (code/numeric), loaded via Fontsource */
   --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* Card elevation/radius — LOCAL additions (EyeRest is flat today), not DESIGN.md
+   * transcriptions; pending promotion upstream to the qte77 brand. Used by the
+   * A2UI surface theming below. */
+  --radius-card: 12px;
+  --shadow-card: 0 1px 2px rgba(28, 26, 20, 0.06), 0 4px 12px rgba(28, 26, 20, 0.08);
 }
 
 /*
@@ -46,6 +52,7 @@
     --color-data-caution: #c8b868;
     --color-data-negative: #c08060;
     --color-data-alt: #a8b870;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
   }
 }
 :root[data-theme="dark"] {
@@ -60,6 +67,7 @@
   --color-data-caution: #c8b868;
   --color-data-negative: #c08060;
   --color-data-alt: #a8b870;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
 }
 
 :root {
@@ -143,4 +151,134 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---- A2UI surface theming (Plan 008 · PR1) --------------------------------------------------
+ * The @a2ui catalog ships class maps that resolve to CSS vars this app never defines, so the
+ * rendered surface is unstyled. theme/a2uiTheme.ts routes Card/Button/Tabs/Text to the qte-*
+ * hooks below, styled with the EyeRest @theme tokens above (already dark/light-aware). Scoped
+ * under .a2ui-surface (the library's reset root) so nothing leaks; our unlayered rules override
+ * the library's zero-specificity :where() reset. --radius-card / --shadow-card live with the
+ * other tokens in the @theme + dark blocks above (local additions pending upstream promotion). */
+
+/* Surface baseline: font + text colour inherit past the library's `all: revert` reset. */
+.a2ui-surface {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+}
+
+/* Card — elevated, padded, rounded surface. */
+.a2ui-surface .qte-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
+}
+
+/* Button — filled primary with hover / active / keyboard-focus affordances. */
+.a2ui-surface .qte-button {
+  background-color: var(--color-primary);
+  color: var(--color-primary-on);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.05s ease;
+}
+.a2ui-surface .qte-button:hover {
+  opacity: 0.9;
+}
+.a2ui-surface .qte-button:active {
+  transform: translateY(1px);
+}
+.a2ui-surface .qte-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Tabs — the library ships empty tab class maps, so give the active tab a clear state. */
+.a2ui-surface .qte-tab {
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.a2ui-surface .qte-tab-active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Text — restore our font + a coherent type ramp (library leaves body/caption unset). */
+.a2ui-surface .qte-text {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+}
+.a2ui-surface .qte-text-h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.a2ui-surface .qte-text-h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+/* Tighter tracking on headings for a more polished ramp. */
+.a2ui-surface .qte-text-h1,
+.a2ui-surface .qte-text-h2,
+.a2ui-surface .qte-text-h3 {
+  letter-spacing: -0.01em;
+}
+.a2ui-surface .qte-text-h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.a2ui-surface .qte-text-h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.a2ui-surface .qte-text-h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.a2ui-surface .qte-text-body {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.a2ui-surface .qte-text-caption {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Image — size by usage hint (the catalog leaves images unconstrained → a giant avatar).
+ * Classes may land on the wrapper or the <img>, so target both; the first rule is a safety net. */
+.a2ui-surface .a2ui-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.a2ui-surface .qte-img-avatar,
+.a2ui-surface .qte-img-avatar img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.a2ui-surface .qte-img-icon,
+.a2ui-surface .qte-img-icon img {
+  width: 20px;
+  height: 20px;
+}
+.a2ui-surface .qte-img-sm,
+.a2ui-surface .qte-img-sm img {
+  max-width: 96px;
+}
+.a2ui-surface .qte-img-md,
+.a2ui-surface .qte-img-md img {
+  max-width: 200px;
 }
