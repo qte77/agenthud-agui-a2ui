@@ -318,9 +318,12 @@ body {
 }
 
 /* Image — size by usage hint (the catalog leaves images unconstrained → a giant avatar).
- * Classes may land on the wrapper or the <img>, so target both; the first rule is a safety net. */
+ * Classes may land on the wrapper or the <img>, so target both. The first rule is the universal
+ * safety net: live agents often omit usageHint entirely, so cap ALL images at a sane size —
+ * hint-specific rules below then set exact dimensions. */
 .a2ui-surface .a2ui-image img {
-  max-width: 100%;
+  max-width: min(100%, 280px);
+  max-height: 280px;
   height: auto;
   display: block;
 }
