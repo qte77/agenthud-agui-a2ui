@@ -1,6 +1,6 @@
 ---
 date: 2026-07-04
-status: in-progress
+status: done
 issues: [129, 156, 128]
 plan: plans/007-live-interactive-multicol.md
 title: Handoff 007 — Interactive live agent + multi-column

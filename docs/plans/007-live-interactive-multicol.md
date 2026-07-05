@@ -2,7 +2,7 @@
 title: Plan 007 — Interactive live agent (onAction) + multi-column
 description: Multi-col shipped (#159); the onAction MVP is unblocked (live-stream quirk RESOLVED); #140 v0.9 = major migration (stay v0.8). Carries a full source map so the next session need not re-explore.
 date: 2026-07-04
-status: in-progress
+status: done
 issues: [129, 156, 128]
 handoff: handoffs/007-live-interactive-multicol.md
 ---
