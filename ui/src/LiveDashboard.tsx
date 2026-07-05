@@ -47,6 +47,9 @@ const fieldClass =
 
 const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-5.4-mini)";
 
+// Submittable default prompt (not a placeholder): Run works out of the box; cleared on first focus.
+export const DEFAULT_PROMPT = "Output an interactive fairytale";
+
 /** Pending-render skeleton while a run streams and the surface is still empty (kept out of
  *  LiveDashboard to stay under the complexity gate). */
 function pendingSurfaceFallback(isRunning: boolean) {
@@ -117,7 +120,10 @@ export function LiveDashboard({
   onMode: (mode: ViewMode) => void;
 }) {
   const [settings, setSettings] = useState<LiveSettings>(loadSettings);
-  const [prompt, setPrompt] = useState("");
+  // Starts as a real (submittable) default prompt — clicking Run untouched uses it; the first
+  // focus into the field clears it so the visitor types on a blank slate.
+  const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
+  const [promptTouched, setPromptTouched] = useState(false);
   // Tracks an explicit "Custom…" model choice — mirrors the provider's editable reveal (the provider
   // uses a static `editable` flag; a model id can't, so we remember the Custom selection).
   const [modelCustom, setModelCustom] = useState(false);
@@ -252,6 +258,13 @@ export function LiveDashboard({
           rows={3}
           placeholder="Ask the agent to compose a UI — e.g. “show a card with a title and two buttons”"
           value={prompt}
+          onFocus={() => {
+            // First focus clears the submittable default so the visitor types on a blank slate.
+            if (!promptTouched) {
+              setPrompt("");
+              setPromptTouched(true);
+            }
+          }}
           onChange={(e) => setPrompt(e.target.value)}
         />
 
