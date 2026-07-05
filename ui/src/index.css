@@ -26,6 +26,12 @@
   /* Inter (UI/prose) + JetBrains Mono (code/numeric), loaded via Fontsource */
   --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* Card elevation/radius — LOCAL additions (EyeRest is flat today), not DESIGN.md
+   * transcriptions; pending promotion upstream to the qte77 brand. Used by the
+   * A2UI surface theming below. */
+  --radius-card: 12px;
+  --shadow-card: 0 1px 2px rgba(28, 26, 20, 0.06), 0 4px 12px rgba(28, 26, 20, 0.08);
 }
 
 /*
@@ -46,6 +52,7 @@
     --color-data-caution: #c8b868;
     --color-data-negative: #c08060;
     --color-data-alt: #a8b870;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
   }
 }
 :root[data-theme="dark"] {
@@ -60,6 +67,7 @@
   --color-data-caution: #c8b868;
   --color-data-negative: #c08060;
   --color-data-alt: #a8b870;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
 }
 
 :root {
@@ -150,21 +158,8 @@ body {
  * rendered surface is unstyled. theme/a2uiTheme.ts routes Card/Button/Tabs/Text to the qte-*
  * hooks below, styled with the EyeRest @theme tokens above (already dark/light-aware). Scoped
  * under .a2ui-surface (the library's reset root) so nothing leaks; our unlayered rules override
- * the library's zero-specificity :where() reset.
- * --radius-card / --shadow-card are LOCAL additions (the brand is flat today) — pending promotion
- * to the qte77 EyeRest brand (DESIGN.md); upstream tracking issue TBD. */
-:root {
-  --radius-card: 12px;
-  --shadow-card: 0 1px 2px rgba(28, 26, 20, 0.06), 0 4px 12px rgba(28, 26, 20, 0.08);
-}
-:root[data-theme="dark"] {
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.55);
-  }
-}
+ * the library's zero-specificity :where() reset. --radius-card / --shadow-card live with the
+ * other tokens in the @theme + dark blocks above (local additions pending upstream promotion). */
 
 /* Surface baseline: font + text colour inherit past the library's `all: revert` reset. */
 .a2ui-surface {
