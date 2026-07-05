@@ -22,7 +22,8 @@ models in a server-side Python pipeline, not our constraint.
 ## Decision
 
 Teach the catalog with a **hand-curated, concise component reference in `SYSTEM_PROMPT`**
-(`ui/src/agent/liveAgent.ts`) — the exact prop shape per Type, transcribed from `@a2ui`'s schema
+(`ui/src/agent/prompts.ts` — relocated from `liveAgent.ts` in #175; decision unchanged) — the exact
+prop shape per Type, transcribed from `@a2ui`'s schema
 (`@a2ui/web_core/.../v0_8/schema/common-types.js`).
 
 | Option | Accuracy | Token cost / call | Small-model fit | Maintenance | Verdict |

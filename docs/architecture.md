@@ -65,7 +65,7 @@ The final box above expands to the translation that turns a model reply into ren
    (`literalString` / `literalNumber` / `literalBoolean`).
 
 > Gotcha: `beginRendering.root` **must equal the id of the top component** — a missing root id paints a
-> blank surface with no error. The live `SYSTEM_PROMPT` (`ui/src/agent/liveAgent.ts`) enforces this.
+> blank surface with no error. The live `SYSTEM_PROMPT` (`ui/src/agent/prompts.ts`) enforces this.
 
 ## The ours / theirs line
 

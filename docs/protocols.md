@@ -183,8 +183,9 @@ Traps from building the live + demo render paths on `@a2ui` v0.8 — each links 
   and teach the catalog with a curated prompt reference, not the raw schema. See [ADR-0003][adr-0003].
 - **Exact shapes:** typed literals (`literalString/Number/Boolean`, never bare `literal`); top id must be
   `root`; `Card.child` (single) not `children`; `Slider` min/max are plain numbers.
-- **Buttons need `onAction`** on the provider or clicks do nothing (#156); images need a token→URL
-  resolver to self-host (`ui/src/agent/assets.ts`).
+- **Buttons need `onAction`** on the provider or clicks do nothing — wired since #170/#173 via
+  `ui/src/agent/actionBridge.ts` (Live: follow-up agent turn; Demo: decision-tree navigation via
+  `TreeChoice.action`); images need a token→URL resolver to self-host (`ui/src/agent/assets.ts`).
 
 ## Sources
 
