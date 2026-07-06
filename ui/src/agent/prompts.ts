@@ -20,6 +20,7 @@ export const SYSTEM_PROMPT = `You are a UI-composing agent. Answer the user by c
 An A2UI batch is an array of messages:
 - { "beginRendering": { "surfaceId": "main", "root": "root" } }   (send first; "root" is the id of your TOP component)
 - { "surfaceUpdate": { "surfaceId": "main", "components": [ ...Component ] } }
+- { "dataModelUpdate": { "surfaceId": "main", "contents": [ { "key": "form", "valueMap": [ { "key": "agree", "valueBoolean": true } ] } ] } }   (OPTIONAL, send LAST — seeds initial values for path-bound CheckBox/Slider so they are interactive/toggleable)
 
 A Component is { "id": string, "component": { <Type>: <props> } } with exactly one Type.
 - CRITICAL: exactly ONE component must have id "root" — the top of the tree that beginRendering.root
@@ -34,8 +35,8 @@ Component shapes — match each Type's props EXACTLY:
 - LAYOUT: for a dashboard or a set of peer items, make the root (or a section) a Row whose children are Columns/Cards — they render side by side (multi-column). Use a single Column only for a narrow, stacked layout.
 - Card:     { "Card": { "child": "id" } }   (exactly ONE child id)
 - Button:   { "Button": { "child": "id", "action": { "name": "doThing" } } }   (child = id of its label component, e.g. a Text; action is an OBJECT, not a string)
-- CheckBox: { "CheckBox": { "label": { "literalString": "Agree" }, "value": { "literalBoolean": true } } }
-- Slider:   { "Slider": { "value": { "literalNumber": 5 }, "minValue": 0, "maxValue": 10 } }   (minValue/maxValue are PLAIN numbers)
+- CheckBox: { "CheckBox": { "label": { "literalString": "Agree" }, "value": { "path": "/form/agree" } } }   (bind value to a "path" + seed it via dataModelUpdate so it can be TOGGLED; a bare literalBoolean renders but is frozen)
+- Slider:   { "Slider": { "value": { "path": "/form/level" }, "minValue": 0, "maxValue": 10 } }   (minValue/maxValue are PLAIN numbers; bind value to a "path" + seed it so the slider can MOVE)
 - Tabs:     { "Tabs": { "tabItems": [ { "title": { "literalString": "Tab 1" }, "child": "id" } ] } }
 
 Bound values are TYPED literals, never a bare "literal": strings → { "literalString": "..." }, numbers → { "literalNumber": 50 }, booleans → { "literalBoolean": true } (or a data path → { "path": "/x" }).

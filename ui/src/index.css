@@ -390,3 +390,9 @@ body {
 .a2ui-surface .qte-img-md img {
   max-width: 200px;
 }
+/* Header images are intentional banners — exempt from the 280px universal cap. */
+.a2ui-surface .qte-img-header,
+.a2ui-surface .qte-img-header img {
+  max-width: 100%;
+  max-height: none;
+}
