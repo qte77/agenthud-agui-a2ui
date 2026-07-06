@@ -3,7 +3,13 @@ import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { resolveAssets } from "./assets";
 import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
-import { actionToTurn, appendUserTurn, type UserTurn } from "./conversation";
+import {
+  actionToTurn,
+  appendUserTurn,
+  appendAssistantTurn,
+  summarizeRender,
+  type ConversationTurn,
+} from "./conversation";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
@@ -14,8 +20,9 @@ export function useLiveAgent() {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  // Conversation history (user turns only in the MVP) — seeded by run(), grown by sendAction().
-  const messagesRef = useRef<UserTurn[]>([]);
+  // Conversation history — seeded by run(), grown by sendAction() and, after each successful
+  // turn, an assistant summary of what was rendered (turn memory — see conversation.ts).
+  const messagesRef = useRef<ConversationTurn[]>([]);
 
   const render = useCallback(
     (messages: unknown[]) =>
@@ -26,9 +33,11 @@ export function useLiveAgent() {
 
   // Shared one-turn stream routine (run + sendAction differ only in how history is prepared).
   const stream = useCallback(
-    async (settings: LiveSettings, messages: UserTurn[]) => {
+    async (settings: LiveSettings, messages: ConversationTurn[]) => {
       setIsRunning(true);
       setError(null);
+      // A2UI batches seen during this stream — the last one feeds the assistant summary.
+      const batches: unknown[][] = [];
 
       const start = Date.now();
       const ac = new AbortController();
@@ -38,11 +47,17 @@ export function useLiveAgent() {
           settings,
           messages,
           (event) => {
+            if (event.a2uiMessages) batches.push(event.a2uiMessages);
             const entry = applyA2UIEvent(event, Date.now() - start, render);
             setEventLog((prev) => appendLogEntry(prev, entry));
           },
           { signal: ac.signal }
         );
+        // Turn memory: record what this turn rendered so the NEXT turn sees it.
+        const lastBatch = batches.at(-1);
+        if (lastBatch) {
+          messagesRef.current = appendAssistantTurn(messagesRef.current, summarizeRender(lastBatch));
+        }
       } catch (err) {
         if (!ac.signal.aborted) {
           setError(toConnectionError(err));
