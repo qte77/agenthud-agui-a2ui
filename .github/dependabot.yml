@@ -12,6 +12,13 @@ updates:
     labels: ["dependencies", "npm"]
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      # AI-SDK majors break the live-agent path (streamText/fullStream shapes) — handled in a
+      # deliberate migration PR, not an auto-bump. See #185.
+      - dependency-name: "ai"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@ai-sdk/openai"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm"
     directory: "/worker"
     schedule:
@@ -22,6 +29,10 @@ updates:
     labels: ["dependencies", "npm"]
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      # wrangler@4 peer-pins @cloudflare/workers-types to ^4; the v5 major conflicts (ERESOLVE).
+      - dependency-name: "@cloudflare/workers-types"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
