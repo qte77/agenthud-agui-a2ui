@@ -43,15 +43,18 @@ BYOK key) and protocol tool-call history (plumbing; same cost) — revisit if su
 
 ## State
 
-**SHIPPED** — merged in **#182**, released in **v0.4.0** (2026-07-06). 106/106, lint 0, typecheck 0;
-Red-first. Landing + CHANGELOG done.
+**SHIPPED & VERIFIED** — merged in **#182**, released in **v0.4.0** (2026-07-06). 106/106, lint 0,
+typecheck 0; Red-first. Landing + CHANGELOG done.
 
-## Verification still owed (optional)
+## Verification
 
-- **Live E2E continuity re-run** (recipe: docs/testing.md "Live BYOK E2E", needs user's `ui/.env`):
-  run fairytale, click a story button, and additionally assert the SECOND turn's content *continues*
-  the first (story text overlaps/references turn 1) — the observable effect of memory. Unit-verified
-  today (the hook contract test proves the summary lands in history); this proves the model uses it.
+- Unit: the hook contract test proves the assistant summary lands in the history (turn N's messages
+  include turn N-1's render summary).
+- **Live E2E continuity ✅ (2026-07-06)**: via the docs/testing.md "Live BYOK E2E" recipe (patchright
+  + `ui/.env`). Turn 1 rendered "The Enchanted Forest"; clicking *Venture Deep Into Forest* produced
+  turn 2 "Deep Within the Enchanted Forest — you step onto the winding path…" — a genuine continuation
+  referencing the same setting + the clicked action, not a restart. Zero console errors. Confirms the
+  model actually *uses* the memory, not just that it's stored.
 
 ## Related / deferred
 
