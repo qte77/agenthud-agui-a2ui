@@ -1,8 +1,8 @@
 ---
 title: Plan 009 — Live turn memory (assistant render summaries)
-description: Turn N sees turn N-1's render via a compact assistant summary — fixes "multi-turn is just multiple single-turns". Code complete on feat/live-turn-memory (PR pending); carries a full source map.
+description: Turn N sees turn N-1's render via a compact assistant summary — fixes "multi-turn is just multiple single-turns". SHIPPED in #182 / v0.4.0; carries a full source map.
 date: 2026-07-05
-status: in-progress
+status: done
 issues: [156]
 handoff: ../handoffs/009-live-turn-memory.md
 ---
@@ -41,19 +41,17 @@ BYOK key) and protocol tool-call history (plumbing; same cost) — revisit if su
   `vi.mock` factories are hoisted (use `vi.hoisted`); a defensive `typeof onEvent !== "function"`
   guard absorbs an act()-flush re-entry that once invoked the mock bare.
 
-## State at handoff
+## State
 
-All code + tests **complete and green** on branch **`feat/live-turn-memory`** (106/106, lint 0,
-typecheck 0; Red-first, watched fail). NOT yet committed/PR'd — see handoff for the landing steps.
+**SHIPPED** — merged in **#182**, released in **v0.4.0** (2026-07-06). 106/106, lint 0, typecheck 0;
+Red-first. Landing + CHANGELOG done.
 
-## Verification still owed
+## Verification still owed (optional)
 
-1. Land: commit by topic → push → PR → squash on green CI (ruleset requires CodeFactor; squash-only).
-2. **Live E2E re-run** (recipe: docs/testing.md "Live BYOK E2E", needs user's `ui/.env`):
-   `/tmp/verify_live_e2e.py` pattern — run fairytale, click a story button, and additionally assert
-   the SECOND turn's content *continues* the first (e.g. story text overlaps/references turn 1) —
-   that's the observable effect of memory.
-3. CHANGELOG entry (in this branch's diff already).
+- **Live E2E continuity re-run** (recipe: docs/testing.md "Live BYOK E2E", needs user's `ui/.env`):
+  run fairytale, click a story button, and additionally assert the SECOND turn's content *continues*
+  the first (story text overlaps/references turn 1) — the observable effect of memory. Unit-verified
+  today (the hook contract test proves the summary lands in history); this proves the model uses it.
 
 ## Related / deferred
 
