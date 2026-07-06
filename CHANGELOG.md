@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ui/src/agent/prompts.ts`: **live-rendered CheckBox/Slider are now interactive** — the system
+  prompt taught only *literal* value bindings (`literalBoolean`/`literalNumber`), which render frozen;
+  it now teaches `path` bindings + a `dataModelUpdate` seed so the renderer's two-way binding lets
+  the visitor toggle/slide (the Live analog of the Demo fix in #173). Live-verified. Closes #183.
+- `ui/src/index.css`: `usageHint: "header"` images are exempt from the 280px universal cap (banners).
+
 ## [0.4.0] - 2026-07-06
 
 ### Fixed
