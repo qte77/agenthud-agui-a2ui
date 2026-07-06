@@ -2,7 +2,7 @@
 date: 2026-07-05
 status: done
 issues: [156]
-plan: ../plans/009-live-turn-memory.md
+plan: plans/009-live-turn-memory.md
 title: Handoff 009 — Live turn memory (land + verify)
 description: SHIPPED & VERIFIED — turn memory merged in #182, released in v0.4.0, live-E2E continuity confirmed. Nothing owed. Plan 009 carries the source map (retained for reference/regression).
 ---

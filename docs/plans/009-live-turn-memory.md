@@ -4,7 +4,7 @@ description: Turn N sees turn N-1's render via a compact assistant summary — f
 date: 2026-07-05
 status: done
 issues: [156]
-handoff: ../handoffs/009-live-turn-memory.md
+handoff: handoffs/009-live-turn-memory.md
 ---
 
 # Plan 009 — Live turn memory

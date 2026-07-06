@@ -1,9 +1,10 @@
 ---
 title: Plan 008 — A2UI generative-UI parity (qte77-branded)
-description: Make the A2UI surface look/feel like a polished generative-UI showcase (CopilotKit A2UI). PR1 (surface theming) shipped; PR2–4 deferred, reassess after PR1. Root cause was an unstyled surface.
+description: Make the A2UI surface look/feel like a polished generative-UI showcase (CopilotKit A2UI). PR1–PR3 + demo-controls shipped (v0.4.0); PR4 (transcript UI) deferred → #195. Root cause was an unstyled surface.
 date: 2026-07-05
-status: in-progress
+status: shipped
 issues: [156]
+handoff: handoffs/008-a2ui-generative-ui-parity.md
 ---
 
 # Plan 008 — A2UI generative-UI parity (qte77-branded)
@@ -47,8 +48,10 @@ Inter type ramp, avatar sized to 44px (was unconstrained).
   (`SurfaceSkeleton` via `A2UIRenderer`'s `fallback` — shows only while the surface is empty and a
   run streams). The streaming-log cursor was **cut** per KISS review (redundant with the growing
   event log). Reduced-motion gated by the existing global rule.
-- **PR4 — multi-turn transcript** (#156 Stage 2): per-turn surfaces + a chat transcript layout. Biggest/
-  riskiest (IA rebuild, overlaps #128) — explicitly YAGNI until proven wanted.
+- **PR4 — multi-turn transcript** (#156 Stage 2): per-turn surfaces + a chat transcript layout + a
+  "continue the conversation" composer. Biggest/riskiest (IA rebuild, overlaps #128) — **deferred
+  (YAGNI), tracked in #195**; sequence #128's unify before/with it. Memory half already shipped
+  (plan/handoff 009, #182).
 - **Addendum (user-reported, shipped as follow-up): Demo controls wired** — rendered Buttons drive the
   decision tree via `TreeChoice.action` + the PR2 `actionBridge` (Demo's pre-baked analog of #156's
   interaction story); CheckBoxes/Slider became locally interactive via `path` bindings +
@@ -58,11 +61,14 @@ Inter type ramp, avatar sized to 44px (was unconstrained).
 
 - **KISS**: PR1 first, then reassess (rejected committing to full parity up front).
 - **Robust theming** via `theme` prop + `qte-*` hooks (rejected filling library `--n-*/--p-*` vars →
-  couples to private classmaps; rejected feeding `beginRendering.styles` → partial). Risk: couples to
-  the exported `Theme` shape; a future `@a2ui` v0.9 redesign (#140) could change it.
+  couples to private classmaps; rejected feeding `beginRendering.styles` → partial). Risk (bounded):
+  couples to the exported `Theme` shape — but `qteA2uiTheme: Theme` is typed, so a shape change is a
+  compile error, and the real-renderer test guards runtime. **#140 evaluated & closed** — `@a2ui` v0.9
+  is a major redesign (no `onAction`/provider/registry); staying on v0.8. Re-check only if a breaking
+  `@a2ui/react` major lands.
 - **Brand SoT**: `--radius-card`/`--shadow-card` are new brand-level primitives (EyeRest is flat today).
   They should be promoted to the qte77 EyeRest `DESIGN.md` upstream; the `qte-*` component CSS stays
-  app-local. Upstream tracking issue **TBD** (the brand repo wasn't locatable in this session).
+  app-local. Upstream tracked in **qte77/qte77#148** (brand repo; also cited at `ui/src/index.css:31`).
 
 ## Constraints honored
 Self-host / no-CDN; no animation dependency; qte77 `@theme` tokens reused; `prefers-reduced-motion`
