@@ -16,6 +16,14 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 - [ADR-0002: Edge proxy platform][adr-0002] — Cloudflare Workers (vs Supabase / Vercel)
 - [ADR-0003: Live-agent catalog instruction][adr-0003] — curated prompt reference (vs schema injection)
 
+## Plans & handoffs
+
+Per-change working docs live in `plans/` and `handoffs/`, paired **1:1** by a shared `NNN-slug.md`
+filename (e.g. `plans/010-unify-demo-live-surface.md` ↔ `handoffs/010-unify-demo-live-surface.md`) and
+cross-linked via frontmatter — the plan carries `handoff: handoffs/NNN-slug.md`, the handoff carries
+`plan: plans/NNN-slug.md`, and both mirror `status`/`issues`. A plan is the design + source map; its
+handoff is where to start + how to hand it off. Add both together; keep the numbers in lockstep.
+
 [architecture]: architecture.md
 [cloudflare-runbook]: cloudflare-runbook.md
 [protocols]: protocols.md
