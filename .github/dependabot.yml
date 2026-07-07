@@ -19,6 +19,12 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@ai-sdk/openai"
         update-types: ["version-update:semver-major"]
+      # @a2ui/react is 0.x, so a breaking renderer/protocol redesign (the v0.9 rewrite — no
+      # onAction/provider/registry, evaluated & deferred in #140) can ship as a 0.x MINOR, not a
+      # major. Ignore both so it's a deliberate migration PR, not an auto-bump (same rationale as
+      # the AI-SDK above). Patch bumps still flow — CI's real-renderer test guards them.
+      - dependency-name: "@a2ui/react"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
   - package-ecosystem: "npm"
     directory: "/worker"
     schedule:
