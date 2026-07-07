@@ -1,10 +1,10 @@
 ---
 date: 2026-07-07
-status: in-progress
+status: done
 issues: [128, 156]
 plan: plans/010-unify-demo-live-surface.md
 title: Handoff 010 — Unify Demo + Live into one surface
-description: Plan approved; 3-PR slicing (docs → extract → unify). PR-a shipped this doc; start at PR-b (pure extraction), then PR-c (TDD Red-first). Plan 010 carries the full contract + test list.
+description: SHIPPED — #128 closed via PR-a (#198) docs, PR-b (#199) extraction, PR-c (#200) the unify. Continuity verified in a real browser (patchright, 0 console errors). Nothing owed; PR4/#195 (transcript) builds on the lifted log next.
 ---
 
 # Handoff 010 — Unify Demo + Live into one surface
@@ -12,17 +12,20 @@ description: Plan approved; 3-PR slicing (docs → extract → unify). PR-a ship
 > Read [plan 010][plan] first — it carries the **verified source map**, the injected-setter contract,
 > the continuity semantics, and the Red-first test list, so you don't re-explore.
 
-## Where we are
+## Where we are — SHIPPED (#128 closed)
 
-- ✅ **PR-a (docs) shipped** — this handoff + plan 010 + the plans/handoffs index (`docs/README.md`) +
+- ✅ **PR-a (docs) — #198.** This handoff + plan 010 + the plans/handoffs index (`docs/README.md`) +
   the 0.x-deps Dependabot learning (`AGENT_LEARNINGS.md`).
-- ▶️ **PR-b (pure extraction) — next.** Move `DemoDashboard` (+ `DemoTreeChoiceView`, `DemoLeafView`,
-  `type Mode`, `HistoryEntry`, `activeRecording`) verbatim from `App.tsx:91-305` into
-  `ui/src/DemoDashboard.tsx`; `App.tsx` gains one **eager** `import { DemoDashboard }`. Zero behavior
-  change, **no new tests** — `App.test.tsx` is the net. Gates green = done.
-- ⏳ **PR-c (the unify) — after PR-b.** Lift `eventLog` to `Root`, inject the setter into both engine
-  hooks, add the two unmount cleanups, drop `clearSurfaces()` on switch (continuity), restyle
-  `ModeToggle`. **TDD Red-first** — see plan §"Red-first tests".
+- ✅ **PR-b (pure extraction) — #199.** `DemoDashboard` (+ helpers/types) moved to
+  `ui/src/DemoDashboard.tsx`; zero behavior change; code-split intact.
+- ✅ **PR-c (the unify) — #200.** `eventLog` lifted to `Root`; setter injected into both engine hooks;
+  two unmount cleanups (replay timer cancel / live stream abort); `clearSurfaces()` dropped from the
+  switch path (continuity); `ModeToggle` restyled. **TDD Red-first**, 112/112 green.
+- ✅ **Verified in a real browser** (patchright, port 4173): demo replay → switch to Live → the event
+  stream + surface persist → switch back → still there; **0 console errors**. Code-split preserved.
+
+Nothing owed. **Next:** PR4 / #195 (persistent transcript UI + composer) builds directly on the lifted
+`eventLog`/turn-history this introduced.
 
 ## Guardrails
 
