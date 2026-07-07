@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { DashboardShell } from "./DashboardShell";
 import { useReplayEngine } from "./useReplayEngine";
 import { type ViewMode } from "./ModeToggle";
@@ -12,6 +20,7 @@ import {
   type DecisionTree,
 } from "./recordings";
 import { setActionHandler } from "./agent/actionBridge";
+import type { EventLogEntry } from "./agent/applyA2UIEvent";
 
 type Mode = "idle" | "tree" | "all";
 
@@ -83,9 +92,13 @@ function DemoLeafView({
 export function DemoDashboard({
   view,
   onView,
+  eventLog,
+  setEventLog,
 }: {
   view: ViewMode;
   onView: (mode: ViewMode) => void;
+  eventLog: EventLogEntry[];
+  setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>;
 }) {
   const [mode, setMode] = useState<Mode>("idle");
   const [currentNode, setCurrentNode] = useState("root");
@@ -128,8 +141,9 @@ export function DemoDashboard({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, currentSegmentId, playTrigger]);
 
-  const { isPlaying, eventLog, play, restart } = useReplayEngine(
+  const { isPlaying, play, restart } = useReplayEngine(
     filteredRecording,
+    setEventLog,
     useCallback(() => setShowChoices(true), [])
   );
 

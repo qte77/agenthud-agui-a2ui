@@ -1,6 +1,8 @@
 import { renderHook, act } from "@testing-library/react";
+import { useState } from "react";
 import { useReplayEngine } from "../src/useReplayEngine";
 import type { Recording } from "../src/recordings";
+import type { EventLogEntry } from "../src/agent/applyA2UIEvent";
 
 const mockProcessMessages = vi.fn();
 const mockClearSurfaces = vi.fn();
@@ -35,6 +37,14 @@ const testRecording: Recording = {
   ],
 };
 
+// Harness: the App root owns the shared event log (useState) and injects the setter, mirroring
+// the #128 lift. Tests read the shared log via `result.current.log`.
+function useHarness(recording: Recording, onComplete?: () => void) {
+  const [log, setLog] = useState<EventLogEntry[]>([]);
+  const engine = useReplayEngine(recording, setLog, onComplete);
+  return { ...engine, log, setLog };
+}
+
 /** Drain all pending timers so every recursive setTimeout resolves. */
 function flushAllTimers() {
   act(() => {
@@ -54,14 +64,14 @@ describe("useReplayEngine", () => {
   });
 
   it("initial state: not playing, empty event log", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     expect(result.current.isPlaying).toBe(false);
-    expect(result.current.eventLog).toEqual([]);
+    expect(result.current.log).toEqual([]);
   });
 
   it("play starts playback and sets isPlaying true", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -72,7 +82,7 @@ describe("useReplayEngine", () => {
   });
 
   it("events fire with correct delays", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -82,32 +92,32 @@ describe("useReplayEngine", () => {
     act(() => {
       vi.advanceTimersByTime(0);
     });
-    expect(result.current.eventLog).toHaveLength(1);
+    expect(result.current.log).toHaveLength(1);
     // fixture-guaranteed indices: non-null assertions are safe in test context
-    expect(result.current.eventLog[0]!.type).toBe("RUN_STARTED");
+    expect(result.current.log[0]!.type).toBe("RUN_STARTED");
 
     // Second event has delayMs: 100
     act(() => {
       vi.advanceTimersByTime(100);
     });
-    expect(result.current.eventLog).toHaveLength(2);
-    expect(result.current.eventLog[1]!.type).toBe("TEXT_MESSAGE_CONTENT");
+    expect(result.current.log).toHaveLength(2);
+    expect(result.current.log[1]!.type).toBe("TEXT_MESSAGE_CONTENT");
 
     // Third event has delayMs: 100
     act(() => {
       vi.advanceTimersByTime(100);
     });
-    expect(result.current.eventLog).toHaveLength(3);
-    expect(result.current.eventLog[2]!.type).toBe("TOOL_CALL_START");
+    expect(result.current.log).toHaveLength(3);
+    expect(result.current.log[2]!.type).toBe("TOOL_CALL_START");
 
     // Fourth event has delayMs: 0 — flush remaining recursive timers
     flushAllTimers();
-    expect(result.current.eventLog).toHaveLength(4);
-    expect(result.current.eventLog[3]!.type).toBe("RUN_FINISHED");
+    expect(result.current.log).toHaveLength(4);
+    expect(result.current.log[3]!.type).toBe("RUN_FINISHED");
   });
 
   it("calls processMessages for events with a2uiMessages", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -125,7 +135,7 @@ describe("useReplayEngine", () => {
   });
 
   it("eventLog accumulates entries with timestamps", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -133,19 +143,19 @@ describe("useReplayEngine", () => {
 
     flushAllTimers();
 
-    expect(result.current.eventLog).toHaveLength(4);
-    for (const entry of result.current.eventLog) {
+    expect(result.current.log).toHaveLength(4);
+    for (const entry of result.current.log) {
       expect(entry).toHaveProperty("type");
       expect(entry).toHaveProperty("timestamp");
       expect(typeof entry.timestamp).toBe("number");
     }
 
     // Second entry should have text
-    expect(result.current.eventLog[1]!.text).toBe("hello");
+    expect(result.current.log[1]!.text).toBe("hello");
   });
 
   it("isPlaying becomes false after all events played", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -159,9 +169,7 @@ describe("useReplayEngine", () => {
 
   it("onComplete fires after playback finishes", () => {
     const onComplete = vi.fn();
-    const { result } = renderHook(() =>
-      useReplayEngine(testRecording, onComplete)
-    );
+    const { result } = renderHook(() => useHarness(testRecording, onComplete));
 
     act(() => {
       result.current.play();
@@ -173,7 +181,7 @@ describe("useReplayEngine", () => {
   });
 
   it("play with append skips clearSurfaces", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play({ append: true });
@@ -184,7 +192,7 @@ describe("useReplayEngine", () => {
   });
 
   it("restart stops playback and clears state", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -194,19 +202,19 @@ describe("useReplayEngine", () => {
     act(() => {
       vi.advanceTimersByTime(0);
     });
-    expect(result.current.eventLog).toHaveLength(1);
+    expect(result.current.log).toHaveLength(1);
 
     act(() => {
       result.current.restart();
     });
 
     expect(result.current.isPlaying).toBe(false);
-    expect(result.current.eventLog).toEqual([]);
+    expect(result.current.log).toEqual([]);
     expect(mockClearSurfaces).toHaveBeenCalled();
   });
 
   it("play while already playing is a no-op", () => {
-    const { result } = renderHook(() => useReplayEngine(testRecording));
+    const { result } = renderHook(() => useHarness(testRecording));
 
     act(() => {
       result.current.play();
@@ -221,5 +229,46 @@ describe("useReplayEngine", () => {
 
     // clearSurfaces should not be called again
     expect(mockClearSurfaces).not.toHaveBeenCalled();
+  });
+
+  // #128: with the log lifted to the shared root, a fresh (non-append) play must wipe whatever
+  // the other source left in the log — a fresh replay is a fresh story, not an append.
+  it("fresh play wipes pre-existing entries in the shared log", () => {
+    const { result } = renderHook(() => useHarness(testRecording));
+
+    act(() => {
+      result.current.setLog([{ type: "SEED_FROM_OTHER_SOURCE", timestamp: 0 }]);
+    });
+    expect(result.current.log).toHaveLength(1);
+
+    act(() => {
+      result.current.play();
+    });
+    flushAllTimers();
+
+    expect(result.current.log.some((e) => e.type === "SEED_FROM_OTHER_SOURCE")).toBe(false);
+    expect(result.current.log).toHaveLength(4);
+  });
+
+  // #128: the setter lives in the always-mounted root, so a replay timer that outlives this
+  // dashboard's unmount would be a zombie writer into the shared log/surface. Unmount must cancel it.
+  it("unmount mid-play stops scheduled events", () => {
+    const { result, unmount } = renderHook(() => useHarness(testRecording));
+
+    act(() => {
+      result.current.play();
+    });
+    // Fire RUN_STARTED (t=0) + TEXT (t=100); the a2uiMessages event is scheduled for t=200.
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    unmount();
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    // The scheduled TOOL_CALL_START (only event with a2uiMessages) never rendered.
+    expect(mockProcessMessages).not.toHaveBeenCalled();
   });
 });

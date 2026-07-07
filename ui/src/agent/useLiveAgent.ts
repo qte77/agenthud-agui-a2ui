@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { resolveAssets } from "./assets";
@@ -13,10 +13,10 @@ import {
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
-// surface are driven identically to replay. DRY.
-export function useLiveAgent() {
+// surface are driven identically to replay. DRY. The event log is owned by the App
+// root (shared across sources — #128) and injected as setEventLog.
+export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>) {
   const { processMessages, clearSurfaces } = useA2UIActions();
-  const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -66,7 +66,7 @@ export function useLiveAgent() {
         setIsRunning(false);
       }
     },
-    [render]
+    [render, setEventLog]
   );
 
   const run = useCallback(
@@ -78,7 +78,7 @@ export function useLiveAgent() {
       messagesRef.current = [{ role: "user", content: prompt }];
       await stream(settings, messagesRef.current);
     },
-    [isRunning, clearSurfaces, stream]
+    [isRunning, clearSurfaces, stream, setEventLog]
   );
 
   // Button click → one follow-up turn with the FULL history. No clearSurfaces(): the new
@@ -94,5 +94,9 @@ export function useLiveAgent() {
 
   const stop = useCallback(() => abortRef.current?.abort(), []);
 
-  return { eventLog, isRunning, error, run, sendAction, stop };
+  // Abort any in-flight stream if this dashboard unmounts (source switch) — the shared log/surface
+  // setter lives in the App root now, so a live stream must not keep writing after unmount. (#128)
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  return { isRunning, error, run, sendAction, stop };
 }
