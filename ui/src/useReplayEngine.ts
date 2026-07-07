@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./agent/applyA2UIEvent";
 import { accumulate, emptySnapshot } from "./replaySnapshot";
@@ -6,20 +6,19 @@ import type { Recording } from "./recordings";
 
 interface ReplayState {
   isPlaying: boolean;
-  eventLog: EventLogEntry[];
   play: (options?: { append?: boolean }) => void;
   restart: () => void;
 }
 
 export function useReplayEngine(
   recording: Recording,
+  setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>,
   onComplete?: () => void
 ): ReplayState {
   const { processMessages, clearSurfaces } = useA2UIActions();
   const onCompleteRef = useRef(onComplete);
   // eslint-disable-next-line react-hooks/refs -- latest-callback ref so scheduled timers call the current onComplete
   onCompleteRef.current = onComplete;
-  const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Running snapshot so each replayed delta renders as a self-contained surfaceUpdate (see
@@ -68,7 +67,7 @@ export function useReplayEngine(
 
       step(0);
     },
-    [isPlaying, recording, render, clearSurfaces]
+    [isPlaying, recording, render, clearSurfaces, setEventLog]
   );
 
   const restart = useCallback(() => {
@@ -77,7 +76,17 @@ export function useReplayEngine(
     setEventLog([]);
     clearSurfaces();
     snapshotRef.current = emptySnapshot();
-  }, [clearSurfaces]);
+  }, [clearSurfaces, setEventLog]);
 
-  return { isPlaying, eventLog, play, restart };
+  // The event log lives in the App root now (shared across sources), so a replay timer that
+  // outlives this dashboard's unmount would be a zombie writer into the shared log/surface.
+  // Cancel the scheduled chain on unmount. (#128)
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    []
+  );
+
+  return { isPlaying, play, restart };
 }

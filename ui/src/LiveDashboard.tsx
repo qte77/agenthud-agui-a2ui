@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { DashboardShell } from "./DashboardShell";
 import { SurfaceSkeleton } from "./SurfaceSkeleton";
 import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
 import { setActionHandler } from "./agent/actionBridge";
 import type { LiveSettings } from "./agent/liveAgent";
+import type { EventLogEntry } from "./agent/applyA2UIEvent";
 import { ENDPOINTS } from "./config";
 
 // BYOK connection — base URL + model persist in sessionStorage; the API key stays in memory only
@@ -115,9 +116,13 @@ function ModelPicker({
 export function LiveDashboard({
   mode,
   onMode,
+  eventLog,
+  setEventLog,
 }: {
   mode: ViewMode;
   onMode: (mode: ViewMode) => void;
+  eventLog: EventLogEntry[];
+  setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>;
 }) {
   const [settings, setSettings] = useState<LiveSettings>(loadSettings);
   // Starts as a real (submittable) default prompt — clicking Run untouched uses it; the first
@@ -127,7 +132,7 @@ export function LiveDashboard({
   // Tracks an explicit "Custom…" model choice — mirrors the provider's editable reveal (the provider
   // uses a static `editable` flag; a model id can't, so we remember the Custom selection).
   const [modelCustom, setModelCustom] = useState(false);
-  const { eventLog, isRunning, error, run, sendAction, stop } = useLiveAgent();
+  const { isRunning, error, run, sendAction, stop } = useLiveAgent(setEventLog);
 
   // Route rendered-Button clicks (A2UISurface onAction → actionBridge) into a follow-up
   // agent turn. Unregistered on unmount, so Demo mode clicks stay no-ops.

@@ -6,7 +6,6 @@ import "@testing-library/jest-dom";
 const hookState = { isRunning: false };
 vi.mock("../src/agent/useLiveAgent", () => ({
   useLiveAgent: () => ({
-    eventLog: [],
     isRunning: hookState.isRunning,
     error: null,
     run: vi.fn(),
@@ -21,7 +20,12 @@ import { A2UISurfaceProvider } from "../src/A2UISurface";
 function renderLive() {
   render(
     <A2UISurfaceProvider>
-      <LiveDashboard mode="live" onMode={() => undefined} />
+      <LiveDashboard
+        mode="live"
+        onMode={() => undefined}
+        eventLog={[]}
+        setEventLog={() => undefined}
+      />
     </A2UISurfaceProvider>,
   );
 }
