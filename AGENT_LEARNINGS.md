@@ -47,3 +47,17 @@ description: Non-obvious patterns that prevent repeated mistakes across sprints
   no credits), fixable in `ui/src/config.ts`, not in agent code.
 - **Example**: `anthropic/claude-3.5-sonnet` → 404 "No endpoints found"; an OpenRouter key with 0 credits → 402.
 - **References**: `ui/src/config.ts` (model lists + `verified` dates), `docs/plans/007-live-interactive-multicol.md`.
+
+### Dependabot: `0.x` deps break on a *minor*, so major-only ignores don't guard them
+
+- **Context**: Adding a Dependabot `ignore` to hold a dependency at a known-good line (e.g. pinning
+  `@a2ui/react` to the v0.8 renderer API).
+- **Problem**: Under semver, a `0.x` package signals breaking changes with a **minor** bump
+  (`0.10` → `0.11`), not a major. An `ignore` of `version-update:semver-major` (correct for `1.x+`
+  deps like `ai`/`@ai-sdk/openai`) lets a breaking `0.x` release through into the grouped auto-bump.
+- **Solution**: For a `0.x` dependency you want to freeze, ignore **both** `semver-major` **and**
+  `semver-minor` (patches still flow). Comment *why* it differs from the `1.x+` entries above it.
+- **Example**: `- dependency-name: "@a2ui/react"` → `update-types: ["version-update:semver-major",
+  "version-update:semver-minor"]` (`.github/dependabot.yml`, #197).
+- **References**: `.github/dependabot.yml`, `docs/plans/008-a2ui-generative-ui-parity.md` (#140 renderer
+  freeze on v0.8).
