@@ -1,8 +1,8 @@
 ---
 title: Plan 010 — Unify Demo + Live into one surface (#128)
-description: Lift the event log to the App root so Demo↔Live share one persistent A2UI surface + event stream (continuity on switch), with a lighter source selector. Unblocks PR4/#195. Proposed.
+description: Lift the event log to the App root so Demo↔Live share one persistent A2UI surface + event stream (continuity on switch), with a lighter source selector. SHIPPED (#128) via PRs #198/#199/#200; unblocks PR4/#195.
 date: 2026-07-07
-status: proposed
+status: shipped
 issues: [128, 156]
 handoff: handoffs/010-unify-demo-live-surface.md
 ---
