@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `ui/src/Transcript.tsx`, `ui/src/Composer.tsx`, `ui/src/agent/transcript.ts`: **Live persistent
+  conversation transcript + composer** — each turn's rendered surface is retained in a scrollable
+  transcript (prior turns frozen via `@a2ui/react`'s `A2UIViewer`, the latest stays the live
+  interactive surface); a free-text composer drives follow-up turns via `useLiveAgent.sendMessage`
+  alongside the rendered-Button path. Live-only; a fresh run wipes the transcript. Reuses
+  `replaySnapshot.accumulate` to fold validated batches into viewer props. Live-verified. Closes #195.
+
 ### Fixed
 
 - `ui/src/agent/prompts.ts`: **live-rendered CheckBox/Slider are now interactive** — the system

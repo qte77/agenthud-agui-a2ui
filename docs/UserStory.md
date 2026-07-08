@@ -137,6 +137,23 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 ---
 
+### US-10: Multi-turn conversation — transcript + composer (Live)
+
+**As a** visitor,
+**I want to** see each turn's rendered UI kept in a scrollable transcript and continue the conversation with free text,
+**so that** the live agent feels like a real multi-turn conversation, not a series of one-shot renders.
+
+**Acceptance criteria:**
+
+- [x] Each Live turn's rendered surface is retained in a scrollable transcript — prior turns frozen (read-only `A2UIViewer` snapshots), the latest stays the live interactive surface
+- [x] A free-text composer drives a follow-up turn (`useLiveAgent.sendMessage`) alongside the rendered-Button path; a clicked Button appears as a `Clicked "…"` transcript row
+- [x] Transcript + composer reset on a fresh run and on a Demo↔Live switch; a mere switch keeps the shared surface + event stream (#128)
+- [x] Display-only — `messagesRef` stays the sole model-facing history; the BYOK key never enters the transcript
+
+**Status:** Done — #195 (the Stage-2 UI half of #156); the memory half was #182. Live-verified (3-turn BYOK E2E, 0 console errors). See [plan 011](plans/011-live-transcript-composer.md).
+
+---
+
 ## Future — Multiple tours
 
 ### US-8: Tour selector with multiple recordings
@@ -186,6 +203,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 7. ~~US-7: BYOK live agent~~ (done)
 8. US-6: GitHub Models proxy (CORS-relay delivered via worker; keyless deferred)
 9. US-9: Arbitrary accounts
+10. ~~US-10: Live transcript + composer~~ (done)
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0004]: decisions/0004-self-contained-replay-snapshots.md
