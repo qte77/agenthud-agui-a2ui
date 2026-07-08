@@ -4,7 +4,7 @@ status: done
 issues: [128, 156]
 plan: plans/010-unify-demo-live-surface.md
 title: Handoff 010 — Unify Demo + Live into one surface
-description: SHIPPED — #128 closed via PR-a (#198) docs, PR-b (#199) extraction, PR-c (#200) the unify. Continuity verified in a real browser (patchright, 0 console errors). Nothing owed; PR4/#195 (transcript) builds on the lifted log next.
+description: SHIPPED — #128 closed via PR-a (#198) docs, PR-b (#199) extraction, PR-c (#200) the unify. Continuity verified in a real browser (patchright, 0 console errors). Nothing owed. PR4/#195 (transcript + composer) shipped next in #205 (plan/handoff 011).
 ---
 
 # Handoff 010 — Unify Demo + Live into one surface
@@ -27,6 +27,9 @@ description: SHIPPED — #128 closed via PR-a (#198) docs, PR-b (#199) extractio
 Nothing owed on #128.
 
 ## Next session — PR4 / #195 (persistent transcript UI + composer)
+
+> ✅ **SHIPPED in #205** (plan/handoff 011) — this section is retained for history; the anchors below
+> guided that work.
 
 The unify is the foundation; PR4 is the last live-agent piece. **Start in plan-mode and produce
 plan 011 + handoff 011 first, then TDD.** Read **#195** for scope; the anchors below (plus plan 010's

@@ -1,22 +1,25 @@
 ---
 date: 2026-07-08
-status: planned
+status: done
 issues: [195, 156]
 plan: plans/011-live-transcript-composer.md
 title: Handoff 011 — Live persistent transcript UI + composer
-description: PR4 / #195 — the last live-agent piece. Retain each Live turn's surface in a chat transcript (prior turns frozen via A2UIViewer, latest stays live) + a free-text composer. Builds on lifted eventLog (#128) + turn memory (#182). Start from plan 011's source map; TDD Red-first.
+description: SHIPPED — PR4 / #195 delivered via #205 (code, TDD Red-first, 130/130 green) + #204 (docs). Live-verified. Retains each Live turn's surface in a chat transcript (prior turns frozen via A2UIViewer, latest stays live) + a free-text composer, on the lifted eventLog (#128) + turn memory (#182).
 ---
 
 # Handoff 011 — Live persistent transcript UI + composer
 
 > Read [plan 011][plan] first — it carries the **verified source map**, the capture/fold decision, the
-> `beforeSurface` layout call, the injected-setter contract, and the Red-first test list, so you don't
-> re-explore.
+> `beforeSurface` layout call, the injected-setter contract, and the Red-first test list.
 
-## Where we are
+## Where we are — SHIPPED (#195)
 
-- Foundation shipped: `eventLog` lifted to `Root` (#128 / plan 010), turn memory in place (#182 / plan
-  009). `@a2ui/react@0.10.1` ships `A2UIViewer` (static per-instance renderer) — feasibility confirmed.
+- ✅ **Delivered** via PR **#205** (code, TDD Red-first, 130/130 green, code-split preserved) + PR
+  **#204** (this plan/handoff). **Live-verified**: 3-turn BYOK E2E (Run → composer follow-up →
+  live-button click) = 2 frozen prior turns, newest row `Clicked "chooseRun"`, **0 console errors**.
+  #195 closed; #156 rescoped to the deferred speculative pre-render (Mode B). Nothing owed.
+- Foundation it built on: `eventLog` lifted to `Root` (#128 / plan 010), turn memory in place (#182 /
+  plan 009). `@a2ui/react@0.10.1` ships `A2UIViewer` (static per-instance renderer) — feasibility confirmed.
 - UX **decided** (via AskUserQuestion): interleaved chat transcript (user row + surface per turn; prior
   turns frozen, latest stays the live interactive surface); composer = bottom bar in main; **Live-only**.
 - Review KISS-cuts already folded into plan 011: **no per-turn error field** (top-level `error` banner

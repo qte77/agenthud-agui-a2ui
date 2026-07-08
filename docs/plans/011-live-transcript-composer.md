@@ -1,8 +1,8 @@
 ---
 title: Plan 011 — Live persistent transcript UI + conversation composer (#195)
-description: Retain each Live turn's rendered surface in a scrollable chat transcript (prior turns frozen via A2UIViewer, latest stays live) + a free-text composer. Builds on the lifted eventLog (#128) and turn memory (#182); the last live-agent piece of #156 Stage 2.
+description: Retain each Live turn's rendered surface in a scrollable chat transcript (prior turns frozen via A2UIViewer, latest stays live) + a free-text composer. Builds on the lifted eventLog (#128) and turn memory (#182); the last live-agent piece of #156 Stage 2. SHIPPED via #205 (code) / #204 (docs); live-verified (3-turn BYOK E2E, 0 console errors).
 date: 2026-07-08
-status: planned
+status: shipped
 issues: [195, 156]
 handoff: handoffs/011-live-transcript-composer.md
 ---
