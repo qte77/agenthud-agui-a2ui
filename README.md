@@ -26,15 +26,10 @@ AG-UI events from your own OpenAI-compatible key. In Live, each turn's rendered 
 scrollable transcript (prior turns frozen, the latest interactive) and a free-text composer continues
 the conversation.
 
-<details>
-<summary>Screenshot — Demo mode</summary>
-
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png" />
-  <img alt="agenthud — the decision tree and AG-UI event stream driving A2UI components" src="assets/screenshot-light.png" />
+  <source media="(prefers-color-scheme: dark)" srcset="assets/usage-dark.gif" />
+  <img alt="agenthud — Live: a prompt renders an A2UI surface, a composer drives a follow-up turn, and the prior turn freezes in the transcript" src="assets/usage-light.gif" />
 </picture>
-
-</details>
 
 ## How
 
