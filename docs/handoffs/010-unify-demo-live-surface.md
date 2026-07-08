@@ -24,8 +24,29 @@ description: SHIPPED — #128 closed via PR-a (#198) docs, PR-b (#199) extractio
 - ✅ **Verified in a real browser** (patchright, port 4173): demo replay → switch to Live → the event
   stream + surface persist → switch back → still there; **0 console errors**. Code-split preserved.
 
-Nothing owed. **Next:** PR4 / #195 (persistent transcript UI + composer) builds directly on the lifted
-`eventLog`/turn-history this introduced.
+Nothing owed on #128.
+
+## Next session — PR4 / #195 (persistent transcript UI + composer)
+
+The unify is the foundation; PR4 is the last live-agent piece. **Start in plan-mode and produce
+plan 011 + handoff 011 first, then TDD.** Read **#195** for scope; the anchors below (plus plan 010's
+source map) mean you don't need to re-explore:
+
+- **Lifted state (build on this):** `App.tsx` `Root` owns `const [eventLog, setEventLog] =
+  useState<EventLogEntry[]>([])` and passes both as props to each dashboard. The transcript renders
+  from this shared log; a composer drives a new turn through the existing engines.
+- **Turn memory already exists (plan 009):** `ui/src/agent/conversation.ts` (`ConversationTurn`,
+  `summarizeRender`) + `messagesRef` in `useLiveAgent.ts` hold the multi-turn history. PR4 is the *UI*
+  for what memory already tracks — don't rebuild the memory.
+- **Slots to reuse:** `DashboardShell` exposes `children` (main body, below the surface), `asidePanel`,
+  and `extraControls`. The composer likely extends one of these — **no shell inversion** (stays
+  rejected per plan 010).
+- **Actions:** rendered-Button clicks route via `agent/actionBridge.ts` (`setActionHandler`/
+  `dispatchAction`) → `useLiveAgent.sendAction`; the composer adds a *free-text* follow-up alongside.
+- **UX decisions to settle in plan-mode (via AskUserQuestion):** transcript layout (stacked per-turn
+  surfaces vs chat bubbles); composer placement (`asidePanel` vs a bottom bar); Live-only vs Demo too.
+- **Guardrails carry over** (see below): Option A, continuity semantics, strict TDD/lint/typing/sec,
+  preserve the code-split.
 
 ## Guardrails
 
