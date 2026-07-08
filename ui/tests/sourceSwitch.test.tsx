@@ -10,6 +10,7 @@ const mockClearSurfaces = vi.fn();
 vi.mock("@a2ui/react", () => ({
   A2UIProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   A2UIRenderer: () => <div data-testid="a2ui-surface" />,
+  A2UIViewer: () => null,
   initializeDefaultCatalog: vi.fn(),
   useA2UIActions: () => ({
     processMessages: mockProcessMessages,
@@ -25,6 +26,7 @@ vi.mock("../src/agent/useLiveAgent", () => ({
     error: null,
     run: vi.fn(),
     sendAction: vi.fn(),
+    sendMessage: vi.fn(),
     stop: vi.fn(),
   }),
 }));

@@ -26,6 +26,8 @@ interface DashboardShellProps {
   eventLog: EventLogEntry[];
   /** Optional collapsible panel pinned to the top of the right sidebar (Live: connection settings). */
   asidePanel?: ReactNode;
+  /** Optional content above the live A2UI surface (Live: the prior-turn transcript). */
+  beforeSurface?: ReactNode;
   /** Optional content shown while the A2UI surface doesn't exist (Live: pending-render skeleton). */
   surfaceFallback?: ReactNode;
   /** Dim the existing surface + show a Generating chip while a follow-up turn streams (Live). */
@@ -45,6 +47,7 @@ export function DashboardShell({
   eventsSubtitle,
   eventLog,
   asidePanel,
+  beforeSurface,
   surfaceFallback,
   surfaceBusy,
   footerLead,
@@ -74,6 +77,7 @@ export function DashboardShell({
             </span>
             <span className="text-xs text-text-muted">— {surfaceSubtitle}</span>
           </div>
+          {beforeSurface}
           <div className="relative">
             {surfaceBusy && (
               <span className="qte-generating-chip" role="status">

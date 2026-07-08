@@ -89,6 +89,12 @@ SSE stream" belief was a misdiagnosis — the real failures were a stale model i
    latency. Click a rendered `.qte-button` and poll for a second `RUN_FINISHED`.
 4. **Probe the event log via `textContent`, not `innerText`** — the log sits in a `<details>`
    accordion and hidden text is invisible to `innerText`.
+5. **Transcript + composer (#195):** after the first render, type into the composer
+   (`input[placeholder^='Message the agent']`) and submit → a frozen prior-turn surface
+   (`[aria-label='previous turn (read-only)']`) appears with the new user row above the live surface.
+   A clicked live `.qte-button` adds another frozen turn labelled `Clicked "…"`; frozen-turn buttons
+   are inert (`pointer-events-none`). Verified live: Run → composer follow-up → button = 2 frozen
+   turns, 0 console errors.
 
 ## Sources
 

@@ -3,6 +3,7 @@ import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { resolveAssets } from "./assets";
 import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
+import { emptySnapshot, accumulate } from "../replaySnapshot";
 import {
   actionToTurn,
   appendUserTurn,
@@ -10,12 +11,23 @@ import {
   summarizeRender,
   type ConversationTurn,
 } from "./conversation";
+import {
+  seedTurn,
+  finalizeTurn,
+  toTurnSnapshot,
+  actionLabel,
+  type TranscriptTurn,
+} from "./transcript";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
 // surface are driven identically to replay. DRY. The event log is owned by the App
-// root (shared across sources — #128) and injected as setEventLog.
-export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>) {
+// root (shared across sources — #128) and injected as setEventLog; the display-only
+// conversation transcript is owned by LiveDashboard and injected as setTranscript (#195).
+export function useLiveAgent(
+  setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>,
+  setTranscript: Dispatch<SetStateAction<TranscriptTurn[]>>
+) {
   const { processMessages, clearSurfaces } = useA2UIActions();
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,13 +43,18 @@ export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[
     [processMessages]
   );
 
-  // Shared one-turn stream routine (run + sendAction differ only in how history is prepared).
+  // Shared one-turn stream routine. `userText` is the user's side of this turn (prompt / composer
+  // text / clicked-action label) — the transcript row; run + sendAction/sendMessage differ only in
+  // how history + userText are prepared.
   const stream = useCallback(
-    async (settings: LiveSettings, messages: ConversationTurn[]) => {
+    async (settings: LiveSettings, messages: ConversationTurn[], userText: string) => {
       setIsRunning(true);
       setError(null);
+      setTranscript((prev) => seedTurn(prev, userText));
       // A2UI batches seen during this stream — the last one feeds the assistant summary.
       const batches: unknown[][] = [];
+      // Fold this turn's validated batches into one self-contained snapshot to freeze in the transcript.
+      const snap = emptySnapshot();
 
       const start = Date.now();
       const ac = new AbortController();
@@ -49,6 +66,11 @@ export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[
           (event) => {
             if (event.a2uiMessages) batches.push(event.a2uiMessages);
             const entry = applyA2UIEvent(event, Date.now() - start, render);
+            // Only fold validated batches (a2uiComponentCount is set on schema success) and resolve
+            // asset tokens first, so a frozen turn renders exactly what the live surface showed.
+            if (event.a2uiMessages && entry.a2uiComponentCount !== undefined) {
+              accumulate(snap, resolveAssets(event.a2uiMessages));
+            }
             setEventLog((prev) => appendLogEntry(prev, entry));
           },
           { signal: ac.signal }
@@ -63,33 +85,48 @@ export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[
           setError(toConnectionError(err));
         }
       } finally {
+        // Freeze this turn's surface (null if it rendered nothing / failed before any valid batch).
+        setTranscript((prev) => finalizeTurn(prev, toTurnSnapshot(snap)));
         setIsRunning(false);
       }
     },
-    [render, setEventLog]
+    [render, setEventLog, setTranscript]
   );
 
   const run = useCallback(
     async (settings: LiveSettings, prompt: string) => {
       if (isRunning) return;
-      // Fresh conversation: reset log, surface, and history.
+      // Fresh conversation: reset log, surface, transcript, and history.
       setEventLog([]);
+      setTranscript([]);
       clearSurfaces();
       messagesRef.current = [{ role: "user", content: prompt }];
-      await stream(settings, messagesRef.current);
+      await stream(settings, messagesRef.current, prompt);
     },
-    [isRunning, clearSurfaces, stream, setEventLog]
+    [isRunning, clearSurfaces, stream, setEventLog, setTranscript]
   );
 
-  // Button click → one follow-up turn with the FULL history. No clearSurfaces(): the new
-  // beginRendering replaces the surface, avoiding a blank flash. No-op before the first run.
-  const sendAction = useCallback(
-    async (settings: LiveSettings, name: string) => {
+  // A follow-up turn with the FULL history. No clearSurfaces(): the new beginRendering replaces the
+  // surface, avoiding a blank flash. No-op before the first run. `userText` is the transcript row.
+  const followUp = useCallback(
+    async (settings: LiveSettings, content: string, userText: string) => {
       if (isRunning || messagesRef.current.length === 0) return;
-      messagesRef.current = appendUserTurn(messagesRef.current, actionToTurn(name).content);
-      await stream(settings, messagesRef.current);
+      messagesRef.current = appendUserTurn(messagesRef.current, content);
+      await stream(settings, messagesRef.current, userText);
     },
     [isRunning, stream]
+  );
+
+  // Rendered-Button click → follow-up turn (model-facing action sentence; transcript shows the label).
+  const sendAction = useCallback(
+    (settings: LiveSettings, name: string) => followUp(settings, actionToTurn(name).content, actionLabel(name)),
+    [followUp]
+  );
+
+  // Composer free-text follow-up → the typed text is both the model turn and the transcript row.
+  const sendMessage = useCallback(
+    (settings: LiveSettings, text: string) => followUp(settings, text, text),
+    [followUp]
   );
 
   const stop = useCallback(() => abortRef.current?.abort(), []);
@@ -98,5 +135,5 @@ export function useLiveAgent(setEventLog: Dispatch<SetStateAction<EventLogEntry[
   // setter lives in the App root now, so a live stream must not keep writing after unmount. (#128)
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  return { isRunning, error, run, sendAction, stop };
+  return { isRunning, error, run, sendAction, sendMessage, stop };
 }

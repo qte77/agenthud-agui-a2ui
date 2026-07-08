@@ -10,6 +10,7 @@ vi.mock("../src/agent/useLiveAgent", () => ({
     error: null,
     run: vi.fn(),
     sendAction: vi.fn(),
+    sendMessage: vi.fn(),
     stop: vi.fn(),
   }),
 }));

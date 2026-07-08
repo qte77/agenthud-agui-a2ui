@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useState } from "react";
 import type { EventLogEntry } from "../src/agent/applyA2UIEvent";
+import type { TranscriptTurn } from "../src/agent/transcript";
 
 // Mock ONLY the network seam: a fake agent that "renders" one Text component per call.
 // vi.hoisted: the vi.mock factory below is hoisted above this file's const declarations.
@@ -46,11 +47,13 @@ import { useLiveAgent } from "../src/agent/useLiveAgent";
 
 const SETTINGS = { baseURL: "https://x", apiKey: "k", model: "m" };
 
-// Harness: the App root owns the shared event log and injects the setter (#128 lift).
+// Harness: the App root owns the shared event log (#128 lift); LiveDashboard owns the transcript
+// (#195). Both setters are injected into the hook.
 function useHarness() {
   const [log, setLog] = useState<EventLogEntry[]>([]);
-  const agent = useLiveAgent(setLog);
-  return { ...agent, log, setLog };
+  const [transcript, setTranscript] = useState<TranscriptTurn[]>([]);
+  const agent = useLiveAgent(setLog, setTranscript);
+  return { ...agent, log, setLog, transcript };
 }
 
 describe("useLiveAgent turn memory", () => {
@@ -115,5 +118,83 @@ describe("useLiveAgent shared-log contract (#128)", () => {
     unmount();
 
     expect(captured?.aborted).toBe(true);
+  });
+});
+
+describe("useLiveAgent transcript capture (#195)", () => {
+  beforeEach(() => runLiveAgentMock.mockClear());
+
+  it("run seeds one turn with the prompt and the rendered snapshot", async () => {
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(SETTINGS, "tell a story"));
+
+    expect(result.current.transcript).toHaveLength(1);
+    expect(result.current.transcript[0]?.userText).toBe("tell a story");
+    expect(result.current.transcript[0]?.snapshot?.root).toBe("t1");
+    expect(result.current.transcript[0]?.snapshot?.components.map((c) => c.id)).toEqual(["t1"]);
+  });
+
+  it("sendAction appends a turn labelled with the clicked action, keeping prior turns", async () => {
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(SETTINGS, "tell a story"));
+    await act(() => result.current.sendAction(SETTINGS, "enterForest"));
+
+    expect(result.current.transcript).toHaveLength(2);
+    expect(result.current.transcript[0]?.userText).toBe("tell a story"); // retained
+    expect(result.current.transcript[1]?.userText).toBe('Clicked "enterForest"');
+    expect(result.current.transcript[1]?.snapshot?.root).toBe("t1");
+  });
+
+  it("sendMessage sends a free-text follow-up with full history and adds a transcript turn", async () => {
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(SETTINGS, "tell a story"));
+    await act(() => result.current.sendMessage(SETTINGS, "and then?"));
+
+    // History stays intact (turn memory): [user prompt, assistant summary, user follow-up].
+    const secondCallMessages = runLiveAgentMock.mock.calls[1]?.[1] as {
+      role: string;
+      content: string;
+    }[];
+    expect(secondCallMessages.map((m) => m.role)).toEqual(["user", "assistant", "user"]);
+    expect(secondCallMessages[2]?.content).toBe("and then?");
+    expect(result.current.transcript).toHaveLength(2);
+    expect(result.current.transcript[1]?.userText).toBe("and then?");
+  });
+
+  it("sendMessage is a no-op before the first run", async () => {
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.sendMessage(SETTINGS, "hello?"));
+
+    expect(runLiveAgentMock).not.toHaveBeenCalled();
+    expect(result.current.transcript).toHaveLength(0);
+  });
+
+  it("a fresh run resets the transcript to the new turn", async () => {
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(SETTINGS, "story one"));
+    await act(() => result.current.sendAction(SETTINGS, "enterForest"));
+    expect(result.current.transcript).toHaveLength(2);
+
+    await act(() => result.current.run(SETTINGS, "story two"));
+
+    expect(result.current.transcript).toHaveLength(1);
+    expect(result.current.transcript[0]?.userText).toBe("story two");
+  });
+
+  it("a failed turn keeps its user row (snapshot null) and surfaces the error", async () => {
+    runLiveAgentMock.mockRejectedValueOnce(new Error("boom"));
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(SETTINGS, "tell a story"));
+
+    expect(result.current.transcript).toHaveLength(1);
+    expect(result.current.transcript[0]?.userText).toBe("tell a story");
+    expect(result.current.transcript[0]?.snapshot).toBeNull();
+    expect(result.current.error).toMatch(/boom/);
   });
 });
