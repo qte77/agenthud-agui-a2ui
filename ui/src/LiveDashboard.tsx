@@ -1,11 +1,14 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { DashboardShell } from "./DashboardShell";
 import { SurfaceSkeleton } from "./SurfaceSkeleton";
+import { Transcript } from "./Transcript";
+import { Composer } from "./Composer";
 import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
 import { setActionHandler } from "./agent/actionBridge";
 import type { LiveSettings } from "./agent/liveAgent";
 import type { EventLogEntry } from "./agent/applyA2UIEvent";
+import type { TranscriptTurn } from "./agent/transcript";
 import { ENDPOINTS } from "./config";
 
 // BYOK connection — base URL + model persist in sessionStorage; the API key stays in memory only
@@ -45,6 +48,12 @@ function loadSettings(): LiveSettings {
 const fieldClass =
   "w-full rounded border border-border bg-bg px-2 py-1 text-sm text-text " +
   "focus:border-primary focus:outline-none";
+
+// The composer drives a follow-up turn, so it needs a ready connection and an existing conversation,
+// and must stay inert mid-stream. (Kept module-level to hold LiveDashboard under the complexity gate.)
+function composerDisabled(isRunning: boolean, turnCount: number, connectionReady: boolean): boolean {
+  return isRunning || turnCount === 0 || !connectionReady;
+}
 
 const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-5.4-mini)";
 
@@ -132,7 +141,13 @@ export function LiveDashboard({
   // Tracks an explicit "Custom…" model choice — mirrors the provider's editable reveal (the provider
   // uses a static `editable` flag; a model id can't, so we remember the Custom selection).
   const [modelCustom, setModelCustom] = useState(false);
-  const { isRunning, error, run, sendAction, stop } = useLiveAgent(setEventLog);
+  // Display-only conversation history (#195): one row per turn, prior turns frozen. Local to Live
+  // (like the LLM history it visualizes) — resets on a Demo↔Live switch; the shared surface persists.
+  const [transcript, setTranscript] = useState<TranscriptTurn[]>([]);
+  const { isRunning, error, run, sendAction, sendMessage, stop } = useLiveAgent(
+    setEventLog,
+    setTranscript,
+  );
 
   // Route rendered-Button clicks (A2UISurface onAction → actionBridge) into a follow-up
   // agent turn. Unregistered on unmount, so Demo mode clicks stay no-ops.
@@ -157,11 +172,10 @@ export function LiveDashboard({
     });
   }
 
-  const ready =
-    settings.baseURL.trim() &&
-    settings.apiKey.trim() &&
-    settings.model.trim() &&
-    prompt.trim();
+  // Connection alone gates the composer (a follow-up needs no fresh prompt); + prompt gates Run.
+  const connectionReady =
+    settings.baseURL.trim() && settings.apiKey.trim() && settings.model.trim();
+  const ready = connectionReady && prompt.trim();
 
   // Selection is derived from the persisted baseURL — no extra state to keep in sync.
   const selected =
@@ -321,11 +335,15 @@ export function LiveDashboard({
           {promptPanel}
         </>
       }
+      beforeSurface={<Transcript turns={transcript} />}
       surfaceFallback={pendingSurfaceFallback(isRunning)}
       surfaceBusy={isRunning}
       footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
     >
-      {null}
+      <Composer
+        disabled={composerDisabled(isRunning, transcript.length, Boolean(connectionReady))}
+        onSend={(text) => void sendMessage(settings, text)}
+      />
     </DashboardShell>
   );
 }
