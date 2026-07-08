@@ -150,7 +150,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [x] Transcript + composer reset on a fresh run and on a Demo↔Live switch; a mere switch keeps the shared surface + event stream (#128)
 - [x] Display-only — `messagesRef` stays the sole model-facing history; the BYOK key never enters the transcript
 
-**Status:** Done — #195 (the Stage-2 UI half of #156); the memory half was #182. Live-verified (3-turn BYOK E2E, 0 console errors). See [plan 011](plans/011-live-transcript-composer.md).
+**Status:** Done — #195 (the Stage-2 UI half of #156); the memory half was #182. Live-verified (3-turn BYOK E2E, 0 console errors). See `docs/plans/011-live-transcript-composer.md`.
 
 ---
 
