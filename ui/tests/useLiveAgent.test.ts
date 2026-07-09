@@ -3,6 +3,8 @@ import { renderHook, act } from "@testing-library/react";
 import { useState } from "react";
 import type { EventLogEntry } from "../src/agent/applyA2UIEvent";
 import type { TranscriptTurn } from "../src/agent/transcript";
+import { candidateModels } from "../src/agent/fallback";
+import { ENDPOINTS } from "../src/config";
 
 // Mock ONLY the network seam: a fake agent that "renders" one Text component per call.
 // vi.hoisted: the vi.mock factory below is hoisted above this file's const declarations.
@@ -46,6 +48,13 @@ vi.mock("@a2ui/react", () => ({
 import { useLiveAgent } from "../src/agent/useLiveAgent";
 
 const SETTINGS = { baseURL: "https://x", apiKey: "k", model: "m" };
+
+// A real ENDPOINT so candidateModels() yields >1 candidate (fall-through #210).
+const OR = "https://openrouter.ai/api/v1";
+const OR_MODELS = ENDPOINTS.find((e) => e.baseURL === OR)?.models ?? [];
+const OR_SETTINGS = { baseURL: OR, apiKey: "k", model: OR_MODELS[0]! };
+const rejectStatus = (status: number) => () =>
+  Promise.reject(Object.assign(new Error("fail"), { statusCode: status }));
 
 // Harness: the App root owns the shared event log (#128 lift); LiveDashboard owns the transcript
 // (#195). Both setters are injected into the hook.
@@ -196,5 +205,76 @@ describe("useLiveAgent transcript capture (#195)", () => {
     expect(result.current.transcript[0]?.userText).toBe("tell a story");
     expect(result.current.transcript[0]?.snapshot).toBeNull();
     expect(result.current.error).toMatch(/boom/);
+  });
+});
+
+describe("useLiveAgent fall-through (#210)", () => {
+  beforeEach(() => runLiveAgentMock.mockClear());
+
+  it("falls through to the next model on 429 and the winner renders", async () => {
+    runLiveAgentMock.mockImplementationOnce(rejectStatus(429)); // 1st candidate rate-limited; 2nd uses the default (renders)
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(OR_SETTINGS, "hi"));
+
+    expect(runLiveAgentMock).toHaveBeenCalledTimes(2);
+    const cands = candidateModels(OR, OR_SETTINGS.model);
+    expect((runLiveAgentMock.mock.calls[0]?.[0] as { model: string }).model).toBe(cands[0]);
+    expect((runLiveAgentMock.mock.calls[1]?.[0] as { model: string }).model).toBe(cands[1]);
+    expect(result.current.transcript[0]?.snapshot?.root).toBe("t1"); // winner rendered
+    expect(result.current.log.some((e) => e.type === "FALLBACK")).toBe(true);
+  });
+
+  it("falls through when a model finishes without rendering (ignored the tool)", async () => {
+    runLiveAgentMock.mockImplementationOnce(
+      (_s: unknown, _m: unknown, onEvent: (e: { type: string }) => void) => {
+        if (typeof onEvent === "function") onEvent({ type: "RUN_FINISHED" });
+        return Promise.resolve();
+      }
+    );
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(OR_SETTINGS, "hi"));
+
+    expect(runLiveAgentMock).toHaveBeenCalledTimes(2);
+    expect(result.current.transcript[0]?.snapshot?.root).toBe("t1");
+  });
+
+  it("treats an in-stream RUN_ERROR as a failed attempt and falls through", async () => {
+    runLiveAgentMock.mockImplementationOnce(
+      (_s: unknown, _m: unknown, onEvent: (e: { type: string; text?: string }) => void) => {
+        if (typeof onEvent === "function") onEvent({ type: "RUN_ERROR", text: "provider blew up" });
+        return Promise.resolve();
+      }
+    );
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(OR_SETTINGS, "hi"));
+
+    expect(runLiveAgentMock).toHaveBeenCalledTimes(2);
+    expect(result.current.transcript[0]?.snapshot?.root).toBe("t1");
+  });
+
+  it("sets an error after exhausting candidates (all rate-limited)", async () => {
+    const cands = candidateModels(OR, OR_SETTINGS.model);
+    cands.forEach(() => runLiveAgentMock.mockImplementationOnce(rejectStatus(429)));
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(OR_SETTINGS, "hi"));
+
+    expect(runLiveAgentMock).toHaveBeenCalledTimes(cands.length);
+    expect(result.current.error).toBeTruthy();
+    expect(result.current.transcript[0]?.snapshot).toBeNull();
+  });
+
+  it("stops immediately on a bad key (401) — no retry", async () => {
+    runLiveAgentMock.mockImplementationOnce(rejectStatus(401));
+    const { result } = renderHook(() => useHarness());
+
+    await act(() => result.current.run(OR_SETTINGS, "hi"));
+
+    expect(runLiveAgentMock).toHaveBeenCalledTimes(1);
+    expect(result.current.error).toMatch(/check your API key/i);
+    expect(result.current.transcript[0]?.snapshot).toBeNull();
   });
 });

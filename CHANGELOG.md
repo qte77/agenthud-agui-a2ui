@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `ui/src/agent/fallback.ts` + `ui/src/agent/useLiveAgent.ts`: **model fall-through chain** — a Live turn
+  now tries the provider's other models (same BYOK key, your chosen model first, capped at 3) when one is
+  rate-limited (429), errors (5xx / network), or ignores the `render_ui` tool (renders nothing) —
+  first-valid render wins, each fall-through noted in the EventStream. **Stops immediately** on a bad key
+  (401/403) or no credits (402) rather than burning retries. `classifyFailure`/`candidateModels` are pure
+  (TDD Red-first); reuses the existing validated-batch gate. Closes #210.
+
 - `ui/src/Transcript.tsx`, `ui/src/Composer.tsx`, `ui/src/agent/transcript.ts`: **Live persistent
   conversation transcript + composer** — each turn's rendered surface is retained and stepped through
   with a ◀/▶ pager, one turn at a time (a prior turn shows as a frozen `@a2ui/react` `A2UIViewer`; the

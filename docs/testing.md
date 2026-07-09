@@ -95,6 +95,18 @@ SSE stream" belief was a misdiagnosis — the real failures were a stale model i
    A clicked live `.qte-button` adds another frozen turn labelled `Clicked "…"`; frozen-turn buttons
    are inert (`pointer-events-none`). Verified live: Run → composer follow-up → button = 2 frozen
    turns, 0 console errors.
+6. **Paged transcript (#209):** `button[aria-label='Previous turn']` / `'Next turn'` step the pager;
+   a past turn shows `[aria-label='previous turn (read-only)']` and the live surface hides; the pager
+   reads `Turn N of M`; a new turn snaps to latest.
+7. **Fall-through (#210):** a fresh render + no `FALLBACK` log entry is the happy path. To exercise
+   retry, seed a bogus `model` (via `sessionStorage['agenthud-byok']`) → the first attempt fails and a
+   `FALLBACK` marker (text `… failed (…) — trying …`) appears before the next model renders. A bad key
+   → immediate stop, `/check your API key/` error, **no** `FALLBACK` marker.
+   - ⚠️ **Never `fill()` the API-key `input[type=password]` in a way that can time out** — Playwright
+     dumps the element's `value` (your key) into the error log. Prefer the dev `.env` prefill; if you
+     must set the key, seed it via `sessionStorage` is not possible (key is memory-only) — instead
+     ensure the Connection panel is open (the sidebar accordion collapses it when Prompt opens) so the
+     fill can't time out.
 
 ## Sources
 
