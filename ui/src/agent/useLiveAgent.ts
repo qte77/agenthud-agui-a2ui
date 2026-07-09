@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateA
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./applyA2UIEvent";
 import { resolveAssets } from "./assets";
-import { runLiveAgent, toConnectionError, type LiveSettings } from "./liveAgent";
+import { runLiveAgent, type LiveSettings } from "./liveAgent";
+import { candidateModels, classifyFailure } from "./fallback";
 import { emptySnapshot, accumulate } from "../replaySnapshot";
 import {
   actionToTurn,
@@ -45,52 +46,86 @@ export function useLiveAgent(
 
   // Shared one-turn stream routine. `userText` is the user's side of this turn (prompt / composer
   // text / clicked-action label) — the transcript row; run + sendAction/sendMessage differ only in
-  // how history + userText are prepared.
+  // how history + userText are prepared. Fall-through (#210): try candidate models (same provider,
+  // BYOK) until one renders a valid batch — the FIRST valid render wins; retry on rate-limit / provider
+  // error / no-render, stop on a bad key. Each attempt renders live; a failed attempt is reset.
   const stream = useCallback(
     async (settings: LiveSettings, messages: ConversationTurn[], userText: string) => {
       setIsRunning(true);
       setError(null);
       setTranscript((prev) => seedTurn(prev, userText));
-      // A2UI batches seen during this stream — the last one feeds the assistant summary.
-      const batches: unknown[][] = [];
-      // Fold this turn's validated batches into one self-contained snapshot to freeze in the transcript.
-      const snap = emptySnapshot();
 
       const start = Date.now();
       const ac = new AbortController();
       abortRef.current = ac;
-      try {
-        await runLiveAgent(
-          settings,
-          messages,
-          (event) => {
-            if (event.a2uiMessages) batches.push(event.a2uiMessages);
-            const entry = applyA2UIEvent(event, Date.now() - start, render);
-            // Only fold validated batches (a2uiComponentCount is set on schema success) and resolve
-            // asset tokens first, so a frozen turn renders exactly what the live surface showed.
-            if (event.a2uiMessages && entry.a2uiComponentCount !== undefined) {
-              accumulate(snap, resolveAssets(event.a2uiMessages));
-            }
-            setEventLog((prev) => appendLogEntry(prev, entry));
-          },
-          { signal: ac.signal }
-        );
-        // Turn memory: record what this turn rendered so the NEXT turn sees it.
-        const lastBatch = batches.at(-1);
-        if (lastBatch) {
-          messagesRef.current = appendAssistantTurn(messagesRef.current, summarizeRender(lastBatch));
+      const models = candidateModels(settings.baseURL, settings.model);
+      let snap = emptySnapshot();
+      let winnerBatch: unknown[] | undefined;
+      let lastReason = "";
+
+      for (let i = 0; i < models.length; i++) {
+        const model = models[i]!;
+        snap = emptySnapshot();
+        let runError: unknown = null;
+        const batches: unknown[][] = [];
+
+        if (i > 0) {
+          // Reset the failed attempt's surface and note the fall-through in the EventStream (#210 #8).
+          clearSurfaces();
+          const note: EventLogEntry = {
+            type: "FALLBACK",
+            timestamp: Date.now() - start,
+            text: `${models[i - 1]!} failed (${lastReason}) — trying ${model}`,
+          };
+          setEventLog((prev) => appendLogEntry(prev, note));
         }
-      } catch (err) {
-        if (!ac.signal.aborted) {
-          setError(toConnectionError(err));
+
+        try {
+          await runLiveAgent(
+            { ...settings, model },
+            messages,
+            (event) => {
+              if (event.a2uiMessages) batches.push(event.a2uiMessages);
+              const entry = applyA2UIEvent(event, Date.now() - start, render);
+              // Fold validated batches (a2uiComponentCount set on schema success), asset-resolved.
+              if (event.a2uiMessages && entry.a2uiComponentCount !== undefined) {
+                accumulate(snap, resolveAssets(event.a2uiMessages));
+              }
+              // An in-stream error part surfaces as RUN_ERROR (not a throw) — capture it as a failure.
+              if (event.type === "RUN_ERROR") runError = new Error(event.text ?? "run error");
+              setEventLog((prev) => appendLogEntry(prev, entry));
+            },
+            { signal: ac.signal }
+          );
+        } catch (err) {
+          runError = err;
         }
-      } finally {
-        // Freeze this turn's surface (null if it rendered nothing / failed before any valid batch).
-        setTranscript((prev) => finalizeTurn(prev, toTurnSnapshot(snap)));
-        setIsRunning(false);
+
+        if (ac.signal.aborted) break; // user stopped — don't retry, don't error.
+        // A valid self-contained snapshot = this model rendered a usable UI → first-valid-wins.
+        if (toTurnSnapshot(snap)) {
+          winnerBatch = batches.at(-1);
+          break;
+        }
+        // A clean finish with no valid render = the model ignored the tool → retryable.
+        const outcome =
+          runError !== null ? classifyFailure(runError) : { retry: true, message: "the model returned no UI" };
+        lastReason = outcome.message;
+        if (!outcome.retry || i === models.length - 1) {
+          setError(outcome.message);
+          break;
+        }
       }
+
+      // Turn memory: record what the WINNER rendered so the next turn sees it (never on a failure).
+      if (winnerBatch) {
+        messagesRef.current = appendAssistantTurn(messagesRef.current, summarizeRender(winnerBatch));
+      }
+      // Freeze the turn's surface (the winner's, or null if every candidate failed).
+      setTranscript((prev) => finalizeTurn(prev, toTurnSnapshot(snap)));
+      setIsRunning(false);
     },
-    [render, setEventLog, setTranscript]
+    [render, setEventLog, setTranscript, clearSurfaces]
   );
 
   const run = useCallback(
