@@ -28,6 +28,8 @@ interface DashboardShellProps {
   asidePanel?: ReactNode;
   /** Optional content above the live A2UI surface (Live: the prior-turn transcript). */
   beforeSurface?: ReactNode;
+  /** Hide the live A2UI surface without unmounting it (Live: while a past transcript turn is viewed). */
+  surfaceHidden?: boolean;
   /** Optional content shown while the A2UI surface doesn't exist (Live: pending-render skeleton). */
   surfaceFallback?: ReactNode;
   /** Dim the existing surface + show a Generating chip while a follow-up turn streams (Live). */
@@ -48,6 +50,7 @@ export function DashboardShell({
   eventLog,
   asidePanel,
   beforeSurface,
+  surfaceHidden,
   surfaceFallback,
   surfaceBusy,
   footerLead,
@@ -78,7 +81,7 @@ export function DashboardShell({
             <span className="text-xs text-text-muted">— {surfaceSubtitle}</span>
           </div>
           {beforeSurface}
-          <div className="relative">
+          <div className="relative" hidden={surfaceHidden}>
             {surfaceBusy && (
               <span className="qte-generating-chip" role="status">
                 Generating…

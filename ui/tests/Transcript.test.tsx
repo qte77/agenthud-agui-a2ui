@@ -1,10 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import type { TranscriptTurn, TurnSnapshot } from "../src/agent/transcript";
 
-// Partial-mock: stub only A2UIViewer (so we can count frozen surfaces) while keeping defaultTheme
-// real for the qteA2uiTheme import.
+// Stub only A2UIViewer (count frozen surfaces) while keeping defaultTheme real for qteA2uiTheme.
 vi.mock("@a2ui/react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@a2ui/react")>();
   return {
@@ -15,42 +14,52 @@ vi.mock("@a2ui/react", async (importOriginal) => {
 
 import { Transcript } from "../src/Transcript";
 
-// The transcript freezes every turn EXCEPT the latest (which stays the live surface elsewhere) —
-// so N turns render N user rows and N-1 frozen viewers, skipping turns that captured no snapshot.
-describe("Transcript", () => {
+// Paged transcript (#209): one turn shown at a time, ◀/▶ to step. A selected PAST turn renders its
+// frozen A2UIViewer; the LATEST turn renders no viewer here (the live surface shows it).
+describe("Transcript (paged)", () => {
   const snap = (root: string): TurnSnapshot => ({ root, components: [{ id: root, component: {} }] });
+  const turns: TranscriptTurn[] = [
+    { userText: "first prompt", snapshot: snap("t1") },
+    { userText: "second", snapshot: snap("t2") },
+    { userText: "third", snapshot: snap("t3") },
+  ];
+  const noop = () => undefined;
 
-  it("renders every user row but freezes only the prior turns (N-1)", () => {
-    const turns: TranscriptTurn[] = [
-      { userText: "u1", snapshot: snap("t1") },
-      { userText: "u2", snapshot: snap("t2") },
-      { userText: "u3", snapshot: snap("t3") },
-    ];
+  it("shows the selected PAST turn's frozen surface + its position", () => {
+    render(<Transcript turns={turns} selected={0} onPrev={noop} onNext={noop} />);
 
-    render(<Transcript turns={turns} />);
-
-    expect(screen.getByText("u1")).toBeInTheDocument();
-    expect(screen.getByText("u2")).toBeInTheDocument();
-    expect(screen.getByText("u3")).toBeInTheDocument();
-    const roots = screen.getAllByTestId("frozen-viewer").map((el) => el.getAttribute("data-root"));
-    expect(roots).toEqual(["t1", "t2"]); // latest (t3) is NOT frozen
+    expect(screen.getByText(/first prompt/)).toBeInTheDocument();
+    expect(screen.getByText(/Turn 1 of 3/)).toBeInTheDocument();
+    expect(screen.getByTestId("frozen-viewer").getAttribute("data-root")).toBe("t1");
   });
 
-  it("skips a prior turn that captured no snapshot", () => {
-    const turns: TranscriptTurn[] = [
-      { userText: "u1", snapshot: null },
-      { userText: "u2", snapshot: snap("t2") },
-      { userText: "u3", snapshot: snap("t3") },
-    ];
+  it("renders no frozen viewer when the latest turn is selected (live surface shows it)", () => {
+    render(<Transcript turns={turns} selected={2} onPrev={noop} onNext={noop} />);
 
-    render(<Transcript turns={turns} />);
+    expect(screen.getByText(/Turn 3 of 3/)).toBeInTheDocument();
+    expect(screen.queryByTestId("frozen-viewer")).toBeNull();
+  });
 
-    expect(screen.getAllByTestId("frozen-viewer")).toHaveLength(1);
-    expect(screen.getByTestId("frozen-viewer").getAttribute("data-root")).toBe("t2");
+  it("disables ◀ at the first turn and fires onNext", () => {
+    const onNext = vi.fn();
+    render(<Transcript turns={turns} selected={0} onPrev={noop} onNext={onNext} />);
+
+    expect(screen.getByRole("button", { name: /previous turn/i })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: /next turn/i }));
+    expect(onNext).toHaveBeenCalledTimes(1);
+  });
+
+  it("disables ▶ at the latest turn and fires onPrev", () => {
+    const onPrev = vi.fn();
+    render(<Transcript turns={turns} selected={2} onPrev={onPrev} onNext={noop} />);
+
+    expect(screen.getByRole("button", { name: /next turn/i })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: /previous turn/i }));
+    expect(onPrev).toHaveBeenCalledTimes(1);
   });
 
   it("renders nothing for an empty transcript", () => {
-    const { container } = render(<Transcript turns={[]} />);
+    const { container } = render(<Transcript turns={[]} selected={0} onPrev={noop} onNext={noop} />);
 
     expect(container).toBeEmptyDOMElement();
   });

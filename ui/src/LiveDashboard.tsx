@@ -55,6 +55,24 @@ function composerDisabled(isRunning: boolean, turnCount: number, connectionReady
   return isRunning || turnCount === 0 || !connectionReady;
 }
 
+// Paged-transcript pager index (#209): the ◀/▶ selection, snapped to the latest turn whenever the turn
+// count changes (a new turn or a fresh-run reset). Adjust-during-render (ref-guarded) — not an effect.
+// `viewingPast` is true when a non-latest turn is shown, so the live surface is hidden for it.
+function usePagerIndex(count: number): {
+  index: number;
+  setIndex: Dispatch<SetStateAction<number>>;
+  viewingPast: boolean;
+} {
+  const [index, setIndex] = useState(0);
+  const [prevCount, setPrevCount] = useState(count);
+  if (prevCount !== count) {
+    // Store-prev-and-adjust during render (the React-endorsed alternative to a reset effect).
+    setPrevCount(count);
+    setIndex(Math.max(0, count - 1));
+  }
+  return { index, setIndex, viewingPast: count > 0 && index !== count - 1 };
+}
+
 const MODEL_PLACEHOLDER = "Model id (e.g. openai/gpt-5.4-mini)";
 
 // Submittable default prompt (not a placeholder): Run works out of the box; cleared on first focus.
@@ -144,6 +162,8 @@ export function LiveDashboard({
   // Display-only conversation history (#195): one row per turn, prior turns frozen. Local to Live
   // (like the LLM history it visualizes) — resets on a Demo↔Live switch; the shared surface persists.
   const [transcript, setTranscript] = useState<TranscriptTurn[]>([]);
+  // Paged turn view (#209): which turn the ◀/▶ pager shows. A new turn (or a reset) snaps to latest.
+  const { index: turnIndex, setIndex: setTurnIndex, viewingPast } = usePagerIndex(transcript.length);
   const { isRunning, error, run, sendAction, sendMessage, stop } = useLiveAgent(
     setEventLog,
     setTranscript,
@@ -335,7 +355,15 @@ export function LiveDashboard({
           {promptPanel}
         </>
       }
-      beforeSurface={<Transcript turns={transcript} />}
+      beforeSurface={
+        <Transcript
+          turns={transcript}
+          selected={turnIndex}
+          onPrev={() => setTurnIndex((i) => Math.max(0, i - 1))}
+          onNext={() => setTurnIndex((i) => Math.min(transcript.length - 1, i + 1))}
+        />
+      }
+      surfaceHidden={viewingPast}
       surfaceFallback={pendingSurfaceFallback(isRunning)}
       surfaceBusy={isRunning}
       footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
