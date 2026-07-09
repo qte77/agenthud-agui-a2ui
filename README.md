@@ -27,7 +27,7 @@ scrollable transcript (prior turns frozen, the latest interactive) and a free-te
 the conversation.
 
 <details>
-<summary>Screencast — Live: prompt → A2UI surface → composer follow-up → frozen transcript</summary>
+<summary>Screencast — Live: a prompt renders an A2UI surface, a composer drives a follow-up turn, and the prior turn freezes in the transcript</summary>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/usage-dark.gif" />
