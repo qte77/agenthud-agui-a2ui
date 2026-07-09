@@ -22,9 +22,9 @@ tree, where each path renders a different component mix from the same catalog (w
 event stream beside the surface) plus a Catalog Viewer of all 18 A2UI components; the qte77
 **EyeRest** theme with a light/dark/system toggle; and a **Live (BYOK)** tier that swaps the
 replay for a real LLM in the browser — its `render_ui` tool (zod-validated) emits the same
-AG-UI events from your own OpenAI-compatible key. In Live, each turn's rendered surface is kept in a
-scrollable transcript (prior turns frozen, the latest interactive) and a free-text composer continues
-the conversation.
+AG-UI events from your own OpenAI-compatible key. In Live, you step through prior turns with a ◀/▶
+pager (one surface at a time; the latest stays interactive) and a free-text composer continues the
+conversation.
 
 <details>
 <summary>Screencast — Live: a prompt renders an A2UI surface, a composer drives a follow-up turn, and the prior turn freezes in the transcript</summary>
@@ -53,8 +53,8 @@ A2UI components.
 **Live (BYOK)** — toggle **Demo → Live** in the header, pick an OpenAI-compatible provider
 (or **Custom…** for any base URL), paste your API key, and choose a model from the curated
 dropdown (**Custom…** accepts any id). Run a prompt, then **continue the conversation** with the
-composer below the surface — each turn's rendered UI stays in a scrollable **transcript** above (prior
-turns frozen, the latest interactive), and clicking a rendered button also drives the next turn. Your
+composer below the surface — **step through prior turns with ◀/▶** (one surface at a time; the latest
+stays interactive), and clicking a rendered button also drives the next turn. Your
 **API key is held in memory only**
 (never stored — gone on reload); the base URL + model persist in `sessionStorage`. GitHub Models
 and Google route through the deployed edge proxy ([worker/README.md](worker/README.md)); the dev

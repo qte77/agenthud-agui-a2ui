@@ -140,12 +140,12 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 ### US-10: Multi-turn conversation — transcript + composer (Live)
 
 **As a** visitor,
-**I want to** see each turn's rendered UI kept in a scrollable transcript and continue the conversation with free text,
+**I want to** step through each turn's rendered UI with ◀/▶ and continue the conversation with free text,
 **so that** the live agent feels like a real multi-turn conversation, not a series of one-shot renders.
 
 **Acceptance criteria:**
 
-- [x] Each Live turn's rendered surface is retained in a scrollable transcript — prior turns frozen (read-only `A2UIViewer` snapshots), the latest stays the live interactive surface
+- [x] Each Live turn's rendered surface is retained and navigable via a ◀/▶ pager (one turn at a time) — a prior turn is a frozen read-only `A2UIViewer` snapshot, the latest stays the live interactive surface, a new turn snaps to latest (#209)
 - [x] A free-text composer drives a follow-up turn (`useLiveAgent.sendMessage`) alongside the rendered-Button path; a clicked Button appears as a `Clicked "…"` transcript row
 - [x] Transcript + composer reset on a fresh run and on a Demo↔Live switch; a mere switch keeps the shared surface + event stream (#128)
 - [x] Display-only — `messagesRef` stays the sole model-facing history; the BYOK key never enters the transcript

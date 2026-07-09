@@ -9,11 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - `ui/src/Transcript.tsx`, `ui/src/Composer.tsx`, `ui/src/agent/transcript.ts`: **Live persistent
-  conversation transcript + composer** — each turn's rendered surface is retained in a scrollable
-  transcript (prior turns frozen via `@a2ui/react`'s `A2UIViewer`, the latest stays the live
-  interactive surface); a free-text composer drives follow-up turns via `useLiveAgent.sendMessage`
-  alongside the rendered-Button path. Live-only; a fresh run wipes the transcript. Reuses
-  `replaySnapshot.accumulate` to fold validated batches into viewer props. Live-verified. Closes #195.
+  conversation transcript + composer** — each turn's rendered surface is retained and stepped through
+  with a ◀/▶ pager, one turn at a time (a prior turn shows as a frozen `@a2ui/react` `A2UIViewer`; the
+  latest stays the live interactive surface; a new turn snaps to latest); a free-text composer drives
+  follow-up turns via `useLiveAgent.sendMessage` alongside the rendered-Button path. Live-only; a fresh
+  run wipes the transcript. Reuses `replaySnapshot.accumulate` to fold validated batches into viewer
+  props. Live-verified. Closes #195, #209.
 
 ### Fixed
 
