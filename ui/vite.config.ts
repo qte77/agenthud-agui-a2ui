@@ -21,6 +21,21 @@ export default defineConfig({
   },
   build: {
     target: "es2022",
+    // Split the EAGER vendors (react, @a2ui) into named, cacheable chunks so the main chunk clears
+    // Vite's >500 kB warning. Deliberately NOT a blanket node_modules group — that would pull ai/@ai-sdk
+    // into the eager graph and break the Live code-split (the AI SDK must stay in the lazy LiveDashboard
+    // chunk; see the marker check in docs/plans/012). Vite 8 / Rolldown: codeSplitting groups replace the
+    // old rollup manualChunks. This does not reduce first-load bytes; it improves caching + silences the warning.
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: "react", test: /node_modules\/(react|react-dom|scheduler)\// },
+            { name: "a2ui", test: /node_modules\/@a2ui\// },
+          ],
+        },
+      },
+    },
   },
   test: {
     environment: "jsdom",
