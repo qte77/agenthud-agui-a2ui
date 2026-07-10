@@ -3,29 +3,26 @@ import { resolveUpstream, isAllowedOrigin } from "../src/router";
 
 describe("resolveUpstream", () => {
   it("maps an allowlisted provider to its upstream and appends the sub-path", () => {
-    expect(resolveUpstream("/github-models/chat/completions")).toBe(
-      "https://models.github.ai/inference/chat/completions",
-    );
     expect(resolveUpstream("/google/chat/completions")).toBe(
       "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
     );
   });
 
   it("returns the bare upstream when there is no sub-path", () => {
-    expect(resolveUpstream("/github-models")).toBe("https://models.github.ai/inference");
+    expect(resolveUpstream("/google")).toBe("https://generativelanguage.googleapis.com/v1beta/openai");
   });
 
   it("returns null for an unknown provider (no open proxy / SSRF)", () => {
     expect(resolveUpstream("/evil.example.com/v1")).toBeNull();
     expect(resolveUpstream("/")).toBeNull();
     expect(resolveUpstream("")).toBeNull();
-    expect(resolveUpstream("/foo/github-models")).toBeNull(); // known name only counts as first segment
+    expect(resolveUpstream("/foo/google")).toBeNull(); // known name only counts as first segment
   });
 
   it("keeps the host fixed by the allowlist regardless of the sub-path", () => {
-    const u = resolveUpstream("/github-models/../../etc/passwd");
+    const u = resolveUpstream("/google/../../etc/passwd");
     expect(u).not.toBeNull();
-    expect(new URL(u!).host).toBe("models.github.ai");
+    expect(new URL(u!).host).toBe("generativelanguage.googleapis.com");
   });
 });
 

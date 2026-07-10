@@ -4,7 +4,7 @@ import worker from "../src/worker";
 const ORIGIN = "https://qte77.github.io";
 
 function post(body: BodyInit, headers: Record<string, string> = {}): Request {
-  return new Request("https://proxy.example/github-models/chat/completions", {
+  return new Request("https://proxy.example/google/chat/completions", {
     method: "POST",
     headers: { origin: ORIGIN, "content-type": "application/json", ...headers },
     body,
