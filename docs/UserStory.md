@@ -116,7 +116,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 - [ ] The browser consumes the stream and renders A2UI on the same surface
 - [ ] Falls back to BYOK / Demo when the worker is unavailable
 
-**Status:** CORS-relay delivered & live. The edge worker is **deployed** as a **BYOK pass-through CORS proxy** (`worker/`): it relays the non-CORS endpoints (GitHub Models, Google) server-to-server so they work in-browser with the *visitor's own* key — satisfying criteria 2-3, and the "(via proxy)" options are now active in the dashboard. The **keyless** variant (criterion 1 — the worker holding a `models:read` token so visitors need no key) stays deferred (abuse/secret surface). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001][adr-0001] and `worker/README.md`.
+**Status:** CORS-relay delivered & live. The edge worker is **deployed** as a **BYOK pass-through CORS proxy** (`worker/`): it relays the non-CORS endpoint (Google) server-to-server so it works in-browser with the *visitor's own* key — satisfying criteria 2-3, and the "(via proxy)" option is now active in the dashboard. **GitHub Models — the provider this story was named for — was retired by GitHub on 2026-07-30, so its proxy route was dropped (#165); the worker now relays Google only.** The **keyless** variant (criterion 1 — the worker holding a `models:read` token so visitors need no key) stays deferred (abuse/secret surface). The original ADK-JS (`@google/adk`) plan is obsolete. See [ADR-0001][adr-0001] and `worker/README.md`.
 
 ---
 

@@ -23,6 +23,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   run wipes the transcript. Reuses `replaySnapshot.accumulate` to fold validated batches into viewer
   props. Live-verified. Closes #195, #209.
 
+### Removed
+
+- `ui/src/config.ts` + `worker/src/router.ts`: **GitHub Models provider + worker route** — GitHub retired
+  GitHub Models on 2026-07-30 (brownouts from 07-16), so the "(via proxy)" GitHub Models endpoint and the
+  worker's `github-models` upstream (both would 404) are dropped; the edge proxy now relays Google only.
+  Docs (architecture, `worker/README`, README, US-6) updated to match. #165.
+
 ### Fixed
 
 - `ui/src/replaySnapshot.ts`, `ui/src/agent/transcript.ts`, `ui/src/Transcript.tsx`: **frozen transcript

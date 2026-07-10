@@ -8,7 +8,7 @@ import { SYSTEM_PROMPT, RENDER_UI_TOOL_DESCRIPTION } from "./prompts";
 
 // BYOK connection details — supplied by the visitor. The API key is held in memory only (never
 // persisted); base URL + model persist in sessionStorage. Per US-7. Any CORS-friendly
-// OpenAI-compatible endpoint works (e.g. OpenRouter); GitHub Models / Google route via the edge
+// OpenAI-compatible endpoint works (e.g. OpenRouter); Google routes via the edge
 // proxy — see worker/README.md (US-6).
 export interface LiveSettings {
   baseURL: string;

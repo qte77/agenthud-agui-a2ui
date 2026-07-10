@@ -5,8 +5,8 @@
 // Project repo — used by the header GitHub links, the footer, and the build-version badge.
 export const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
 
-// PROXY_BASE points at the deployed edge proxy (US-6 / worker/) — the "(via proxy)" endpoints below
-// route GitHub Models + Google through it so they work in-browser despite no upstream CORS. In dev,
+// PROXY_BASE points at the deployed edge proxy (US-6 / worker/) — the "(via proxy)" endpoint below
+// routes Google through it so it works in-browser despite no upstream CORS. In dev,
 // VITE_PROXY_BASE (ui/.env) overrides it to target a local `wrangler dev` worker that allows the
 // localhost origin (prod rejects localhost by design); prod ignores it since DEV is false.
 export const PROXY_BASE =
@@ -15,7 +15,7 @@ export const PROXY_BASE =
     : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
 
 // OpenAI-compatible BYOK endpoints offered in the Live connection dropdown. The CORS-friendly ones
-// work in-browser as-is; GitHub Models + Google have no browser CORS, so they route through the edge
+// work in-browser as-is; Google has no browser CORS, so it routes through the edge
 // proxy (US-6 / ADR-0001 — see worker/README.md). `editable` reveals the freeform URL field (Custom).
 // Only endpoints that actually work from the static site are listed — providers with no browser CORS
 // and no safe fixed proxy upstream (e.g. Azure's per-resource host, an SSRF risk) are not offered;
@@ -76,14 +76,6 @@ export const ENDPOINTS: Endpoint[] = [
     baseURL: "https://api.deepseek.com",
     // verified 2026-07-04 (deepseek-chat/deepseek-reasoner retire 2026-07-24 → use v4 ids)
     models: ["deepseek-v4-pro", "deepseek-v4-flash"],
-  },
-  {
-    // ⚠️ GitHub Models is fully RETIRED 2026-07-30 (brownouts 07-16 / 07-23): this endpoint — and
-    // the worker `github-models` route — will 404 after that. Drop both once it goes dark (#140-adjacent).
-    label: "GitHub Models (via proxy) · retires 2026-07-30",
-    baseURL: `${PROXY_BASE}/github-models`,
-    // verified 2026-07-04
-    models: ["openai/gpt-4.1", "openai/gpt-4o-mini"],
   },
   {
     label: "Google (via proxy)",

@@ -8,7 +8,7 @@ description: End-to-end data flow for the Live (BYOK) tier, showing what we own 
 End-to-end data flow for the Live (BYOK) tier, split by **what we own** vs **what we run on**.
 The app is static (GitHub Pages); the edge proxy is *our* code on Cloudflare's runtime
 ([ADR-0002][adr-0002]); the upstreams are third-party LLM APIs. The
-proxy exists **only for the non-CORS endpoints** (GitHub Models, Google) — CORS-friendly providers
+proxy exists **only for the non-CORS endpoint** (Google) — CORS-friendly providers
 are called directly from the browser. Worker specifics live in [`worker/README.md`][worker-readme].
 
 ```
@@ -17,10 +17,10 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
         │   https://qte77.github.io/agenthud-agui-a2ui/                  │
         │   ┌──────────────────────────────────────────┐                 │
         │   │ Live (BYOK) · Vercel AI SDK               │                 │
-        │   │   baseURL = PROXY_BASE/github-models      │                 │
+        │   │   baseURL = PROXY_BASE/google             │                 │
         │   │   Authorization: Bearer <USER's own key>  │                 │
         │   └──────────────────┬───────────────────────┘                 │
-        │                      │ ① POST …/github-models/chat/completions  │
+        │                      │ ① POST …/google/chat/completions         │
         │                      │    (+ CORS preflight OPTIONS)            │
         └──────────────────────┼─────────────────────────────────────────┘
                                │
@@ -34,7 +34,6 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
                                │ ② server-to-server  (no browser CORS here)
                                ▼
         ┌──────────────────────────── THEIRS (upstream LLMs) ───────────┐
-        │   models.github.ai/inference         (GitHub Models)          │
         │   generativelanguage.googleapis.com/v1beta/openai  (Google)   │
         └──────────────────────┬─────────────────────────────────────────┘
                                │ ③ streamed tokens
@@ -79,7 +78,7 @@ The final box above expands to the translation that turns a model reply into ren
 
 ## Why CORS, and why the allowlist is the lock
 
-GitHub Models / Google send no browser CORS headers, so the browser refuses to call them directly;
+Google sends no browser CORS headers, so the browser refuses to call it directly;
 the worker relays server-to-server (where CORS doesn't apply) and stamps the response with
 `Access-Control-Allow-Origin`. Because the worker **holds no secret**, that **origin allowlist is its
 only access gate** — production echoes only `https://qte77.github.io`; localhost is added only in dev
