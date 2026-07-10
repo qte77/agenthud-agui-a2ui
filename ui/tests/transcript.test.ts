@@ -14,6 +14,7 @@ describe("transcript", () => {
   const snapshot = (root: string): TurnSnapshot => ({
     root,
     components: [{ id: root, component: { Text: { text: { literalString: "x" } } } }],
+    data: {},
   });
 
   describe("seedTurn", () => {
@@ -84,6 +85,22 @@ describe("transcript", () => {
       accumulate(snap, [{ beginRendering: { surfaceId: "main", root: "root" } }]);
 
       expect(toTurnSnapshot(snap)).toBeNull();
+    });
+
+    it("carries the folded data model into the snapshot (#206)", () => {
+      const snap = emptySnapshot();
+      accumulate(snap, [
+        { beginRendering: { surfaceId: "main", root: "root" } },
+        {
+          surfaceUpdate: {
+            surfaceId: "main",
+            components: [{ id: "root", component: { CheckBox: { value: { path: "/filters/active" } } } }],
+          },
+        },
+        { dataModelUpdate: { surfaceId: "main", contents: [{ key: "filters", valueMap: [{ key: "active", valueBoolean: true }] }] } },
+      ]);
+
+      expect(toTurnSnapshot(snap)?.data).toEqual({ filters: { active: true } });
     });
   });
 });
