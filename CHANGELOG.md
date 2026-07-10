@@ -23,6 +23,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   run wipes the transcript. Reuses `replaySnapshot.accumulate` to fold validated batches into viewer
   props. Live-verified. Closes #195, #209.
 
+### Changed
+
+- `ui/vite.config.ts`: **vendor chunking** — split the eager `react` + `@a2ui` deps into named, cacheable
+  chunks (Vite 8 / Rolldown `codeSplitting` groups), so the main chunk drops from ~534 kB to ~122 kB and
+  Vite's >500 kB warning clears. The AI SDK stays confined to the lazy `LiveDashboard` chunk (verified via
+  the code-split marker check: `streamText` appears only there). No first-load byte reduction — purely
+  chunking/caching. Closes #121.
+
 ### Fixed
 
 - `ui/src/agent/prompts.ts`: **live-rendered CheckBox/Slider are now interactive** — the system
