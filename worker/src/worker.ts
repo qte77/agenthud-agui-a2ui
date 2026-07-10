@@ -1,9 +1,42 @@
 import { resolveUpstream, corsHeaders, isAllowedOrigin, type Env } from "./router";
+import { buildProviders, renderFree } from "./agent/providers";
+import { SYSTEM_PROMPT } from "./agent/prompts";
+import type { ChatMessage } from "./agent/model";
+import { verifyTurnstile } from "./turnstile";
 
 type Cors = Record<string, string>;
 
 // Forwarded-body cap — blocks cost/DoS amplification (chat payloads are far smaller than 1 MiB).
 const MAX_BODY_BYTES = 1_048_576;
+
+// Tighter cap for the keyless render endpoint: the system prompt lives server-side and turn history
+// is compact summaries, so 64 KiB is generous while shrinking the abuse surface.
+const MAX_RENDER_BODY_BYTES = 65_536;
+
+// Deterministic fallback UI — "the demo can never break". Returned (200) when every free provider
+// fails, so the browser always gets a valid, self-contained batch instead of an error.
+const STUB_BATCH: unknown[] = [
+  { beginRendering: { surfaceId: "main", root: "root" } },
+  {
+    surfaceUpdate: {
+      surfaceId: "main",
+      components: [
+        { id: "root", component: { Card: { child: "stub-text" } } },
+        {
+          id: "stub-text",
+          component: {
+            Text: {
+              text: {
+                literalString: "The free demo model is busy right now — please try again in a moment.",
+              },
+              usageHint: "body",
+            },
+          },
+        },
+      ],
+    },
+  },
+];
 
 // Read the request body, enforcing the size cap. Returns the bytes, or a 413 Response when too
 // large. Skips reading when the declared length already exceeds the cap; otherwise verifies the
@@ -11,13 +44,78 @@ const MAX_BODY_BYTES = 1_048_576;
 async function readCappedBody(
   request: Request,
   cors: Cors,
+  maxBytes: number = MAX_BODY_BYTES,
 ): Promise<ArrayBuffer | Response> {
-  const overByHeader = Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES;
+  const overByHeader = Number(request.headers.get("content-length") ?? 0) > maxBytes;
   const body = overByHeader ? null : await request.arrayBuffer();
-  if (body === null || body.byteLength > MAX_BODY_BYTES) {
+  if (body === null || body.byteLength > maxBytes) {
     return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
   }
   return body;
+}
+
+// Keep only well-formed user/assistant turns; DROP any client-sent system message (the worker owns
+// the system prompt on a keyless endpoint) and ignore any client-chosen model (`:free` only).
+function sanitizeMessages(raw: unknown): ChatMessage[] {
+  if (!Array.isArray(raw)) return [];
+  const out: ChatMessage[] = [];
+  for (const m of raw) {
+    const msg = m as { role?: unknown; content?: unknown };
+    if ((msg.role === "user" || msg.role === "assistant") && typeof msg.content === "string") {
+      out.push({ role: msg.role, content: msg.content });
+    }
+  }
+  return out;
+}
+
+// Keyless "Free (no key)" render (US-6 keyless): run free models server-side so a visitor needs no
+// key. Inherits the shared gates (CORS/OPTIONS/POST/origin/RATE_LIMITER) from the caller; adds a
+// tight per-IP limit, Turnstile proof-of-human, a small body cap, and a $0 `:free`-only chain.
+// Never breaks: provider exhaustion → deterministic stub. The key rides only in the upstream header.
+async function handleKeylessRender(request: Request, env: Env, cors: Cors): Promise<Response> {
+  if (env.FREE_RATE_LIMITER) {
+    const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
+    const { success } = await env.FREE_RATE_LIMITER.limit({ key: ip });
+    if (!success) return Response.json({ error: "Rate limit exceeded" }, { status: 429, headers: cors });
+  }
+
+  const raw = await readCappedBody(request, cors, MAX_RENDER_BODY_BYTES);
+  if (raw instanceof Response) return raw; // 413
+
+  let parsed: { messages?: unknown; turnstileToken?: unknown };
+  try {
+    parsed = JSON.parse(new TextDecoder().decode(raw)) as typeof parsed;
+  } catch {
+    return Response.json({ error: "Invalid JSON body" }, { status: 400, headers: cors });
+  }
+
+  // Proof-of-human before any model spend (closes the Origin-spoof drain).
+  const token = typeof parsed.turnstileToken === "string" ? parsed.turnstileToken : "";
+  const ip = request.headers.get("cf-connecting-ip") ?? undefined;
+  if (!env.TURNSTILE_SECRET || !(await verifyTurnstile(token, env.TURNSTILE_SECRET, ip))) {
+    return Response.json({ error: "Turnstile verification failed" }, { status: 403, headers: cors });
+  }
+
+  const messages: ChatMessage[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    ...sanitizeMessages(parsed.messages),
+  ];
+  const providers = buildProviders({
+    ai: env.AI,
+    openRouterKey: env.OPENROUTER_KEY,
+    openRouterFreeModels: env.OPENROUTER_FREE_MODELS
+      ? env.OPENROUTER_FREE_MODELS.split(",").map((s) => s.trim()).filter(Boolean)
+      : undefined,
+  });
+
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 20_000);
+  try {
+    const free = await renderFree(providers, { messages, signal: ac.signal });
+    return Response.json({ a2uiMessages: free ? free.result.batch : STUB_BATCH }, { headers: cors });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // Forward only what the upstream needs (the visitor's key + content type + body) and stream the
@@ -85,7 +183,13 @@ export default {
       }
     }
 
-    const upstream = resolveUpstream(new URL(request.url).pathname);
+    const pathname = new URL(request.url).pathname;
+
+    // Keyless free-inference tier — the worker runs free models server-side (no visitor key).
+    // Inherits every gate above; adds Turnstile + a tighter per-IP limit inside the handler.
+    if (pathname === "/agent/render") return handleKeylessRender(request, env, cors);
+
+    const upstream = resolveUpstream(pathname);
     if (!upstream) return new Response("Unknown provider", { status: 404, headers: cors });
 
     const body = await readCappedBody(request, cors);

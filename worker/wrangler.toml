@@ -35,9 +35,31 @@ namespace_id = "1001"
   limit = 100
   period = 60
 
+# Cloudflare Workers AI (free, no key) — the first, truly-$0 tier of the keyless `/agent/render`
+# free chain (spares the OpenRouter quota). Secrets (OPENROUTER_KEY, TURNSTILE_SECRET) are set with
+# `wrangler secret put`, NOT here.
+[ai]
+binding = "AI"
+
+# Tighter per-IP limit for the SERVER-funded keyless render endpoint — 10 requests / 60s per IP
+# (the 100/60s above is sized for the BYOK relay). Production only; the handler treats it as optional.
+[[ratelimits]]
+name = "FREE_RATE_LIMITER"
+namespace_id = "1002"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
 # Production (`wrangler deploy`) sets no vars, so CORS echoes ONLY https://qte77.github.io.
 # The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
 # localhost origins, for headless/local E2E. For local `wrangler dev`, put
 # ALLOW_LOCALHOST="true" in a gitignored worker/.dev.vars instead.
 [env.dev.vars]
 ALLOW_LOCALHOST = "true"
+
+# Named envs don't inherit bindings — mirror the AI binding so the dev deploy (agenthud-proxy-dev,
+# used for headless E2E) exercises the full free chain. FREE_RATE_LIMITER stays prod-only (like
+# RATE_LIMITER above); the handler skips it when absent, leaving local/E2E runs unthrottled.
+[env.dev.ai]
+binding = "AI"
