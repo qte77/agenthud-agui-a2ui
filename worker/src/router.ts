@@ -27,6 +27,18 @@ export interface Env {
   ALLOW_LOCALHOST?: string;
   /** Per-IP rate limiter (abuse lock). Absent in local dev / tests → rate-limit skipped. */
   RATE_LIMITER?: RateLimit;
+
+  // ---- Keyless free-inference tier (US-6 keyless, `/agent/render`) ----
+  /** Server-held OpenRouter key (secret). The `:free`-only lock caps spend at $0. Absent → tier off. */
+  OPENROUTER_KEY?: string;
+  /** CSV override for the OpenRouter `:free` model list (non-`:free` ids are filtered out in code). */
+  OPENROUTER_FREE_MODELS?: string;
+  /** Cloudflare Workers AI binding (`[ai]`). Free tier, tried first. Absent → skipped. */
+  AI?: Ai;
+  /** Turnstile secret (secret). Required for `/agent/render`; absent → the keyless endpoint 403s. */
+  TURNSTILE_SECRET?: string;
+  /** Tighter per-IP limit for the server-funded render endpoint. Absent in dev/tests → skipped. */
+  FREE_RATE_LIMITER?: RateLimit;
 }
 
 // Production allows ONLY the gh-pages site; localhost dev origins are added when
