@@ -31,8 +31,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the code-split marker check: `streamText` appears only there). No first-load byte reduction — purely
   chunking/caching. Closes #121.
 
+### Removed
+
+- `ui/src/config.ts` + `worker/src/router.ts`: **GitHub Models provider + worker route** — GitHub retired
+  GitHub Models on 2026-07-30 (brownouts from 07-16), so the "(via proxy)" GitHub Models endpoint and the
+  worker's `github-models` upstream (both would 404) are dropped; the edge proxy now relays Google only.
+  Docs (architecture, `worker/README`, README, US-6) updated to match. #165.
+
 ### Fixed
 
+- `ui/src/replaySnapshot.ts`, `ui/src/agent/transcript.ts`, `ui/src/Transcript.tsx`: **frozen transcript
+  turns keep their data-bound values** — `accumulate` now folds each `dataModelUpdate` seed into the surface
+  snapshot **and** passes it through the rendered batch, so a stepped-back turn's path-bound CheckBox/Slider
+  (and the Demo replay's seeded controls) render with their values instead of at defaults. The
+  ValueMap→object fold is pure (TDD Red-first); "layer 2" (a visitor's live edits before the turn froze)
+  stays deferred (YAGNI). Closes #206.
 - `ui/src/agent/prompts.ts`: **live-rendered CheckBox/Slider are now interactive** — the system
   prompt taught only *literal* value bindings (`literalBoolean`/`literalNumber`), which render frozen;
   it now teaches `path` bindings + a `dataModelUpdate` seed so the renderer's two-way binding lets

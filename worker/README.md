@@ -1,8 +1,8 @@
 # agenthud edge proxy (US-6)
 
-A tiny Cloudflare Worker that lets the static GitHub Pages app reach **non-CORS**
-OpenAI-compatible endpoints (GitHub Models, Google). Browsers can't call those directly —
-they send no CORS headers — so this worker forwards the request **server-to-server**
+A tiny Cloudflare Worker that lets the static GitHub Pages app reach a **non-CORS**
+OpenAI-compatible endpoint (Google). Browsers can't call it directly —
+it sends no CORS headers — so this worker forwards the request **server-to-server**
 (where CORS doesn't apply) and streams the response back.
 
 **BYOK pass-through — holds no secret.** It forwards the visitor's own `Authorization`
@@ -14,7 +14,6 @@ header upstream; the key never lives in the worker.
 
 | provider | upstream |
 |---|---|
-| `github-models` | `https://models.github.ai/inference` |
 | `google` | `https://generativelanguage.googleapis.com/v1beta/openai` |
 
 The first path segment is the only routing key (no open proxy / SSRF). Only `POST`/`OPTIONS`
@@ -33,8 +32,7 @@ npx wrangler deploy --env=""   # top-level (production); use --env dev for the l
 
 Then set `PROXY_BASE` in [`ui/src/config.ts`](../ui/src/config.ts) to the deployed
 `https://agenthud-proxy.<your-subdomain>.workers.dev` URL — `config.ts` is the single source of
-truth for that URL, and the **GitHub Models (via proxy)** / **Google (via proxy)** dropdown entries
-point at it.
+truth for that URL, and the **Google (via proxy)** dropdown entry points at it.
 
 ## Local dev
 
@@ -48,7 +46,7 @@ npx wrangler dev                                  # http://localhost:8787 — ke
 npm --prefix ui run dev
 ```
 
-Now "GitHub Models (via proxy)" / "Google (via proxy)" resolve to the local worker. Notes:
+Now "Google (via proxy)" resolves to the local worker. Notes:
 
 - **`compatibility_date` must be ≤ the date the installed wrangler's runtime supports**, or
   `wrangler dev` refuses to start (`requires compatibility date "…"` error). Bump it alongside

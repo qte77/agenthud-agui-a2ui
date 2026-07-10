@@ -13,10 +13,54 @@ export interface SurfaceSnapshot {
   surfaceId: string;
   /** id → latest component instance (later batches update in place). Insertion order is preserved. */
   components: Map<string, unknown>;
+  /** Two-way-binding seed values folded from dataModelUpdate, as a plain nested object (path → value). */
+  data: Record<string, unknown>;
 }
 
 export function emptySnapshot(): SurfaceSnapshot {
-  return { begin: null, surfaceId: "main", components: new Map() };
+  return { begin: null, surfaceId: "main", components: new Map(), data: {} };
+}
+
+// ---- dataModelUpdate → plain nested object (#206) ----
+// @a2ui seeds path-bound CheckBox/Slider values via `dataModelUpdate` (a ValueMap wire array). Its own
+// ValueMap→object conversion is private, so we hand-roll the same shape: A2UIViewer's `data` prop and the
+// path bindings resolve against a plain nested object (`/form/agree` → `{ form: { agree: true } }`).
+
+/** One @a2ui ValueMap entry — the wire shape for a two-way-binding seed. */
+interface ValueEntry {
+  key: string;
+  valueBoolean?: boolean;
+  valueNumber?: number;
+  valueString?: string;
+  valueMap?: ValueEntry[];
+}
+interface DataModelUpdate {
+  path?: string;
+  contents?: ValueEntry[];
+}
+
+/** A ValueMap entry's value: a nested map recurses; otherwise the one present typed literal. */
+function entryValue(e: ValueEntry): unknown {
+  if (e.valueMap !== undefined) return valueMapToObject(e.valueMap);
+  return e.valueBoolean ?? e.valueNumber ?? e.valueString;
+}
+
+/** Convert a ValueMap array into a plain nested object (`{ key: value }`). */
+function valueMapToObject(entries: ValueEntry[]): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const e of entries) out[e.key] = entryValue(e);
+  return out;
+}
+
+/** Fold a dataModelUpdate's contents into `data` (mutates), nesting under its optional `/a/b` path. */
+function foldDataModelUpdate(data: Record<string, unknown>, update: DataModelUpdate): void {
+  const segments = update.path ? update.path.split("/").filter(Boolean) : [];
+  let target = data;
+  for (const seg of segments) {
+    if (typeof target[seg] !== "object" || target[seg] === null) target[seg] = {};
+    target = target[seg] as Record<string, unknown>;
+  }
+  Object.assign(target, valueMapToObject(update.contents ?? []));
 }
 
 /**
@@ -25,8 +69,13 @@ export function emptySnapshot(): SurfaceSnapshot {
  * so far — so any cross-batch reference resolves within this single message.
  */
 export function accumulate(snapshot: SurfaceSnapshot, messages: unknown[]): unknown[] {
+  const dataUpdates: unknown[] = [];
   for (const msg of messages as Record<string, unknown>[]) {
     if (msg.beginRendering) snapshot.begin = msg;
+    if (msg.dataModelUpdate) {
+      foldDataModelUpdate(snapshot.data, msg.dataModelUpdate);
+      dataUpdates.push(msg);
+    }
     const update = msg.surfaceUpdate as
       | { surfaceId?: string; components?: { id: string }[] }
       | undefined;
@@ -44,5 +93,8 @@ export function accumulate(snapshot: SurfaceSnapshot, messages: unknown[]): unkn
       surfaceUpdate: { surfaceId: snapshot.surfaceId, components: [...snapshot.components.values()] },
     });
   }
+  // Pass THIS batch's dataModelUpdate(s) through, LAST (the live "send last" convention) so the rendered
+  // surface seeds its path-bound controls; snapshot.data already holds them for the frozen A2UIViewer.
+  batch.push(...dataUpdates);
   return batch;
 }

@@ -57,8 +57,8 @@ composer below the surface — **step through prior turns with ◀/▶** (one su
 stays interactive), and clicking a rendered button also drives the next turn. If a model is
 rate-limited or ignores the render tool, Live **auto-tries the provider's other models** (stopping
 cleanly on a bad key). Your **API key is held in memory only**
-(never stored — gone on reload); the base URL + model persist in `sessionStorage`. GitHub Models
-and Google route through the deployed edge proxy ([worker/README.md](worker/README.md)); the dev
+(never stored — gone on reload); the base URL + model persist in `sessionStorage`. Google routes
+through the deployed edge proxy ([worker/README.md](worker/README.md)); the dev
 prefill + proxy env vars are documented in [ui/.env.example](ui/.env.example). The demo needs no
 key. Rationale: [ADR-0001](docs/decisions/0001-agent-runtime-stack.md).
 

@@ -2,7 +2,6 @@
 // proxy can never be aimed at an arbitrary host (no open proxy / SSRF). BYOK pass-through:
 // this worker holds no secret; the visitor's own key is forwarded upstream unchanged.
 const UPSTREAMS: Record<string, string> = {
-  "github-models": "https://models.github.ai/inference",
   google: "https://generativelanguage.googleapis.com/v1beta/openai",
 };
 
