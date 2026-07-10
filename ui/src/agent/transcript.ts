@@ -13,6 +13,8 @@ import type { ComponentInstance } from "@a2ui/react";
 export interface TurnSnapshot {
   root: string;
   components: ComponentInstance[];
+  /** Folded dataModelUpdate seed so frozen data-bound controls keep their values, not defaults (#206). */
+  data: Record<string, unknown>;
 }
 
 export interface TranscriptTurn {
@@ -46,7 +48,7 @@ export function finalizeTurn(
 export function toTurnSnapshot(snap: SurfaceSnapshot): TurnSnapshot | null {
   const root = (snap.begin as { beginRendering?: { root?: string } } | null)?.beginRendering?.root;
   if (root === undefined || snap.components.size === 0) return null;
-  return { root, components: [...snap.components.values()] as ComponentInstance[] };
+  return { root, components: [...snap.components.values()] as ComponentInstance[], data: { ...snap.data } };
 }
 
 /** UI-facing label for a clicked A2UI action (the model-facing text stays actionToTurn's). */

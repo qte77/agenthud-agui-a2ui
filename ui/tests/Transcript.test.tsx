@@ -8,7 +8,9 @@ vi.mock("@a2ui/react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@a2ui/react")>();
   return {
     ...actual,
-    A2UIViewer: ({ root }: { root: string }) => <div data-testid="frozen-viewer" data-root={root} />,
+    A2UIViewer: ({ root, data }: { root: string; data?: Record<string, unknown> }) => (
+      <div data-testid="frozen-viewer" data-root={root} data-model={JSON.stringify(data ?? null)} />
+    ),
   };
 });
 
@@ -17,7 +19,11 @@ import { Transcript } from "../src/Transcript";
 // Paged transcript (#209): one turn shown at a time, ◀/▶ to step. A selected PAST turn renders its
 // frozen A2UIViewer; the LATEST turn renders no viewer here (the live surface shows it).
 describe("Transcript (paged)", () => {
-  const snap = (root: string): TurnSnapshot => ({ root, components: [{ id: root, component: {} }] });
+  const snap = (root: string, data: Record<string, unknown> = {}): TurnSnapshot => ({
+    root,
+    components: [{ id: root, component: {} }],
+    data,
+  });
   const turns: TranscriptTurn[] = [
     { userText: "first prompt", snapshot: snap("t1") },
     { userText: "second", snapshot: snap("t2") },
@@ -31,6 +37,18 @@ describe("Transcript (paged)", () => {
     expect(screen.getByText(/first prompt/)).toBeInTheDocument();
     expect(screen.getByText(/Turn 1 of 3/)).toBeInTheDocument();
     expect(screen.getByTestId("frozen-viewer").getAttribute("data-root")).toBe("t1");
+  });
+
+  it("passes the selected turn's data model to the frozen viewer (#206)", () => {
+    const withData: TranscriptTurn[] = [
+      { userText: "filters", snapshot: snap("t1", { filters: { active: true } }) },
+      { userText: "next", snapshot: snap("t2") },
+    ];
+    render(<Transcript turns={withData} selected={0} onPrev={noop} onNext={noop} />);
+
+    expect(screen.getByTestId("frozen-viewer").getAttribute("data-model")).toBe(
+      JSON.stringify({ filters: { active: true } })
+    );
   });
 
   it("renders no frozen viewer when the latest turn is selected (live surface shows it)", () => {
