@@ -5,7 +5,11 @@
 // deltas (a later batch re-declares `root` to reference cards defined in earlier batches), so each
 // raw delta would fail that check. We keep a running snapshot of every component seen so far and
 // re-emit a single self-contained surfaceUpdate each step, which renders the same accumulating UI
-// while satisfying @a2ui. The live agent emits one complete batch already, so it needs none of this.
+// while satisfying @a2ui.
+//
+// The live path needs the same self-containment WITHIN one batch — a small model happily splits its
+// components across several surfaceUpdate messages — but not across batches, so it gets the
+// stateless `coalesceSurfaceUpdates` at the render seam instead (agent/applyA2UIEvent.ts).
 
 export interface SurfaceSnapshot {
   /** The most recent beginRendering message, replayed first so the surface keeps its root. */
