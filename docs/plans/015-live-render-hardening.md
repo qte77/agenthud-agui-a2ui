@@ -2,10 +2,14 @@
 title: Plan 015 — Live-path render hardening + re-baseline
 description: Code/file/source map + open threads for the BYOK live A2UI render path, for an unattended next session. Verified working E2E; remaining work is small-model reliability.
 date: 2026-07-25
-status: open
+status: closed
 issues: [129]
 handoff: handoffs/015-live-render-hardening.md
+successor: plans/016-live-variance-and-responsive.md
 ---
+
+> **Closed 2026-07-25.** Open thread #1 was verified by effect and resolved — see
+> "E2E outcome" below. The remainder moved to [plan 016][p016].
 
 # Plan 015 — Live-path render hardening + re-baseline
 
@@ -80,9 +84,36 @@ for well-formed batches. #129 closed on that basis.
 - Gates before push (from `ui/`): `npm run typecheck && npm run lint && npm test`. Local sandbox blocks
   pipes/compound bash + curl; use Read/node and the patchright venv.
 
+## E2E outcome (2026-07-25, unattended)
+
+Matrix: 6 runs, `openai/gpt-4o-mini` **via OpenRouter**, desktop 1440/1280 + mobile 390 (emulated),
+3 prompts (simple card / tabbed settings panel / image gallery), asserting surface paint + zero
+render errors + zero contract violations + zero app console errors + exactly one `render_ui` call.
+
+- Baseline (stale deploy): **2/6**. After the fixes below (build `43b65a4`): **4/6**.
+- **Thread #1 was misdiagnosed as model variance.** The failing batches were structurally complete —
+  every referenced id present. @a2ui v0.8's `SurfaceUpdateMessageSchema` resolves child refs against
+  *one* message's `components`, and the model split them across 2–4 `surfaceUpdate` messages. Fixed
+  deterministically at the render seam (`coalesceSurfaceUpdates`, PR #239) — no prompt change, no
+  derived-schema escalation, no repair step needed. Both ADR-0003 escalation options stay unspent.
+- Invented `asset:` tokens (`asset:product1-image`) reached the DOM → `ERR_UNKNOWN_URL_SCHEME` +
+  broken images; unknown tokens now fall back to an inline data-URI placeholder (same PR).
+- Residual variance: 1 of 4 complex runs emitted **two** `render_ui` calls; the second batch failed
+  our contract and was skipped — **the surface still painted** from the valid one, and the violation
+  is visible in the event log. Graceful degradation, not a blank surface. Carried to plan 016.
+- New defect, unrelated to rendering: the surface collapses to a ~10px sliver at 390px
+  (`DashboardShell.tsx` fixed `w-96` aside) → #240. Carried to plan 016.
+
+**Also unblocked en route:** `main` CI + the Pages deploy were red since the auto-merged TS 7 bump
+(#223/#222) made `npm ci` unresolvable — so the site had been serving a stale build. PR #235.
+
+**Note for future E2E:** the "GitHub Models (via proxy)" recipe in this plan was stale — that
+provider and its worker upstream were removed (#165). Use OpenRouter (the `ui/.env` key) instead.
+
 ## References
 - Pipeline prose: [architecture.md][arch] ("A2UI render pipeline") · ADR-0001/0002/0003
-- Handoff: [handoffs/015-live-render-hardening.md][h015]
+- Handoff: [handoffs/015-live-render-hardening.md][h015] · successor: [plan 016][p016]
 
 [arch]: ../architecture.md
 [h015]: ../handoffs/015-live-render-hardening.md
+[p016]: 016-live-variance-and-responsive.md

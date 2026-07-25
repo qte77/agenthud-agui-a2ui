@@ -1,13 +1,18 @@
 ---
 date: 2026-07-25
-status: open
+status: closed
 issues: [129]
 plan: plans/015-live-render-hardening.md
+successor: handoffs/016-live-variance-and-responsive.md
 title: Handoff 015 — Live-path render hardening + re-baseline
 description: Onboards the next (unattended) session to the verified-working live A2UI render path, the code map, open threads, and the working agreement.
 ---
 
 # Handoff 015 — Live-path render hardening + re-baseline
+
+> **Closed 2026-07-25 — superseded by [handoff 016][h016].** Its open thread #1 turned out to be a
+> seam bug, not model variance (fixed in #239); CI + the Pages deploy were also unbroken (#235).
+> The remainder moved to plan/handoff 016. Kept for the arc record.
 
 > **First thing:** re-baseline. A prior session had a stale view of the tree. Run
 > `git fetch origin && git log --oneline -12 origin/main` and skim `git status` before anything.
@@ -52,3 +57,4 @@ surfaces both contract-violation and render errors in the event log. **These are
 
 [p015]: ../plans/015-live-render-hardening.md
 [arch]: ../architecture.md
+[h016]: 016-live-variance-and-responsive.md
