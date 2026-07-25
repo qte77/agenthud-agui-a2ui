@@ -40,6 +40,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `ui/src/agent/applyA2UIEvent.ts`: **a split `surfaceUpdate` no longer blanks the live surface** — @a2ui
+  v0.8 resolves child references *within a single* `surfaceUpdate` message, so a model that spreads its
+  components over several updates renders nothing ("Component 'root' references non-existent component
+  ID 'generalTab'") even though the batch is complete. `coalesceSurfaceUpdates` folds every update of a
+  surface into one message (first update's position; a re-declared id keeps its position with its last
+  definition) before validation and render. Caught by the unattended live E2E: **3 of 4** gpt-4o-mini
+  runs on a tabbed settings prompt failed this way, all with structurally complete batches. TDD
+  Red-first. The replay path already solved the cross-batch case in `replaySnapshot.accumulate`, whose
+  "the live agent emits one complete batch already" note was the wrong assumption.
+
+- `ui/src/agent/assets.ts`: **an invented `asset:` token no longer emits a failed request** — a model
+  reaches for tokens the prompt never offered (observed: `asset:product1-image` on a gallery prompt);
+  the unresolved `asset:…` URL reached the DOM as an image src, so the browser logged
+  `net::ERR_UNKNOWN_URL_SCHEME` and painted a broken image. Unknown tokens now fall back to an inline
+  data-URI placeholder (`PLACEHOLDER_ASSET`) — layout intact, zero network requests. TDD Red-first.
+
 - `ui/package.json`, `worker/package.json`, `.github/dependabot.yml`: **unbreak CI + the Pages deploy** —
   the auto-merged `typescript` 6.0.3 → 7.0.2 bump (#223/#222) made `npm ci` unresolvable in both
   packages (`typescript-eslint@8` peers at `<6.1.0`), so CI, the Pages deploy, and every local install

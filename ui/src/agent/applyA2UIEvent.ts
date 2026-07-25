@@ -53,6 +53,63 @@ export function summarizeA2UI(messages: unknown[]): {
   return { count, types: [...types] };
 }
 
+interface SurfaceUpdate {
+  surfaceId?: string;
+  components?: { id?: string }[];
+}
+// Batches come from a model, so every element is treated as possibly absent/malformed.
+type BatchMessage = { surfaceUpdate?: SurfaceUpdate } | null | undefined;
+
+/** Every surface's components, keyed id → component in first-seen order (a re-declared id keeps
+ *  its position and takes its latest definition — exactly what a Map does). */
+function componentsBySurface(messages: unknown[]): Map<string, Map<string, unknown>> {
+  const bySurface = new Map<string, Map<string, unknown>>();
+  let anonymous = 0;
+  for (const msg of messages as BatchMessage[]) {
+    const update = msg?.surfaceUpdate;
+    if (!update?.components) continue;
+    const byId = bySurface.get(update.surfaceId ?? "") ?? new Map<string, unknown>();
+    // An id-less component is invalid for @a2ui anyway; key it uniquely so it still reaches the
+    // validator (which reports it) instead of silently collapsing onto another entry.
+    for (const component of update.components) {
+      byId.set(component.id ?? `#anonymous-${String(anonymous++)}`, component);
+    }
+    bySurface.set(update.surfaceId ?? "", byId);
+  }
+  return bySurface;
+}
+
+/**
+ * Merge every `surfaceUpdate` of the same surface in one batch into a single message.
+ *
+ * A2UI v0.8 resolves child references *within* one surfaceUpdate — its schema calls `components`
+ * "a list containing all UI components for the surface" — so a batch that splits them across
+ * several updates is rejected wholesale ("Component 'root' references non-existent component ID
+ * 'x'") even when the ids all exist somewhere in the batch. Small models split like this often
+ * (observed live on tabbed UIs), and since a tool call delivers the whole batch atomically there is
+ * nothing incremental to preserve: merging is semantics-preserving and makes the split harmless.
+ * The merged update keeps the first update's position; a re-declared id keeps its first position
+ * with its last definition (a Map does both), so @a2ui never sees a duplicate id.
+ */
+export function coalesceSurfaceUpdates(messages: unknown[]): unknown[] {
+  const merged = componentsBySurface(messages);
+  const emitted = new Set<string>();
+  const out: unknown[] = [];
+  for (const msg of messages as BatchMessage[]) {
+    const update = msg?.surfaceUpdate;
+    if (!update?.components) {
+      out.push(msg);
+      continue;
+    }
+    const surfaceId = update.surfaceId ?? "";
+    if (emitted.has(surfaceId)) continue; // already folded into this surface's first update
+    emitted.add(surfaceId);
+    const components = [...merged.get(surfaceId)!.values()];
+    out.push({ ...msg, surfaceUpdate: { ...update, components } });
+  }
+  return out;
+}
+
 /**
  * Apply one AG-UI-style event to the A2UI surface and return its log entry.
  *
@@ -76,7 +133,9 @@ export function applyA2UIEvent(
 
   if (!event.a2uiMessages) return entry;
 
-  const parsed = A2UIMessageBatchSchema.safeParse(event.a2uiMessages);
+  // Fold split surfaceUpdates before validating/rendering — see coalesceSurfaceUpdates.
+  const messages = coalesceSurfaceUpdates(event.a2uiMessages);
+  const parsed = A2UIMessageBatchSchema.safeParse(messages);
   if (!parsed.success) {
     // Surface the violation in the event log instead of skipping silently (a blank surface with no
     // log entry once hid a live model emitting a batch that fails our contract). Mirrors the
@@ -89,12 +148,12 @@ export function applyA2UIEvent(
     return entry;
   }
 
-  const info = summarizeA2UI(event.a2uiMessages);
+  const info = summarizeA2UI(messages);
   entry.a2uiComponentCount = info.count;
   entry.a2uiComponentTypes = info.types;
 
   try {
-    render(event.a2uiMessages);
+    render(messages);
   } catch (e) {
     // Surface render failures (e.g. an @a2ui schema mismatch) in the event log instead of silently
     // blanking the surface — a silent swallow here once hid a Card `children` vs `child` mismatch.
