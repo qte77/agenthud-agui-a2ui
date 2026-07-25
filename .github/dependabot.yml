@@ -25,6 +25,11 @@ updates:
       # the AI-SDK above). Patch bumps still flow — CI's real-renderer test guards them.
       - dependency-name: "@a2ui/react"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # typescript-eslint peer-caps TypeScript at <6.1.0, so a TS major auto-bump makes `npm ci`
+      # unresolvable (ERESOLVE) and reds CI + the Pages deploy — exactly what the 7.0.2 bump did.
+      # Let TS majors land in a deliberate PR once typescript-eslint supports them.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm"
     directory: "/worker"
     schedule:
@@ -36,9 +41,12 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     ignore:
-      # wrangler@4 peer-pins @cloudflare/workers-types to ^4; the v5 major conflicts (ERESOLVE).
-      - dependency-name: "@cloudflare/workers-types"
+      # Same TypeScript cap as /ui — typescript-eslint peers at <6.1.0, so a TS major auto-bump
+      # breaks `npm ci` here too.
+      - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # NOTE: @cloudflare/workers-types majors are NOT ignored any more — wrangler >=4.110 peers on
+      # ^5, so pinning it at ^4 was itself the ERESOLVE. Keep it tracking wrangler's peer.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

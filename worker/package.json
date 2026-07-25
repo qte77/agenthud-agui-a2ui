@@ -12,11 +12,11 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4",
+    "@cloudflare/workers-types": "^5",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.7.0",
     "eslint-plugin-sonarjs": "^4.1.0",
-    "typescript": "~7.0.2",
+    "typescript": "~6.0.3",
     "typescript-eslint": "^8.63.0",
     "vitest": "^4.1.10",
     "wrangler": "^4"
