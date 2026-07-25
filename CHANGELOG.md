@@ -40,6 +40,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `ui/package.json`, `worker/package.json`, `.github/dependabot.yml`: **unbreak CI + the Pages deploy** —
+  the auto-merged `typescript` 6.0.3 → 7.0.2 bump (#223/#222) made `npm ci` unresolvable in both
+  packages (`typescript-eslint@8` peers at `<6.1.0`), so CI, the Pages deploy, and every local install
+  failed. TypeScript is pinned back to `~6.0.3` and TS majors are now dependabot-ignored until
+  typescript-eslint supports them. `@cloudflare/workers-types` moved `^4` → `^5` (wrangler ≥4.110 peers
+  on ^5) and its now-inverted major-ignore was dropped.
+
 - `ui/src/replaySnapshot.ts`, `ui/src/agent/transcript.ts`, `ui/src/Transcript.tsx`: **frozen transcript
   turns keep their data-bound values** — `accumulate` now folds each `dataModelUpdate` seed into the surface
   snapshot **and** passes it through the rendered batch, so a stepped-back turn's path-bound CheckBox/Slider
