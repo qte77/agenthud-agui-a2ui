@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `worker/src/wellknown/agent-card.ts`, `worker/src/mcp/*`, `worker/src/a2a/handler.ts`,
+  `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/wrangler.toml`: **agent-native
+  discovery + execution on the edge Worker** — alongside the BYOK relay, three unauthenticated
+  agent-facing routes that wrap the keyless free render chain (Cloudflare Workers AI → OpenRouter
+  `:free`), needing no visitor key and no new env vars:
+  - `GET /.well-known/agent-card.json` — a static **A2A Agent Card** (skills = the two MCP tools;
+    `supportedInterfaces` → the live `/a2a`), public + wildcard CORS.
+  - `POST /mcp` — a **stateless MCP server** (`@modelcontextprotocol/server`'s `createMcpHandler`, no
+    Durable Object) exposing `render_ui` (prompt → A2UI batch) and `validate_a2ui_batch` (structural
+    check → `{valid, issues}`).
+  - `POST /a2a` — a minimal **A2A JSON-RPC** endpoint; `message/send` renders a prompt into a
+    synchronously-completed Task carrying the batch as a `data` artifact (others → `-32601`).
+
+  Both execution endpoints share the `FREE_RATE_LIMITER` and **bypass the browser origin allowlist**
+  (agents send no `Origin`). New deps `@modelcontextprotocol/server` + `zod` (the unused `agents` dep
+  was dropped — `createMcpHandler` ships in `@modelcontextprotocol/server`); `nodejs_compat` added.
+  TDD Red-first for the tool, A2A, card, and validation module logic; routing/origin-bypass verified
+  by test and the bundle by `wrangler deploy --dry-run`. See
+  [ADR-0005](docs/decisions/0005-agent-native-endpoints.md). Closes #255.
+
 - `ui/src/agent/fallback.ts` + `ui/src/agent/useLiveAgent.ts`: **model fall-through chain** — a Live turn
   now tries the provider's other models (same BYOK key, your chosen model first, capped at 3) when one is
   rate-limited (429), errors (5xx / network), or ignores the `render_ui` tool (renders nothing) —

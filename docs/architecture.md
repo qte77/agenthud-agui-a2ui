@@ -66,6 +66,15 @@ The final box above expands to the translation that turns a model reply into ren
 > Gotcha: `beginRendering.root` **must equal the id of the top component** — a missing root id paints a
 > blank surface with no error. The live `SYSTEM_PROMPT` (`ui/src/agent/prompts.ts`) enforces this.
 
+## Agent-native endpoints (Discovery + Execution)
+
+The same Worker also answers three **unauthenticated, agent-facing** routes that wrap the keyless
+render chain — `GET /.well-known/agent-card.json` (A2A card), `POST /mcp` (MCP: `render_ui` +
+`validate_a2ui_batch`), and `POST /a2a` (A2A `message/send` → a completed Task). These **bypass the
+origin allowlist** (programmatic agents send no `Origin`) and share the `FREE_RATE_LIMITER`; they need
+no visitor key. Details in [`worker/README.md`][worker-readme] · [ADR-0005][adr-0005]; protocol
+reference in [protocols.md](protocols.md).
+
 ## The ours / theirs line
 
 - **Ours:** the GitHub Pages static app **and** the worker *source* (`worker/`), plus
@@ -86,4 +95,5 @@ only access gate** — production echoes only `https://qte77.github.io`; localho
 sending an allowlisted `Origin`.
 
 [adr-0002]: decisions/0002-edge-proxy-platform.md
+[adr-0005]: decisions/0005-agent-native-endpoints.md
 [worker-readme]: ../worker/README.md

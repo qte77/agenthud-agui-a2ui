@@ -167,8 +167,11 @@ agenthud already sits at the **AG-UI + A2UI** layers:
 
 A live **BYOK** agent (shipped) adds the **agent-logic** layer (Vercel AI SDK) emitting the
 same AG-UI events a real agent would — the replay engine and a live SSE stream share one
-event schema. **MCP** (tools) and **A2A** (multi-agent) are natural future layers, not yet
-wired in. See [ADR-0001][adr-0001].
+event schema. **MCP** and **A2A** are now wired at the edge: the Worker serves an **A2A Agent
+Card** (`/.well-known/agent-card.json`), a stateless **MCP** server (`/mcp` — `render_ui` +
+`validate_a2ui_batch`), and a minimal **A2A** JSON-RPC endpoint (`/a2a` — `message/send`), all
+wrapping the keyless render chain. See [ADR-0001][adr-0001] · [ADR-0005][adr-0005] ·
+[`worker/README.md`][worker-readme].
 
 ## A2UI/AG-UI gotchas (hard-won)
 
@@ -199,3 +202,5 @@ Linux Foundation, CopilotKit, and the Google Developers Blog.
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0003]: decisions/0003-live-catalog-instruction.md
 [adr-0004]: decisions/0004-self-contained-replay-snapshots.md
+[adr-0005]: decisions/0005-agent-native-endpoints.md
+[worker-readme]: ../worker/README.md

@@ -7,85 +7,86 @@ updated: 2026-08-25
 
 # Handoff — Agent-Native Discovery + Execution
 
-> Delete-callout: nothing has been implemented yet. This is a pre-execution handoff from a
-> planning-only session — treat it as onboarding, not a progress report.
+Onboarding for the next session. Read `docs/plans/017-agent-native-discovery.md` in full first — it
+carries the locked decisions, the verified **source map** (so you need not re-map), and the single
+remaining-work table. This handoff is the "where we are / what's next / how to run it".
 
-## State at handoff (2026-08-25)
+## What shipped this session (Track 1 — agenthud Worker, branch `feat/017-agent-native-discovery`)
 
-The plan (`docs/plans/017-agent-native-discovery.md`) was designed and approved in a separate
-`qte77/qte77`-hub-rooted Claude Code session, via Plan Mode, after live-verifying the Cloudflare
-Agents SDK and current MCP/A2A specs. Execution was then attempted from that same hub-rooted
-session via background subagents and hit avoidable friction: the orchestrating session didn't
-initially realize this repo was already locally checked out at
-`/workspaces/qte77/agenthud-agui-a2ui`, so subagents created redundant clones/worktrees
-elsewhere (`/tmp`, then `/workspaces/agenthud-agui-a2ui-base`), one of which ran a full
-`npm install` (334 packages) that contributed to `/workspaces` filling up (30G/32G, 0 free),
-which then hard-blocked `git fetch`/`git worktree add`. No source files were written and no
-commits were made anywhere as a result — the plan and this handoff are the first real artifacts
-of this arc.
+Complete and **gate-green** (`typecheck` + `lint` + 71 tests) and **bundle-verified**
+(`wrangler deploy --dry-run` → 173 KiB gzip, all bindings resolved, `nodejs_compat` OK):
 
-This session is being wrapped up in favor of starting fresh **directly in this repo directory**
-— no more cross-repo orchestration overhead needed for work that's entirely scoped to this repo.
+- `GET /.well-known/agent-card.json` — static A2A card (`worker/src/wellknown/agent-card.ts`).
+- `POST /mcp` — stateless MCP server via `createMcpHandler` (`worker/src/mcp/{server,tools}.ts`):
+  tools `render_ui`, `validate_a2ui_batch`.
+- `POST /a2a` — minimal A2A JSON-RPC (`worker/src/a2a/handler.ts`): `message/send` → completed Task.
+- Shared render seam `worker/src/agent/render.ts` (`renderFromPrompt`); `validateBatch` added to
+  `worker/src/agent/contract.ts` (`isValidBatch` now delegates).
+- Routing in `worker/src/worker.ts` (`agentNativeRoute`, origin-bypass, `FREE_RATE_LIMITER`);
+  `nodejs_compat` in `worker/wrangler.toml`; deps in `worker/package.json` (**dropped unused
+  `agents`**; kept `@modelcontextprotocol/server` + `zod`).
+- Tests: `worker/test/{mcp-tools,agent-card,a2a,agent-routes}.test.ts` + `contract.test.ts`
+  `validateBatch` block. TDD Red-first for module logic; routing/origin-bypass by in-process test;
+  transport by effect.
+- Docs: `worker/README.md`, `docs/protocols.md`, `CHANGELOG.md` (`[Unreleased]`, **no version bump**),
+  new `docs/decisions/0005-agent-native-endpoints.md`, `docs/README.md` index (added 0004 + 0005),
+  `docs/UserStory.md` (US-11), root `README.md` + `docs/architecture.md` (brief mentions).
 
-## How to handle the plan (order)
+Also cleared this session: **Dependabot backlog 9 → 3** (merged #244/#247/#230/#254/#256; closed
+#250/#248; left #253/#251 = worker-dep bumps to rebase AFTER this arc lands, and #228 = red CI).
 
-Read `docs/plans/017-agent-native-discovery.md` in full — it has the locked owner decisions,
-source map, and phase-by-phase steps. Follow Phase A steps 1-9 in order (step 0's docs are this
-commit). Don't re-derive the owner decisions — they were verified live against current specs
-this session (Cloudflare docs, MCP spec, A2A proto) and are correct as written.
+## What's next (in order)
 
-## First actions on resume
+1. **Open the PR** for `feat/017` (if not already), CI green → **owner squash-merge** (this repo's
+   convention is human merge; the GPG gotcha below may force `--admin`). This is the only Phase-1 gate.
+2. **After merge:** rebase/sweep dependabot **#253 / #251** (they touch `worker/package.json`).
+3. **Track 2 — origin-root discovery** (repo `qte77/qte77.github.io`, checked out at
+   `/workspaces/qte77/qte77.github.io`). Per the `ora-readiness` scout: highest ROI is the Phase-1
+   static cluster — fix llms.txt's 5 dead links **and add agenthud** (currently unmentioned) + a
+   when-to-use section; `/index.md`; origin-level `/.well-known/agent-card.json` +
+   `ai-catalog.json` + `agent-skills/index.json` + `mcp/server-card.json` (thin pointers to THIS
+   Worker's `/a2a` + `/mcp`); robots AI-crawler tiers + Content-Signal + `schemamap:`; JSON-LD
+   breadth; `/auth.md`; api-catalog; agent-friendly 404. **First `curl -I` the live site** — GitHub
+   Pages can't set custom headers, so the Link-header/Vary checks may be capped. Re-scan
+   (`POST https://ora.ai/api/scan {"url":"qte77.github.io"}`) after shipping to verify the lift
+   (45 → plausibly mid-60s).
+4. **Phase 1.5 — cheap Worker wins** (this repo, own PR): consistent JSON error envelope on the
+   remaining plain-text error paths in `worker.ts` (ora `json-error-responses`, ~4 pts);
+   `WWW-Authenticate` hint; document the keyless free tier as the "sandbox". OpenAPI at `/openapi.json`
+   is the bigger Phase-2 item.
+5. **Track 3 — estate baseline** (`qte77/qte77` hub) + the `dntywntme` hackathon repos + whether to
+   use/enhance `qte77/a2ui-agui-kit`: pending the `estate-strategy` scout's report (owner-gated).
 
-1. `df -h /workspaces` — confirm disk space is actually free. This was the hard blocker last
-   session; a cleanup pass was started but its completion was not confirmed before this session
-   ended. Don't assume it's fine.
-2. `git status` + `git branch --show-current` in this checkout — should be clean, on `main`.
-3. Check for and remove stale state from the aborted attempt, if present: `git worktree list`
-   here; and separately check whether `/workspaces/agenthud-agui-a2ui-base`,
-   `/workspaces/agenthud-agui-a2ui-016`, `/workspaces/agenthud-agui-a2ui-017` still exist. Before
-   deleting any of them, check each branch for commits not on `main`
-   (`git log <branch> ^main --oneline`) — if empty, safe to delete; if not, something was
-   committed that needs to be recovered first.
-4. Decide worktree-vs-direct: the plan assumes a `git worktree add` setup for isolation from a
-   concurrent orchestrator session. If this is now a single session working directly in this
-   repo, working directly here (no separate worktree) is simpler and fine — worktrees mattered
-   for avoiding collisions between concurrent sessions/agents, which may no longer apply.
-5. Open the GitHub Issue for this arc (none exists yet), reference it in this handoff's and the
-   plan's `issues:` frontmatter, then proceed through Phase A steps 1-9.
+## Owner-gates (batch into one sitting)
 
-## Working style
+- **PR review + merge** (agent PRs don't self-merge here).
+- **Release** is separate + maintainer-owned: bump `ui/package.json` on `main` → auto-tag `vX.Y.Z` →
+  `publish-release`. **Not part of this PR.**
+- **Track 2/3** touch other repos — confirm access (both are checked out locally already).
 
-Strict TDD RED-first for the two MCP tool handlers' logic and the agent-card shape assertion —
-not for `worker.ts` routing wiring, `wrangler.toml` config, or the MCP transport/DO-absence
-itself, which this repo's own `AGENTS.md` says to verify by effect. Run the real CI gate
-(`npm run typecheck && npm run lint && npm test` in `worker/`) before every push, never
-à la carte.
+## Commands
 
-## Owner-gates (pre-staged; batch into one sitting)
+```bash
+# CI gate (run before every push — the EXACT gate, not à la carte):
+npm run typecheck --prefix worker && npm run lint --prefix worker && npm test --prefix worker
+npm run deploy --prefix worker -- --dry-run --outdir /tmp/wr   # bundle check (no deploy)
+# by-effect once running:  wrangler dev  → curl the card / an MCP tools/list / an A2A message/send
+```
 
-Just one: PR review + merge. This repo's own convention (confirmed in prior arcs' handoffs) is
-that agent-authored PRs cannot self-merge — human merge only, whenever this is ready.
+## Watch-outs (verified this session)
 
-## Gotchas (the unattended tax + arc-specific traps)
+- `env -u GH_TOKEN -u GITHUB_TOKEN` on **every** git/gh call (else 401).
+- `-c commit.gpgsign=false` on commits (no GPG secret key here); owner signs/`--admin`-merges the PR.
+- `/workspaces` disk runs tight (~400 MB free) — no stray `npm install`/large clones; `agents` was
+  pruned to reclaim space.
+- Sandbox blocks Bash pipes / `;` / `&&` — one simple command per call; use `gh --json … --jq`.
+- The A2A `/a2a` JSON-RPC wire shape follows the a2a-js transport (`kind` discriminators); it's
+  verified by effect (curl), not against a strict validator — re-check if a real A2A client rejects it.
+- **Origin-root files are NOT in this repo** — agenthud's `ui/public/` deploys to a subpath crawlers
+  ignore; Track 2 must be done in `qte77/qte77.github.io`.
 
-- `env -u GH_TOKEN -u GITHUB_TOKEN` prefix on every single `git`/`gh` call — bare `gh` hit `401`
-  repeatedly last session; both vars shadow the real credential.
-- **No GPG secret key is available in this environment**, despite `commit.gpgsign=true` being
-  set globally — commits need `-c commit.gpgsign=false`; the owner will need to sign or
-  `--admin`-merge the PR later. Confirmed via `gpg --list-secret-keys` returning empty.
-- `isAllowedOrigin()` in `router.ts` returns `false` on a `null` Origin and is checked
-  immediately after the "non-POST → 405" gate, before the `/agent/render` branch — insert the
-  `/mcp` origin-bypass at that exact point, not vaguely "after the existing gates."
-- Watch `/workspaces` disk usage (`df -h`) before large `npm install`s — it filled to 100% last
-  session. A tiered cleanup tool exists at `/workspaces/disk-cleanup.sh` if needed again.
-- This repo is already checked out at this exact path — never re-clone it. If worktreeing for
-  isolation, worktree off *this* checkout, not a fresh clone.
-- No version bump in this PR — that's a separate, maintainer-owned release PR per this repo's
-  `.github/CONTRIBUTING.md`.
+## At arc close
 
-## At arc close (mine, then prune)
-
-Once merged and Phase C's live verification passes: update this handoff's `status` to `closed`,
-tick the plan's Phase A checklist against what actually shipped, and note any deviations from
-the locked owner decisions. The plan's "Roadmap beyond this arc" table becomes the seed for
-whichever arc number comes next.
+Tick the plan's remaining-work table against what merged, set this handoff `status: closed`, note any
+deviations from the locked decisions (already noted: dropped `agents`; Content-Signal moved to Track 2),
+and migrate any still-open rows to the next `NNNN` pair.
