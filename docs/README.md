@@ -15,6 +15,8 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 - [ADR-0001: Agent runtime stack][adr-0001] — TS-only, BYOK in-browser
 - [ADR-0002: Edge proxy platform][adr-0002] — Cloudflare Workers (vs Supabase / Vercel)
 - [ADR-0003: Live-agent catalog instruction][adr-0003] — curated prompt reference (vs schema injection)
+- [ADR-0004: Self-contained replay snapshots][adr-0004] — re-emit a self-contained surfaceUpdate per step
+- [ADR-0005: Agent-native endpoints][adr-0005] — A2A card + MCP server + A2A endpoint on the Worker
 
 ## Plans & handoffs
 
@@ -32,3 +34,5 @@ handoff is where to start + how to hand it off. Add both together; keep the numb
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0002]: decisions/0002-edge-proxy-platform.md
 [adr-0003]: decisions/0003-live-catalog-instruction.md
+[adr-0004]: decisions/0004-self-contained-replay-snapshots.md
+[adr-0005]: decisions/0005-agent-native-endpoints.md

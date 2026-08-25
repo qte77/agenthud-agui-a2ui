@@ -68,22 +68,34 @@ function buildBatchGraph(batch: unknown[]): { root: string | undefined; graph: M
   return { root, graph };
 }
 
-/** Every referenced child id must be defined somewhere in the batch (no dangling refs). */
-function allRefsDefined(graph: Map<string, string[]>): boolean {
+/** Collect every referenced child id that is defined nowhere in the batch (dangling refs), deduped. */
+function danglingRefs(graph: Map<string, string[]>): string[] {
+  const missing = new Set<string>();
   for (const refs of graph.values()) {
-    for (const r of refs) if (!graph.has(r)) return false;
+    for (const r of refs) if (!graph.has(r)) missing.add(r);
   }
-  return true;
+  return [...missing];
 }
 
 /**
- * Structural safety invariant for a model-produced A2UI batch: root defined + present, every
- * referenced child id defined (self-contained), and the reference graph acyclic. Returns false for
- * anything malformed so the caller uses its deterministic fallback.
+ * Structural validation of a model-produced A2UI batch, reporting SPECIFIC issues: root defined +
+ * present, every referenced child id defined (self-contained), and the reference graph acyclic.
+ * `{ valid: true, issues: [] }` when sound; otherwise `valid: false` with an agent-readable reason
+ * per problem. The shared seam behind both `isValidBatch` (the render fallback gate) and the MCP
+ * `validate_a2ui_batch` tool (the #211 unify seam).
  */
-export function isValidBatch(batch: unknown): batch is unknown[] {
-  if (!Array.isArray(batch)) return false;
+export function validateBatch(batch: unknown): { valid: boolean; issues: string[] } {
+  if (!Array.isArray(batch)) return { valid: false, issues: ["batch must be an array of A2UI messages"] };
+  const issues: string[] = [];
   const { root, graph } = buildBatchGraph(batch);
-  if (!root || !graph.has(root)) return false;
-  return allRefsDefined(graph) && !hasCycle(graph);
+  if (!root) issues.push("missing beginRendering.root");
+  else if (!graph.has(root)) issues.push(`root component "${root}" is not defined`);
+  for (const id of danglingRefs(graph)) issues.push(`dangling reference: "${id}"`);
+  if (hasCycle(graph)) issues.push("reference graph contains a cycle");
+  return { valid: issues.length === 0, issues };
+}
+
+/** Boolean view over {@link validateBatch}: true only for a sound, self-contained, acyclic batch. */
+export function isValidBatch(batch: unknown): batch is unknown[] {
+  return validateBatch(batch).valid;
 }

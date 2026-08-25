@@ -3,6 +3,9 @@ import { buildProviders, renderFree } from "./agent/providers";
 import { SYSTEM_PROMPT } from "./agent/prompts";
 import type { ChatMessage } from "./agent/model";
 import { verifyTurnstile } from "./turnstile";
+import { agentCardResponse } from "./wellknown/agent-card";
+import { mcpFetch } from "./mcp/server";
+import { a2aFetch } from "./a2a/handler";
 
 type Cors = Record<string, string>;
 
@@ -157,6 +160,22 @@ async function forwardToUpstream(
   });
 }
 
+// Agent-native endpoints bypass the browser origin allowlist + generic rate limit (programmatic
+// agents send no Origin): the public A2A discovery card (GET, answered before the 405 gate), and the
+// MCP + A2A execution endpoints (POST, each with its own FREE_RATE_LIMITER). null → normal proxy flow.
+function agentNativeRoute(
+  request: Request,
+  env: Env,
+  pathname: string,
+): Response | Promise<Response> | null {
+  if (request.method === "GET" && pathname === "/.well-known/agent-card.json") {
+    return agentCardResponse(request);
+  }
+  if (request.method === "POST" && pathname === "/mcp") return mcpFetch(request, env);
+  if (request.method === "POST" && pathname === "/a2a") return a2aFetch(request, env);
+  return null;
+}
+
 // BYOK pass-through CORS proxy (US-6). The static GitHub Pages app POSTs to
 // /<provider>/chat/completions; we forward it server-to-server (where browser CORS doesn't apply)
 // and stream the SSE response back with CORS headers. No secret is held here — the visitor's own
@@ -165,11 +184,19 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("origin");
     const cors = corsHeaders(origin, env);
+    const pathname = new URL(request.url).pathname;
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+
+    // Agent-native routes (public A2A discovery card + MCP/A2A execution) bypass the browser origin
+    // allowlist + generic rate limit — programmatic agents send no Origin. See agentNativeRoute.
+    const agentRoute = agentNativeRoute(request, env, pathname);
+    if (agentRoute) return agentRoute;
+
     if (request.method !== "POST") {
       return new Response("Method not allowed", { status: 405, headers: cors });
     }
+
     // Only browsers on an allowlisted origin may use the proxy.
     if (!isAllowedOrigin(origin, env)) return new Response("Forbidden origin", { status: 403 });
 
@@ -182,8 +209,6 @@ export default {
         return Response.json({ error: "Rate limit exceeded" }, { status: 429, headers: cors });
       }
     }
-
-    const pathname = new URL(request.url).pathname;
 
     // Keyless free-inference tier — the worker runs free models server-side (no visitor key).
     // Inherits every gate above; adds Turnstile + a tighter per-IP limit inside the handler.

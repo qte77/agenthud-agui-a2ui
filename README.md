@@ -89,6 +89,7 @@ events through one `applyA2UIEvent` seam into the `@a2ui/react` surface; `zod` v
 A2UI payloads on both sides.
 
 - [Documentation index](docs/README.md) — protocols, testing, user stories, ADRs
+- [Edge worker](worker/README.md) — BYOK relay **+ agent-native endpoints** (A2A card, MCP, A2A)
 - [ADR-0001](docs/decisions/0001-agent-runtime-stack.md) — TS-only agent runtime (vs Pydantic)
 - [Contributing](.github/CONTRIBUTING.md) — dev setup, tests, PR workflow
 - [A2UI](https://a2ui.org/specification/v0.9-a2ui/) · [AG-UI](https://docs.ag-ui.com/introduction)

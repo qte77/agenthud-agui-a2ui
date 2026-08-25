@@ -6,6 +6,9 @@ main = "src/worker.ts"
 # Pinned to the date the LOCAL `wrangler dev` runtime (workerd) supports — "today" can exceed the
 # installed wrangler's binary and break `wrangler dev`. Bump alongside wrangler upgrades.
 compatibility_date = "2026-06-24"
+# nodejs_compat: the MCP server SDK (@modelcontextprotocol/server) pulls in Node built-ins. Mirrored
+# under [env.dev] below so the dev deploy (agenthud-proxy-dev) gets it too.
+compatibility_flags = ["nodejs_compat"]
 
 # Declare workers.dev routing so a clean `wrangler deploy` is deterministic (this was the manual
 # go-live gotcha). preview_urls off keeps the public surface to the single canonical hostname.
@@ -55,6 +58,9 @@ namespace_id = "1002"
 # The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
 # localhost origins, for headless/local E2E. For local `wrangler dev`, put
 # ALLOW_LOCALHOST="true" in a gitignored worker/.dev.vars instead.
+[env.dev]
+compatibility_flags = ["nodejs_compat"]
+
 [env.dev.vars]
 ALLOW_LOCALHOST = "true"
 

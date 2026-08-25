@@ -192,6 +192,32 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 
 ---
 
+## Agent-native — Discovery + Execution
+
+### US-11: An agent discovers and calls agenthud
+
+**As an** AI agent (not a human browser),
+**I want to** discover agenthud's capabilities from a well-known card and invoke them over standard
+protocols,
+**so that** I can render or validate A2UI without a browser or a human in the loop.
+
+**Acceptance criteria:**
+
+- [x] A static **A2A Agent Card** at `GET /.well-known/agent-card.json` (edge Worker) lists the agent's
+  skills, capabilities, and its A2A interface URL
+- [x] A stateless **MCP** endpoint (`POST /mcp`) exposes `render_ui` (prompt → A2UI batch) and
+  `validate_a2ui_batch` (structural check → `{valid, issues}`)
+- [x] A minimal **A2A** JSON-RPC endpoint (`POST /a2a`) — `message/send` returns a completed Task
+  carrying the A2UI batch as a data artifact
+- [x] Endpoints need no visitor key (reuse the keyless free chain) and bypass the browser origin
+  allowlist (agents send no `Origin`)
+
+**Status:** Done (arc 017, #255) — Worker-side. Origin-root discovery for `qte77.github.io`
+(well-known files, llms.txt, Content-Signal) is tracked separately (that content must live in the
+`qte77/qte77.github.io` repo, not this subpath). See `worker/README.md` · [ADR-0005][adr-0005].
+
+---
+
 ## Priority order
 
 1. ~~US-1: Replay~~ (done)
@@ -204,6 +230,8 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 8. US-6: GitHub Models proxy (CORS-relay delivered via worker; keyless deferred)
 9. US-9: Arbitrary accounts
 10. ~~US-10: Live transcript + composer~~ (done)
+11. ~~US-11: Agent-native discovery + execution~~ (done — Worker-side, arc 017)
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0004]: decisions/0004-self-contained-replay-snapshots.md
+[adr-0005]: decisions/0005-agent-native-endpoints.md

@@ -16,10 +16,33 @@ header upstream; the key never lives in the worker.
 |---|---|
 | `google` | `https://generativelanguage.googleapis.com/v1beta/openai` |
 
-The first path segment is the only routing key (no open proxy / SSRF). Only `POST`/`OPTIONS`
-from an allowlisted `Origin` are served — **production allows only `https://qte77.github.io`**;
-localhost dev origins are added only when `ALLOW_LOCALHOST="true"` (see Local dev). CORS is the
-worker's sole access gate, since it holds no secret.
+The first path segment is the only routing key (no open proxy / SSRF). For the BYOK relay, only
+`POST`/`OPTIONS` from an allowlisted `Origin` are served — **production allows only
+`https://qte77.github.io`**; localhost dev origins are added only when `ALLOW_LOCALHOST="true"` (see
+Local dev). CORS is the relay's sole access gate, since it holds no secret.
+
+## Agent-native routes (Discovery + Execution)
+
+Alongside the relay, the Worker exposes three **unauthenticated, agent-facing** endpoints that wrap
+the keyless free render chain (Cloudflare Workers AI → OpenRouter `:free`) — **no visitor key, no new
+env vars**. They **bypass the browser origin allowlist** (programmatic agents send no `Origin`) and
+the two execution endpoints share a tighter `FREE_RATE_LIMITER` (10/60s). See
+[ADR-0005](../docs/decisions/0005-agent-native-endpoints.md) and
+[protocols.md](../docs/protocols.md).
+
+| method + path | what |
+|---|---|
+| `GET /.well-known/agent-card.json` | Static **A2A Agent Card** — name, skills, capabilities, and `supportedInterfaces` → `/a2a`. Public, wildcard CORS. |
+| `POST /mcp` | Stateless **MCP** server (Streamable HTTP, `createMcpHandler`). Tools: `render_ui` (prompt → A2UI batch), `validate_a2ui_batch` (structural check → `{valid, issues}`). |
+| `POST /a2a` | Minimal **A2A** JSON-RPC. `message/send` renders a prompt into a synchronously-completed Task (A2UI batch as a `data` artifact); other methods → `-32601`. |
+
+Quick check against a local `wrangler dev`:
+
+```bash
+curl http://localhost:8787/.well-known/agent-card.json
+curl -X POST http://localhost:8787/a2a -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"parts":[{"kind":"text","text":"a login card"}]}}}'
+```
 
 ## Deploy
 
