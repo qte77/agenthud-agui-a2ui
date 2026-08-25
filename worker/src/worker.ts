@@ -160,20 +160,61 @@ async function forwardToUpstream(
   });
 }
 
-// Agent-native endpoints bypass the browser origin allowlist + generic rate limit (programmatic
-// agents send no Origin): the public A2A discovery card (GET, answered before the 405 gate), and the
-// MCP + A2A execution endpoints (POST, each with its own FREE_RATE_LIMITER). null → normal proxy flow.
+// Wildcard CORS for the agent-native routes: agents may run browser-sandboxed on any origin, so these
+// public, unauthenticated endpoints echo `*` (unlike the BYOK relay, which is origin-locked).
+const AGENT_CORS: Record<string, string> = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+  "access-control-allow-headers": "content-type, authorization, mcp-protocol-version, mcp-session-id",
+  "access-control-max-age": "86400",
+};
+
+// A GET/HEAD probe of a POST-only endpoint answers with a 200 JSON capability descriptor (not an opaque
+// 405), so an agent that cautiously probes before POSTing gets a positive, machine-readable liveness signal.
+function capabilityResponse(selfOrigin: string, pathname: string): Response {
+  const isMcp = pathname === "/mcp";
+  return Response.json(
+    {
+      endpoint: pathname,
+      protocol: isMcp ? "MCP" : "A2A",
+      transport: "JSON-RPC 2.0",
+      methods: ["POST"],
+      hint: `POST a JSON-RPC 2.0 ${isMcp ? "MCP (initialize / tools/list / tools/call)" : "A2A (message/send)"} request here.`,
+      agentCard: `${selfOrigin}/.well-known/agent-card.json`,
+      openapi: "https://qte77.github.io/openapi.json",
+    },
+    { headers: AGENT_CORS },
+  );
+}
+
+// Stamp wildcard CORS onto a handler's (possibly streamed) response.
+async function withAgentCors(res: Response | Promise<Response>): Promise<Response> {
+  const r = await res;
+  const headers = new Headers(r.headers);
+  for (const [k, v] of Object.entries(AGENT_CORS)) headers.set(k, v);
+  return new Response(r.body, { status: r.status, statusText: r.statusText, headers });
+}
+
+// Agent-native endpoints own ALL their methods and bypass the browser origin allowlist: the public A2A
+// discovery card (GET/HEAD), and the MCP + A2A execution endpoints — GET/HEAD → capability descriptor,
+// OPTIONS → CORS preflight, POST → the handler (wildcard-CORS-wrapped). null → normal proxy flow.
 function agentNativeRoute(
   request: Request,
   env: Env,
   pathname: string,
 ): Response | Promise<Response> | null {
-  if (request.method === "GET" && pathname === "/.well-known/agent-card.json") {
+  const m = request.method;
+  if ((m === "GET" || m === "HEAD") && pathname === "/.well-known/agent-card.json") {
     return agentCardResponse(request);
   }
-  if (request.method === "POST" && pathname === "/mcp") return mcpFetch(request, env);
-  if (request.method === "POST" && pathname === "/a2a") return a2aFetch(request, env);
-  return null;
+  if (pathname !== "/mcp" && pathname !== "/a2a") return null;
+  if (m === "OPTIONS") return new Response(null, { status: 204, headers: AGENT_CORS });
+  if (m === "GET" || m === "HEAD") return capabilityResponse(new URL(request.url).origin, pathname);
+  if (m === "POST") return withAgentCors(pathname === "/mcp" ? mcpFetch(request, env) : a2aFetch(request, env));
+  return Response.json(
+    { error: "method_not_allowed", message: "Use POST (JSON-RPC), GET (capability), or OPTIONS." },
+    { status: 405, headers: { ...AGENT_CORS, allow: "GET, POST, OPTIONS" } },
+  );
 }
 
 // BYOK pass-through CORS proxy (US-6). The static GitHub Pages app POSTs to
@@ -186,19 +227,24 @@ export default {
     const cors = corsHeaders(origin, env);
     const pathname = new URL(request.url).pathname;
 
-    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
-
-    // Agent-native routes (public A2A discovery card + MCP/A2A execution) bypass the browser origin
-    // allowlist + generic rate limit — programmatic agents send no Origin. See agentNativeRoute.
+    // Agent-native routes own all their methods (GET capability probe / OPTIONS preflight / POST) with
+    // wildcard CORS, ahead of the origin-locked relay gates — programmatic + browser-sandboxed agents alike.
     const agentRoute = agentNativeRoute(request, env, pathname);
     if (agentRoute) return agentRoute;
 
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+
     if (request.method !== "POST") {
-      return new Response("Method not allowed", { status: 405, headers: cors });
+      return Response.json(
+        { error: "method_not_allowed", message: "This endpoint accepts POST." },
+        { status: 405, headers: { ...cors, allow: "POST, OPTIONS" } },
+      );
     }
 
     // Only browsers on an allowlisted origin may use the proxy.
-    if (!isAllowedOrigin(origin, env)) return new Response("Forbidden origin", { status: 403 });
+    if (!isAllowedOrigin(origin, env)) {
+      return Response.json({ error: "forbidden_origin", message: "Origin not allowed." }, { status: 403 });
+    }
 
     // Per-IP rate limit (abuse lock): the worker holds no secret, so this + the origin allowlist
     // are the only gates. Eventually-consistent / per-location — fine for throttling.
