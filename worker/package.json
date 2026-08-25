@@ -11,6 +11,10 @@
     "lint": "eslint .",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "zod": "^4.4.0"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^5",
     "@eslint/js": "^10.0.1",
