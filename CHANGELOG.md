@@ -21,13 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (`recording.test.ts`, `importRecording.test.ts`); Save/Import wiring verified by effect. See US-12
   and `docs/plans/019-capture-share-replay.md`.
 
-### Fixed
-
-- `ui/src/useReplayEngine.ts`: the replay `render` now resolves `asset:<name>` image tokens (mirrors
-  `useLiveAgent`), so a **captured** recording's asset tokens replay as real images instead of
-  unfetchable `asset:` URLs. Latent until capture-and-share (above) exposed it — the demo's
-  `overview.json` is pre-resolved at build time, so this is a no-op for it.
-
 - `worker/src/wellknown/agent-card.ts`, `worker/src/mcp/*`, `worker/src/a2a/handler.ts`,
   `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/wrangler.toml`: **agent-native
   discovery + execution on the edge Worker** — alongside the BYOK relay, three unauthenticated
@@ -79,6 +72,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Docs (architecture, `worker/README`, README, US-6) updated to match. #165.
 
 ### Fixed
+
+- `ui/src/useReplayEngine.ts`: the replay `render` now resolves `asset:<name>` image tokens (mirrors
+  `useLiveAgent`), so a **captured** recording's asset tokens replay as real images instead of
+  unfetchable `asset:` URLs. Latent until capture-and-share (Added, above) exposed it — the demo's
+  `overview.json` is pre-resolved at build time, so this is a no-op for it. Phase 0 of arc 019.
 
 - `ui/src/agent/applyA2UIEvent.ts`: **a split `surfaceUpdate` no longer blanks the live surface** — @a2ui
   v0.8 resolves child references *within a single* `surfaceUpdate` message, so a model that spreads its
