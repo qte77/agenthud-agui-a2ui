@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `ui/src/agent/recording.ts`, `ui/src/recordings/importRecording.ts` + Save/Import wiring:
+  **capture-and-share replay** — a live BYOK agent session can now be serialized into the SAME
+  recording format the demo replays, so anyone can replay it identically (zero key, zero cost) from a
+  file. Live mode gains a **Save** button (downloads the last successful turn as `agenthud-recording.json`
+  via a Blob object-URL — no backend, no dependency); Demo mode gains an **Import** control that
+  validates the file against `RecordingSchema` (`parseRecordingFile`) and replays it through the
+  unchanged `useReplayEngine`. Capture commits **only the winning model attempt** (never a discarded
+  fall-through), `asset:` image tokens are kept verbatim and resolved at replay time, and `FALLBACK`
+  notes are excluded. One DRY serializer core (`batchesToRecording`) is shared with the (deferred)
+  headless-agent path. Adds no new URL, env var, or CLI switch. TDD Red-first for the two pure modules
+  (`recording.test.ts`, `importRecording.test.ts`); Save/Import wiring verified by effect. See US-12
+  and `docs/plans/019-capture-share-replay.md`.
+
+### Fixed
+
+- `ui/src/useReplayEngine.ts`: the replay `render` now resolves `asset:<name>` image tokens (mirrors
+  `useLiveAgent`), so a **captured** recording's asset tokens replay as real images instead of
+  unfetchable `asset:` URLs. Latent until capture-and-share (above) exposed it — the demo's
+  `overview.json` is pre-resolved at build time, so this is a no-op for it.
+
 - `worker/src/wellknown/agent-card.ts`, `worker/src/mcp/*`, `worker/src/a2a/handler.ts`,
   `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/wrangler.toml`: **agent-native
   discovery + execution on the edge Worker** — alongside the BYOK relay, three unauthenticated

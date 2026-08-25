@@ -20,16 +20,23 @@ table. Nothing here re-derives it.
 2. `git switch feat/019-capture-share-replay` (this branch; the plan+handoff are its first commit).
 3. Confirm on branch, `main` up to date.
 
-## How to handle the plan
+## What shipped this session (Phase 0 + 1 — code-complete)
 
-- Execute **Phase 0 → 1 → 2 → 3** in order (plan §Phases). Phase 0 (one-line `resolveAssets` wrap in
-  `useReplayEngine.ts`) is a **prerequisite** — do it first or captured recordings with images break.
-- **Strict TDD RED-first** for the two pure modules (`recording.ts`, `importRecording.ts`); UI wiring
-  (Save/Import buttons, DemoDashboard state) verified **by effect** (patchright E2E), not unit tests.
-- The serializer is **one DRY core** (`batchesToRecording`) shared by the browser adapter and the Phase-3
-  agent script — don't fork it.
-- **Capture only the WINNING model attempt** (useLiveAgent `stream()` commit-on-win) — else a saved
-  recording replays a discarded failed attempt.
+`npm run typecheck && npm run lint && npm test` all green (173 tests). See the plan's **Shipped** list
+for the file-by-file breakdown. In short: Phase 0 asset-resolve fix; `recording.ts` (DRY core +
+adapter) and `importRecording.ts` with RED-first tests; winner-only capture buffer + `toRecording` in
+`useLiveAgent`; **Save** button (Live) and **Import** control (Demo). **Not yet done: the patchright
+E2E** (env's polyfetch venv was deleted; needs a dev server + browser) — it's row 1 of the table.
+
+## How to handle the remaining work (plan's table, in order)
+
+1. **E2E verify** capture→Save→Import→replay WITH images, 0 console errors (row 1) — the wiring was
+   verified by types/lint/unit only. Run `npm run dev --prefix ui` + patchright (restore the venv first).
+2. **Phase 2** hash link, then **Phase 3** headless `/a2a` script — the serializer is **one DRY core**
+   (`batchesToRecording`); the Phase-3 script must reuse it, don't fork it.
+- Design invariants already honored (keep them): **capture only the WINNING attempt** (commit-on-win in
+  `stream()`); `asset:` tokens stay verbatim in the file and resolve at replay (Phase 0); `FALLBACK`
+  excluded; final `RecordingSchema` invariant.
 
 ## Owner-gates
 - One: PR review + merge of the `feat/019` PR (agent `gh pr merge` is classifier-blocked for large PRs →

@@ -116,15 +116,20 @@ to `/a2a` `message/send`, extract each Task's batch, pipe through the SHARED `ba
 - Gotchas: `env -u GH_TOKEN -u GITHUB_TOKEN` on git/gh; `-c commit.gpgsign=false`; sandbox blocks Bash
   pipes/`;`/`&&` (use `bash -c '…'`).
 
+## Shipped (arc 019, Phase 0+1) — PR feat/019
+
+Code-complete, `npm run typecheck && npm run lint && npm test` all green (173 tests):
+- **Phase 0** — `useReplayEngine` render wrapped with `resolveAssets` (captured `asset:` tokens replay as images).
+- **recording.ts** — `batchesToRecording` (DRY core) + `liveEventsToRecording` (adapter) + `recording.test.ts` (RED-first).
+- **useLiveAgent** — per-attempt capture buffer, winner-only commit, `run()` reset, `toRecording(meta)`.
+- **LiveDashboard** — **Save** button (Blob object-URL download; `SaveButton` extracted for the complexity gate).
+- **importRecording.ts** — `parseRecordingFile` + `importRecording.test.ts` (RED-first).
+- **DemoDashboard** — recording lifted to state; **Import** file-input control + inline error; replays via unchanged `useReplayEngine`.
+
 ## Remaining-work table (single source of open work)
 | # | Item | Phase | Gate | Done-when |
 |---|------|-------|------|-----------|
-| 1 | `useReplayEngine` resolveAssets wrap | 0 | agent | replay renders `asset:` images |
-| 2 | `recording.ts` (batchesToRecording + liveEventsToRecording) + tests | 1 | agent | recording.test.ts green |
-| 3 | capture buffer + `toRecording` in useLiveAgent | 1 | agent | winner-only capture; run() resets |
-| 4 | Save button (download) | 1 | agent | E2E: live→Save downloads valid JSON |
-| 5 | `importRecording.ts` + tests | 1 | agent | importRecording.test.ts green |
-| 6 | DemoDashboard: lift recording to state + Import control | 1 | agent | E2E: Import → replays |
-| 7 | Phase 2 hash link | 2 | agent | encode→decode round-trip test + E2E |
-| 8 | Phase 3 `generate-recording.mjs` | 3 | agent | script → Recording → imports/replays |
-| 9 | Gate + PR (feat/019) | all | owner | CI green; human/`--admin` merge |
+| 1 | E2E verify capture→Save→Import→replay (WITH images, 0 console errors) | 1 | agent | patchright E2E green locally + gh-pages |
+| 2 | Phase 2 hash link (`recordingLink.ts` + App hash-read) | 2 | agent | encode→decode round-trip test + E2E |
+| 3 | Phase 3 `generate-recording.mjs` (headless via `/a2a`) | 3 | agent | script → Recording → imports/replays |
+| 4 | Gate + PR (feat/019) merge | all | owner | CI green; human/`--admin` merge |
