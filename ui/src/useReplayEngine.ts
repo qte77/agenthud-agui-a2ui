@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useA2UIActions } from "@a2ui/react";
 import { applyA2UIEvent, appendLogEntry, type EventLogEntry } from "./agent/applyA2UIEvent";
+import { resolveAssets } from "./agent/assets";
 import { accumulate, emptySnapshot } from "./replaySnapshot";
 import type { Recording } from "./recordings";
 
@@ -29,8 +30,14 @@ export function useReplayEngine(
   // Inject the @a2ui renderer; applyA2UIEvent stays decoupled from @a2ui/react.
   const render = useCallback(
     (messages: unknown[]) =>
+      // Resolve `asset:<name>` image tokens to bundled URLs before folding/rendering — mirrors
+      // useLiveAgent (assets.ts) so a CAPTURED recording's asset tokens replay as real images
+      // instead of unfetchable `asset:` URLs. The demo's overview.json is pre-resolved at build
+      // time (recordings/index.ts), so this is a no-op for it and the fix for everything else.
       processMessages(
-        accumulate(snapshotRef.current, messages) as Parameters<typeof processMessages>[0]
+        accumulate(snapshotRef.current, resolveAssets(messages)) as Parameters<
+          typeof processMessages
+        >[0]
       ),
     [processMessages]
   );
