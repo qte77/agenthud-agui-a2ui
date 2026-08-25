@@ -12,6 +12,7 @@ Single source of truth: each topic lives in one doc — link, don't duplicate.
 - [Agentic Protocols][protocols] — AG-UI, A2UI, MCP, A2A reference
 - [Testing][testing] — test-layout convention (co-location)
 - [User Stories][user-stories] — acceptance criteria and status
+- [Agent-Readiness][agent-readiness] — ora.ai / hackathon status, findings, playbook, next steps
 - [ADR-0001: Agent runtime stack][adr-0001] — TS-only, BYOK in-browser
 - [ADR-0002: Edge proxy platform][adr-0002] — Cloudflare Workers (vs Supabase / Vercel)
 - [ADR-0003: Live-agent catalog instruction][adr-0003] — curated prompt reference (vs schema injection)
@@ -31,6 +32,7 @@ handoff is where to start + how to hand it off. Add both together; keep the numb
 [protocols]: protocols.md
 [testing]: testing.md
 [user-stories]: UserStory.md
+[agent-readiness]: agent-readiness.md
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0002]: decisions/0002-edge-proxy-platform.md
 [adr-0003]: decisions/0003-live-catalog-instruction.md
