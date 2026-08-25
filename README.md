@@ -5,7 +5,7 @@
 > standard catalog.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-58f4c2.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.0-58f4c2.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.0-58f4c2.svg)](CHANGELOG.md)
 [![CI](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/ci.yml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/agenthud-agui-a2ui/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui/badge)](https://www.codefactor.io/repository/github/qte77/agenthud-agui-a2ui)
