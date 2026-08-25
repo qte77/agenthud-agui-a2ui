@@ -13,23 +13,23 @@ table. Nothing here re-derives it.
 
 ## Start-of-session checklist (do in order)
 
-1. **Free disk for the ui toolchain — this is the blocker.** `df -h /workspaces` (was 849M free).
-   The Worker is already deployed (PR #259), so **`rm -rf worker/node_modules`** (~316M, regenerable) →
+1. **Free disk for the ui toolchain — this is the blocker.** `df -h /workspaces` (was 805M free).
+   The Worker is already deployed, so **`rm -rf worker/node_modules`** (~316M, regenerable) →
    ~1.1G+ free. Then `npm ci --prefix ui` (~450M). The ui install ENOSPC'd earlier at ~526M free, so make
    the room first. If wrangler/miniflare is later needed again, `npm ci --prefix worker`.
-2. `git switch feat/019-capture-share-replay` (this branch; the plan+handoff are its first commit).
-3. Confirm on branch, `main` up to date.
+2. `git switch main && git pull --ff-only` — Phase 0+1 already landed (see below); the old
+   `feat/019-capture-share-replay` branch is merged + deleted. Branch a NEW topic branch for Phase 2/3
+   (e.g. `feat/019-phase2-hash-link`).
 
-## What shipped this session (Phase 0 + 1 — code-complete, PR #260)
+## What shipped this session (Phase 0 + 1 — code-complete, MERGED)
 
-**PR #260** is open with **all CI green** (typecheck+lint+test+build, worker, markdown, links, CodeQL) —
-the ONLY thing left on it is the **owner squash-merge** (agent `gh pr merge` is classifier-blocked;
-owner runs `env -u GH_TOKEN -u GITHUB_TOKEN gh pr merge 260 --squash --admin --delete-branch`).
-`npm run typecheck && npm run lint && npm test` all green (173 tests). See the plan's **Shipped** list
-for the file-by-file breakdown. In short: Phase 0 asset-resolve fix; `recording.ts` (DRY core +
-adapter) and `importRecording.ts` with RED-first tests; winner-only capture buffer + `toRecording` in
-`useLiveAgent`; **Save** button (Live) and **Import** control (Demo). **Not yet done: the patchright
-E2E** (env's polyfetch venv was deleted; needs a dev server + browser) — it's row 1 of the table.
+PR **#260** merged (squash `88c8d07`, 2026-08-25) with **all CI green** (typecheck+lint+test+build,
+worker, markdown, links, CodeQL). `npm run typecheck && npm run lint && npm test` all green (173 tests).
+See the plan's **Shipped** list for the file-by-file breakdown. In short: Phase 0 asset-resolve fix;
+`recording.ts` (DRY core + adapter) and `importRecording.ts` with RED-first tests; winner-only capture
+buffer + `toRecording` in `useLiveAgent`; **Save** button (Live) and **Import** control (Demo).
+**Not yet done: the patchright E2E** (env's polyfetch venv was deleted; needs a dev server + browser) —
+it's row 1 of the remaining-work table.
 
 ## How to handle the remaining work (plan's table, in order)
 
@@ -42,9 +42,11 @@ E2E** (env's polyfetch venv was deleted; needs a dev server + browser) — it's 
   excluded; final `RecordingSchema` invariant.
 
 ## Owner-gates
-- One: PR review + merge of the `feat/019` PR (agent `gh pr merge` is classifier-blocked for large PRs →
-  owner runs `!env -u GH_TOKEN -u GITHUB_TOKEN gh pr merge <n> --squash --admin --delete-branch`; small
-  docs/dependabot PRs pass for the agent).
+- Phase 0+1's gate is CLOSED (PR #260 merged). Next gate: review + merge whatever PR carries Phase 2/3
+  (agent `gh pr merge` is classifier-blocked for large PRs → owner runs
+  `!env -u GH_TOKEN -u GITHUB_TOKEN gh pr merge <n> --squash --admin --delete-branch`; small
+  docs/dependabot PRs pass for the agent — confirmed this session on #253; #251 was auto-closed by
+  dependabot as redundant once #253 merged, no admin needed).
 
 ## Watch-outs
 - **Subagents for this arc MUST use worktree isolation** (`Agent` tool `isolation: "worktree"`) — parallel
@@ -56,8 +58,10 @@ E2E** (env's polyfetch venv was deleted; needs a dev server + browser) — it's 
 
 ## Wider context (not this arc)
 Agent-readiness roadmap + ora work: `docs/agent-readiness.md` (score in its frontmatter; ordered next-steps).
-All-open-work plan: `~/.claude/plans/deep-conjuring-pie.md`. Open PRs at handoff: #259 (worker fix, deployed),
-#258 (docs), dependabot #253/#251/#228. Arc 016 (#240 viewport) + arc 018 (#211 a2ui-kit) also `ui/`/disk-gated.
+All-open-work plan: `~/.claude/plans/deep-conjuring-pie.md`. Open PRs at this handoff's update: only
+dependabot #228 (linkify-it — CI failing/stale since 2026-07-24, needs a rebase before it's mergeable).
+#259/#258/#253/#251/#260 all resolved (merged or auto-closed) this session. Arc 016 (#240 viewport) +
+arc 018 (#211 a2ui-kit) also `ui/`/disk-gated.
 
 ## At arc close
 Tick the plan's remaining-work table against what shipped, set this handoff `status: closed`, note any
