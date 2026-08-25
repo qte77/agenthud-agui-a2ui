@@ -44,3 +44,52 @@ describe("agent-native routing", () => {
     expect(res.status).toBe(405);
   });
 });
+
+describe("agent-native probe-friendliness (CORS + capability + JSON errors)", () => {
+  const url = (p: string) => `https://worker.example${p}`;
+
+  it("GET /mcp returns a 200 JSON capability descriptor with wildcard CORS", async () => {
+    const res = await worker.fetch(new Request(url("/mcp"), { method: "GET" }), env);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    const body: { protocol?: string; methods?: string[] } = await res.json();
+    expect(body.protocol).toBe("MCP");
+    expect(body.methods).toContain("POST");
+  });
+
+  it("OPTIONS /a2a preflights 204 + wildcard CORS from any origin", async () => {
+    const res = await worker.fetch(
+      new Request(url("/a2a"), { method: "OPTIONS", headers: { origin: "https://evil.example" } }),
+      env,
+    );
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+  });
+
+  it("POST /a2a response carries wildcard CORS", async () => {
+    const res = await worker.fetch(
+      new Request(url("/a2a"), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tasks/cancel" }),
+      }),
+      env,
+    );
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+  });
+
+  it("an unsupported method on /mcp → 405 JSON with an Allow header", async () => {
+    const res = await worker.fetch(new Request(url("/mcp"), { method: "PUT" }), env);
+    expect(res.status).toBe(405);
+    expect(res.headers.get("allow")).toContain("POST");
+    const body: { error?: string } = await res.json();
+    expect(body.error).toBeTruthy();
+  });
+
+  it("a non-agent non-POST returns a JSON error (not plain text)", async () => {
+    const res = await worker.fetch(new Request(url("/"), { method: "GET" }), env);
+    expect(res.status).toBe(405);
+    const body: { error?: string } = await res.json();
+    expect(body.error).toBe("method_not_allowed");
+  });
+});

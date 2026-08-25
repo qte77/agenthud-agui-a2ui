@@ -50,7 +50,7 @@ export async function mcpFetch(request: Request, env: Env): Promise<Response> {
   if (env.FREE_RATE_LIMITER) {
     const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
     const { success } = await env.FREE_RATE_LIMITER.limit({ key: ip });
-    if (!success) return new Response("Rate limit exceeded", { status: 429 });
+    if (!success) return Response.json({ error: "rate_limited", message: "Rate limit exceeded" }, { status: 429 });
   }
   return createMcpHandler(() => buildMcpServer(env)).fetch(request);
 }
