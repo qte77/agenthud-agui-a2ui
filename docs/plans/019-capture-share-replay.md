@@ -116,7 +116,7 @@ to `/a2a` `message/send`, extract each Task's batch, pipe through the SHARED `ba
 - Gotchas: `env -u GH_TOKEN -u GITHUB_TOKEN` on git/gh; `-c commit.gpgsign=false`; sandbox blocks Bash
   pipes/`;`/`&&` (use `bash -c '…'`).
 
-## Shipped (arc 019, Phase 0+1) — PR feat/019
+## Shipped (arc 019, Phase 0+1) — PR #260 (open, all CI green; awaiting owner squash-merge)
 
 Code-complete, `npm run typecheck && npm run lint && npm test` all green (173 tests):
 - **Phase 0** — `useReplayEngine` render wrapped with `resolveAssets` (captured `asset:` tokens replay as images).
@@ -132,4 +132,4 @@ Code-complete, `npm run typecheck && npm run lint && npm test` all green (173 te
 | 1 | E2E verify capture→Save→Import→replay (WITH images, 0 console errors) | 1 | agent | patchright E2E green locally + gh-pages |
 | 2 | Phase 2 hash link (`recordingLink.ts` + App hash-read) | 2 | agent | encode→decode round-trip test + E2E |
 | 3 | Phase 3 `generate-recording.mjs` (headless via `/a2a`) | 3 | agent | script → Recording → imports/replays |
-| 4 | Gate + PR (feat/019) merge | all | owner | CI green; human/`--admin` merge |
+| 4 | Merge PR #260 (feat/019) | all | owner | `gh pr merge 260 --squash --admin --delete-branch` (agent merge is classifier-blocked) |

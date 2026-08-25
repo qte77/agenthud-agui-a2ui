@@ -20,8 +20,11 @@ table. Nothing here re-derives it.
 2. `git switch feat/019-capture-share-replay` (this branch; the plan+handoff are its first commit).
 3. Confirm on branch, `main` up to date.
 
-## What shipped this session (Phase 0 + 1 — code-complete)
+## What shipped this session (Phase 0 + 1 — code-complete, PR #260)
 
+**PR #260** is open with **all CI green** (typecheck+lint+test+build, worker, markdown, links, CodeQL) —
+the ONLY thing left on it is the **owner squash-merge** (agent `gh pr merge` is classifier-blocked;
+owner runs `env -u GH_TOKEN -u GITHUB_TOKEN gh pr merge 260 --squash --admin --delete-branch`).
 `npm run typecheck && npm run lint && npm test` all green (173 tests). See the plan's **Shipped** list
 for the file-by-file breakdown. In short: Phase 0 asset-resolve fix; `recording.ts` (DRY core +
 adapter) and `importRecording.ts` with RED-first tests; winner-only capture buffer + `toRecording` in
