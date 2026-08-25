@@ -4,6 +4,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -20,6 +21,7 @@ import {
   type DecisionTree,
 } from "./recordings";
 import { setActionHandler } from "./agent/actionBridge";
+import { parseRecordingFile } from "./recordings/importRecording";
 import type { EventLogEntry } from "./agent/applyA2UIEvent";
 
 type Mode = "idle" | "tree" | "all";
@@ -30,10 +32,10 @@ interface HistoryEntry {
   hint: string;
 }
 
-// Single streamlined tour: the decision-tree recording that shows "different
-// intents → different layouts from one catalog".
-// tours is a non-empty literal array; index 0 is always defined
-const activeRecording: Recording = tours[0]!.recording;
+// The demo's built-in tour: the decision-tree recording ("different intents → different layouts
+// from one catalog"). Lifted to component state below so an imported recording can replace it
+// (arc 019). tours is a non-empty literal array; index 0 is always defined.
+const defaultRecording: Recording = tours[0]!.recording;
 
 /** Renders the tree-choice buttons when in tree mode and choices are available. */
 function DemoTreeChoiceView({
@@ -100,6 +102,8 @@ export function DemoDashboard({
   eventLog: EventLogEntry[];
   setEventLog: Dispatch<SetStateAction<EventLogEntry[]>>;
 }) {
+  const [recording, setRecording] = useState<Recording>(defaultRecording);
+  const [importError, setImportError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [currentNode, setCurrentNode] = useState("root");
   const [currentSegmentId, setCurrentSegmentId] = useState<string | null>(null);
@@ -113,7 +117,7 @@ export function DemoDashboard({
   const appendRef = useRef(false);
   const lastHandledTrigger = useRef(0);
 
-  const activeTree: DecisionTree = activeRecording.tree ?? {};
+  const activeTree: DecisionTree = recording.tree ?? {};
 
   // Rendered A2UI Buttons drive the tree: the recording's choices declare which action name
   // triggers them (TreeChoice.action), and clicks arrive via the same actionBridge Live uses.
@@ -127,19 +131,19 @@ export function DemoDashboard({
   });
 
   const filteredRecording = useMemo((): Pick<Recording, "meta" | "events"> => {
-    if (mode === "all") return activeRecording;
+    if (mode === "all") return recording;
     if (mode === "tree" && currentSegmentId) {
       return {
-        meta: activeRecording.meta,
-        events: getSegmentEvents(activeRecording, currentSegmentId, {
+        meta: recording.meta,
+        events: getSegmentEvents(recording, currentSegmentId, {
           append: appendRef.current,
           playedSegments,
         }),
       };
     }
-    return { meta: activeRecording.meta, events: [] };
+    return { meta: recording.meta, events: [] };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, currentSegmentId, playTrigger]);
+  }, [mode, currentSegmentId, playTrigger, recording]);
 
   const { isPlaying, play, restart } = useReplayEngine(
     filteredRecording,
@@ -185,7 +189,8 @@ export function DemoDashboard({
     triggerPlay(isAppend);
   }
 
-  function handlePlayAll() {
+  // Reset all tree/path state and play the whole recording linearly (shared by Play All + Import).
+  function resetAndPlayAll() {
     restart();
     setMode("all");
     setCurrentSegmentId(null);
@@ -194,6 +199,29 @@ export function DemoDashboard({
     setHistory([]);
     setPlayedSegments([]);
     triggerPlay(false);
+  }
+
+  function handlePlayAll() {
+    resetAndPlayAll();
+  }
+
+  // Import a saved recording (JSON) and replay it. Validated against the SAME RecordingSchema as the
+  // demo (parseRecordingFile), then fed into the unchanged useReplayEngine as a full linear sequence
+  // (imported captures have no decision tree). Errors surface inline; nothing else changes on failure.
+  function handleImport(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-importing the same file
+    if (!file) return;
+    void file.text().then((raw) => {
+      const result = parseRecordingFile(raw);
+      if (!result.ok) {
+        setImportError(result.error);
+        return;
+      }
+      setImportError(null);
+      setRecording(result.recording);
+      resetAndPlayAll();
+    });
   }
 
   function handleStartOver() {
@@ -241,6 +269,20 @@ export function DemoDashboard({
           >
             Play All
           </button>
+          {/* Import a captured/shared recording (JSON) and replay it — the capture-share loop's
+              receiving end (arc 019). A styled <label> wraps a hidden file input (no extra dep). */}
+          <label
+            title="Import a saved recording (JSON) and replay it"
+            className="px-3 py-1 rounded border border-border bg-surface text-text text-sm transition-colors hover:border-primary cursor-pointer"
+          >
+            Import
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={handleImport}
+            />
+          </label>
         </>
       }
       surfaceSubtitle="components selected by user intent from standard catalog"
@@ -248,6 +290,11 @@ export function DemoDashboard({
       eventLog={eventLog}
       footerLead="Interactive AG-UI replay + A2UI rendering"
     >
+          {importError && (
+            <p className="mt-3 text-center text-xs text-data-negative">
+              Import failed: {importError}
+            </p>
+          )}
 
           {mode === "idle" && (
             <div className="mt-8">

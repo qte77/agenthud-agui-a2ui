@@ -84,6 +84,33 @@ function pendingSurfaceFallback(isRunning: boolean) {
   return isRunning ? <SurfaceSkeleton /> : null;
 }
 
+// Save-recording control (arc 019): enabled once a turn has captured a rendered surface and no run is
+// in flight. Extracted so its disabled/title branches don't count against LiveDashboard's complexity.
+function SaveButton({
+  isRunning,
+  hasCapture,
+  onSave,
+}: {
+  isRunning: boolean;
+  hasCapture: boolean;
+  onSave: () => void;
+}) {
+  return (
+    <button
+      onClick={onSave}
+      disabled={isRunning || !hasCapture}
+      title={
+        hasCapture
+          ? "Download this session as a replayable recording"
+          : "Run the agent first to capture a session"
+      }
+      className="px-3 py-1 rounded border border-border bg-surface text-text text-sm transition-colors hover:border-primary disabled:opacity-40"
+    >
+      Save
+    </button>
+  );
+}
+
 // Show the model free-text field when the user explicitly picked Custom…, or the persisted model
 // isn't one of the provider's suggestions. Pure helper so it stays out of LiveDashboard's complexity.
 function isCustomModel(explicit: boolean, model: string, models: string[]): boolean {
@@ -164,10 +191,13 @@ export function LiveDashboard({
   const [transcript, setTranscript] = useState<TranscriptTurn[]>([]);
   // Paged turn view (#209): which turn the ◀/▶ pager shows. A new turn (or a reset) snaps to latest.
   const { index: turnIndex, setIndex: setTurnIndex, viewingPast } = usePagerIndex(transcript.length);
-  const { isRunning, error, run, sendAction, sendMessage, stop } = useLiveAgent(
+  const { isRunning, error, run, sendAction, sendMessage, stop, toRecording } = useLiveAgent(
     setEventLog,
     setTranscript,
   );
+  // A capture exists once any turn has frozen a rendered surface (arc 019). Reuses transcript state —
+  // no separate flag to keep in sync.
+  const hasCapture = transcript.some((t) => t.snapshot != null);
 
   // Route rendered-Button clicks (A2UISurface onAction → actionBridge) into a follow-up
   // agent turn. Unregistered on unmount, so Demo mode clicks stay no-ops.
@@ -190,6 +220,23 @@ export function LiveDashboard({
       }
       return next;
     });
+  }
+
+  // Save the last successful turn as a shareable, deterministically-replayable Recording (arc 019):
+  // serialize → Blob → object-URL → hidden download. No backend, no dependency (self-host policy).
+  function handleSave() {
+    const recording = toRecording({
+      title: prompt.trim() || DEFAULT_PROMPT,
+      description: `Live capture · ${settings.model || "agent"}`,
+    });
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(recording, null, 2)], { type: "application/json" })
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "agenthud-recording.json";
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   // Connection alone gates the composer (a follow-up needs no fresh prompt); + prompt gates Run.
@@ -346,6 +393,7 @@ export function LiveDashboard({
           Live · BYOK
         </span>
       }
+      extraControls={<SaveButton isRunning={isRunning} hasCapture={hasCapture} onSave={handleSave} />}
       surfaceSubtitle="composed live by the agent via the render_ui tool"
       eventsSubtitle="live protocol stream driving the surface"
       eventLog={eventLog}

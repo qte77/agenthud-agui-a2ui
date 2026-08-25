@@ -19,6 +19,7 @@ import {
   actionLabel,
   type TranscriptTurn,
 } from "./transcript";
+import { liveEventsToRecording, type CapturedEvent, type RecordingMeta } from "./recording";
 
 // Live counterpart to useReplayEngine: a BYOK agent run feeds the SAME
 // applyA2UIEvent seam (validated render + log entry), so the EventStream and A2UI
@@ -36,6 +37,9 @@ export function useLiveAgent(
   // Conversation history — seeded by run(), grown by sendAction() and, after each successful
   // turn, an assistant summary of what was rendered (turn memory — see conversation.ts).
   const messagesRef = useRef<ConversationTurn[]>([]);
+  // Capture buffer (arc 019): the WINNING attempt's raw events, committed on win (below) and reset by
+  // run(). toRecording() serializes these into a shareable, deterministically-replayable Recording.
+  const capturedEventsRef = useRef<CapturedEvent[]>([]);
 
   const render = useCallback(
     (messages: unknown[]) =>
@@ -68,6 +72,8 @@ export function useLiveAgent(
         snap = emptySnapshot();
         let runError: unknown = null;
         const batches: unknown[][] = [];
+        // Per-attempt capture; only the winning attempt is committed to capturedEventsRef (below).
+        const captured: CapturedEvent[] = [];
 
         if (i > 0) {
           // Reset the failed attempt's surface and note the fall-through in the EventStream (#210 #8).
@@ -85,8 +91,11 @@ export function useLiveAgent(
             { ...settings, model },
             messages,
             (event) => {
+              const timestamp = Date.now() - start;
               if (event.a2uiMessages) batches.push(event.a2uiMessages);
-              const entry = applyA2UIEvent(event, Date.now() - start, render);
+              // Buffer this event (raw, un-asset-resolved) for capture — winner-only commit below.
+              captured.push({ type: event.type, text: event.text, a2uiMessages: event.a2uiMessages, timestamp });
+              const entry = applyA2UIEvent(event, timestamp, render);
               // Fold validated batches (a2uiComponentCount set on schema success), asset-resolved.
               if (event.a2uiMessages && entry.a2uiComponentCount !== undefined) {
                 accumulate(snap, resolveAssets(event.a2uiMessages));
@@ -105,6 +114,7 @@ export function useLiveAgent(
         // A valid self-contained snapshot = this model rendered a usable UI → first-valid-wins.
         if (toTurnSnapshot(snap)) {
           winnerBatch = batches.at(-1);
+          capturedEventsRef.current = captured; // commit ONLY the winning attempt (never a discarded one).
           break;
         }
         // A clean finish with no valid render = the model ignored the tool → retryable.
@@ -135,6 +145,7 @@ export function useLiveAgent(
       setEventLog([]);
       setTranscript([]);
       clearSurfaces();
+      capturedEventsRef.current = [];
       messagesRef.current = [{ role: "user", content: prompt }];
       await stream(settings, messagesRef.current, prompt);
     },
@@ -164,11 +175,17 @@ export function useLiveAgent(
     [followUp]
   );
 
+  // Serialize the last successful turn's captured events into a shareable, replayable Recording.
+  const toRecording = useCallback(
+    (meta: RecordingMeta) => liveEventsToRecording(capturedEventsRef.current, meta),
+    []
+  );
+
   const stop = useCallback(() => abortRef.current?.abort(), []);
 
   // Abort any in-flight stream if this dashboard unmounts (source switch) — the shared log/surface
   // setter lives in the App root now, so a live stream must not keep writing after unmount. (#128)
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  return { isRunning, error, run, sendAction, sendMessage, stop };
+  return { isRunning, error, run, sendAction, sendMessage, stop, toRecording };
 }

@@ -218,6 +218,33 @@ protocols,
 
 ---
 
+## Capture & share — bottle a live session
+
+### US-12: Capture a live agent session as a shareable, deterministic replay
+
+**As a** visitor who just watched the live agent compose a UI,
+**I want to** save that session and hand it to someone else to replay identically,
+**so that** the "wow" moment is shareable with zero key and zero API cost.
+
+**Acceptance criteria:**
+
+- [x] Live mode has a **Save** control that downloads the last successful turn as a
+  `Recording` JSON (`agenthud-recording.json`) — no backend, no dependency (self-host policy)
+- [x] Capture commits **only the winning model attempt** (a fall-through's discarded attempt never
+  leaks into the saved recording); internal `FALLBACK` notes are excluded
+- [x] Demo mode has an **Import** control that validates the file against the same `RecordingSchema`
+  and replays it through the unchanged `useReplayEngine`; invalid files surface an inline error
+- [x] A captured recording replays **identically, with images** — `asset:` tokens are kept in the
+  file and resolved at replay time (`useReplayEngine` now mirrors `useLiveAgent`)
+- [ ] Shareable **hash link** (encode/decode via `CompressionStream`, size-capped) — Phase 2, deferred
+- [ ] **Agent-generated** recordings headlessly via `/a2a` (`scripts/generate-recording.mjs`) — Phase 3, deferred
+
+**Status:** MVP done (arc 019, Phase 0+1) — capture → Save → Import → deterministic replay, TDD
+Red-first for the serializer + parser. Phase 2 (hash link) and Phase 3 (agent-generated) remain. See
+`docs/plans/019-capture-share-replay.md` · [ADR-0004][adr-0004].
+
+---
+
 ## Priority order
 
 1. ~~US-1: Replay~~ (done)
@@ -231,6 +258,7 @@ protocols,
 9. US-9: Arbitrary accounts
 10. ~~US-10: Live transcript + composer~~ (done)
 11. ~~US-11: Agent-native discovery + execution~~ (done — Worker-side, arc 017)
+12. US-12: Capture & share replay (MVP done — arc 019; hash-link + agent-gen deferred)
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0004]: decisions/0004-self-contained-replay-snapshots.md
