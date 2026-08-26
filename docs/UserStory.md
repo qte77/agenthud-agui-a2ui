@@ -265,12 +265,14 @@ Red-first for the serializer + parser. Phase 2 (hash link) and Phase 3 (agent-ge
 - [x] A failed render is refunded — doesn't cost the visitor one of their few tries — and returns
   an honest error rather than a stub (unlike the $0 keyless tier, masking a paid failure would
   misrepresent what happened)
-- [ ] A distinct "Try 2-3 free prompts" affordance in the browser UI, separate from the existing
+- [x] A distinct "Try 2-3 free prompts" affordance in the browser UI, separate from the existing
   (still-deferred) "Free (no key)" BYOK entry — that one is the $0 `:free` tier, a different feature
 
-**Status:** Worker-side done (`worker/src/trial/`, `worker/src/agent/trial.ts`, wired as
-`handleTrialRender` in `worker/src/worker.ts`); browser UI wiring is next. See
-`worker/README.md`'s "Trial tier" section · [ADR-0006][adr-0006].
+**Status:** Built end-to-end (worker: `worker/src/trial/`, `worker/src/agent/trial.ts`, wired as
+`handleTrialRender`; browser: `ui/src/agent/{trialRender,useTrialRender}.ts`, wired into
+`LiveDashboard.tsx`) but **dormant in production** — the UI affordance renders nothing until a real
+Turnstile site key is provisioned and set as `VITE_TURNSTILE_SITE_KEY` in the deploy build env (see
+`ui/.env.example` · `worker/README.md`'s "Trial tier" section · [ADR-0006][adr-0006]).
 
 ---
 
@@ -288,7 +290,7 @@ Red-first for the serializer + parser. Phase 2 (hash link) and Phase 3 (agent-ge
 10. ~~US-10: Live transcript + composer~~ (done)
 11. ~~US-11: Agent-native discovery + execution~~ (done — Worker-side, arc 017)
 12. US-12: Capture & share replay (MVP done — arc 019; hash-link + agent-gen deferred)
-13. US-13: Trial tier, real model, no key (Worker-side done; browser UI wiring next)
+13. ~~US-13: Trial tier, real model, no key~~ (built end-to-end; dormant pending a Turnstile site key)
 
 [adr-0001]: decisions/0001-agent-runtime-stack.md
 [adr-0004]: decisions/0004-self-contained-replay-snapshots.md

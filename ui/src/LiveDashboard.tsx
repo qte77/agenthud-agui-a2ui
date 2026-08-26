@@ -1,15 +1,17 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { DashboardShell } from "./DashboardShell";
 import { SurfaceSkeleton } from "./SurfaceSkeleton";
 import { Transcript } from "./Transcript";
 import { Composer } from "./Composer";
 import { type ViewMode } from "./ModeToggle";
 import { useLiveAgent } from "./agent/useLiveAgent";
+import { useTrialRender } from "./agent/useTrialRender";
+import { getTurnstileToken } from "./agent/trialRender";
 import { setActionHandler } from "./agent/actionBridge";
 import type { LiveSettings } from "./agent/liveAgent";
 import type { EventLogEntry } from "./agent/applyA2UIEvent";
 import type { TranscriptTurn } from "./agent/transcript";
-import { ENDPOINTS } from "./config";
+import { ENDPOINTS, TURNSTILE_SITE_KEY } from "./config";
 
 // BYOK connection — base URL + model persist in sessionStorage; the API key stays in memory only
 // (never written to storage, so it's gone on reload/close/reopen), per US-7.
@@ -53,6 +55,12 @@ const fieldClass =
 // and must stay inert mid-stream. (Kept module-level to hold LiveDashboard under the complexity gate.)
 function composerDisabled(isRunning: boolean, turnCount: number, connectionReady: boolean): boolean {
   return isRunning || turnCount === 0 || !connectionReady;
+}
+
+// Live and trial runs share one surface — either being in-flight should gate the other (Run button,
+// Composer, Save). Extracted so the boolean OR doesn't count against LiveDashboard's complexity.
+function combinedRunning(live: boolean, trial: boolean): boolean {
+  return live || trial;
 }
 
 // Paged-transcript pager index (#209): the ◀/▶ selection, snapped to the latest turn whenever the turn
@@ -109,6 +117,66 @@ function SaveButton({
       Save
     </button>
   );
+}
+
+// Trial tier (US-13 / ADR-0006): a distinct "try before you bring a key" affordance — NOT the same
+// as the still-deferred "Free (no key)" BYOK dropdown entry (that's the $0 :free-model tier; this is
+// 2-3 real-model renders, hard-capped server-side). Stays dormant (renders nothing) until a real
+// Turnstile site key is provisioned — see config.ts. Extracted to keep LiveDashboard under the
+// complexity gate.
+function TrialButton({
+  isRunning,
+  remaining,
+  error,
+  turnstileContainerRef,
+  onTry,
+}: {
+  isRunning: boolean;
+  remaining: number | null;
+  error: string | null;
+  turnstileContainerRef: React.RefObject<HTMLDivElement | null>;
+  onTry: () => void;
+}) {
+  if (!TURNSTILE_SITE_KEY) return null;
+  if (remaining === 0) {
+    return (
+      <p className="text-xs text-text-muted">
+        Trial used up — bring your own key above to keep going.
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-1">
+      <button
+        type="button"
+        onClick={onTry}
+        disabled={isRunning}
+        className="px-3 py-1.5 rounded border border-border bg-surface text-text text-sm transition-colors hover:border-primary disabled:opacity-40"
+      >
+        Try {remaining ?? "2-3"} free prompt{remaining === 1 ? "" : "s"} — no key needed
+      </button>
+      {error && <p className="text-xs text-data-negative break-words">{error}</p>}
+      <div ref={turnstileContainerRef} />
+    </div>
+  );
+}
+
+// Solve the Turnstile challenge in `container`, then fire one trial render. A challenge failure
+// (or the trial tier not being provisioned yet — see getTurnstileToken) already surfaces its own
+// user-readable message; there's nothing else to do here. Extracted to keep LiveDashboard under
+// the complexity gate.
+async function handleTrialClick(
+  container: HTMLDivElement | null,
+  prompt: string,
+  runTrial: (prompt: string, turnstileToken: string) => Promise<void>,
+): Promise<void> {
+  if (!container) return;
+  try {
+    const token = await getTurnstileToken(container);
+    await runTrial(prompt, token);
+  } catch {
+    /* getTurnstileToken/runTrial already surface a message via the hook's error state */
+  }
 }
 
 // Show the model free-text field when the user explicitly picked Custom…, or the persisted model
@@ -195,6 +263,14 @@ export function LiveDashboard({
     setEventLog,
     setTranscript,
   );
+  const {
+    isRunning: trialRunning,
+    error: trialError,
+    remaining: trialRemaining,
+    runTrial,
+  } = useTrialRender(setEventLog, setTranscript);
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const anyRunning = combinedRunning(isRunning, trialRunning);
   // A capture exists once any turn has frozen a rendered surface (arc 019). Reuses transcript state —
   // no separate flag to keep in sync.
   const hasCapture = transcript.some((t) => t.snapshot != null);
@@ -336,7 +412,7 @@ export function LiveDashboard({
         className="px-2 pb-2 space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
-          if (ready && !isRunning) void run(settings, prompt);
+          if (ready && !anyRunning) void run(settings, prompt);
         }}
       >
         <textarea
@@ -357,7 +433,7 @@ export function LiveDashboard({
         <div className="flex items-center gap-2">
           <button
             type="submit"
-            disabled={!ready || isRunning}
+            disabled={!ready || anyRunning}
             className="px-3 py-1.5 rounded bg-primary text-primary-on text-sm transition-opacity disabled:opacity-40"
           >
             {isRunning ? "Running…" : "Run"}
@@ -375,10 +451,19 @@ export function LiveDashboard({
 
         {error && <p className="text-xs text-data-negative break-words">{error}</p>}
         {!settings.apiKey.trim() && (
-          <p className="text-xs text-text-muted">
-            Bring your own key for any CORS-friendly OpenAI-compatible endpoint. Demo mode needs no
-            key.
-          </p>
+          <>
+            <p className="text-xs text-text-muted">
+              Bring your own key for any CORS-friendly OpenAI-compatible endpoint. Demo mode needs no
+              key.
+            </p>
+            <TrialButton
+              isRunning={anyRunning}
+              remaining={trialRemaining}
+              error={trialError}
+              turnstileContainerRef={turnstileContainerRef}
+              onTry={() => void handleTrialClick(turnstileContainerRef.current, prompt, runTrial)}
+            />
+          </>
         )}
       </form>
     </details>
@@ -393,7 +478,7 @@ export function LiveDashboard({
           Live · BYOK
         </span>
       }
-      extraControls={<SaveButton isRunning={isRunning} hasCapture={hasCapture} onSave={handleSave} />}
+      extraControls={<SaveButton isRunning={anyRunning} hasCapture={hasCapture} onSave={handleSave} />}
       surfaceSubtitle="composed live by the agent via the render_ui tool"
       eventsSubtitle="live protocol stream driving the surface"
       eventLog={eventLog}
@@ -412,12 +497,12 @@ export function LiveDashboard({
         />
       }
       surfaceHidden={viewingPast}
-      surfaceFallback={pendingSurfaceFallback(isRunning)}
-      surfaceBusy={isRunning}
+      surfaceFallback={pendingSurfaceFallback(anyRunning)}
+      surfaceBusy={anyRunning}
       footerLead="Live BYOK agent · Vercel AI SDK → AG-UI → A2UI"
     >
       <Composer
-        disabled={composerDisabled(isRunning, transcript.length, Boolean(connectionReady))}
+        disabled={composerDisabled(anyRunning, transcript.length, Boolean(connectionReady))}
         onSend={(text) => void sendMessage(settings, text)}
       />
     </DashboardShell>
