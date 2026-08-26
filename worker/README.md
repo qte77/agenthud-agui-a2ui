@@ -44,6 +44,21 @@ curl -X POST http://localhost:8787/a2a -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"parts":[{"kind":"text","text":"a login card"}]}}}'
 ```
 
+## Keyless free-inference render (browser, not agent-native)
+
+`POST /agent/render` lets a visitor render a UI **without their own key**, server-side, using the
+same free chain (Cloudflare Workers AI → OpenRouter `:free`) the agent-native tools above share.
+Unlike those three routes it is **origin-locked like the BYOK relay** (not wildcard CORS — it sits
+behind the same `isAllowedOrigin` gate) and requires **Turnstile proof-of-human** before any model
+call. Body: `{ messages: [{role,content}...], turnstileToken }`. Shares `FREE_RATE_LIMITER` with
+`/mcp`/`/a2a`; provider-exhaustion never errors — it returns a deterministic stub batch (200).
+
+Env vars/bindings this route needs beyond the base relay: `TURNSTILE_SECRET` (secret, required —
+absent → the route 403s every request), `AI` (Workers AI binding, free tier), `OPENROUTER_KEY`
+(secret) + optional `OPENROUTER_FREE_MODELS` (CSV override), `FREE_RATE_LIMITER` (optional —
+absent → rate limit skipped in dev/test). See `worker/src/router.ts`'s `Env` interface for the
+full doc comment on each.
+
 ## Deploy
 
 ```bash
@@ -81,5 +96,7 @@ Now "Google (via proxy)" resolves to the local worker. Notes:
 
 ## Deferred
 
-- **Keyless** mode (worker holds its own token) — abuse/secret surface; see US-6.
+- The **browser Live UI** for the keyless tier (a "Free (no key)" endpoint entry in the BYOK
+  connection picker) — the worker-side render route above ships today; only the UI wiring is
+  deferred. See US-6.
 - Azure (per-resource URL) and Mammouth.

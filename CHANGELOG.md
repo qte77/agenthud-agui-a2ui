@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/src/mcp/tools.ts`,
+  `worker/src/a2a/handler.ts`: **the keyless HTTP endpoint now shares the same render seam as the
+  MCP/A2A tools** — `handleKeylessRender` previously imported `buildProviders`/`renderFree` from
+  `agent/providers.ts` directly, duplicating the provider-build + timeout + fall-through block
+  `renderFromPrompt` already owned (the module's own comment claimed "three callers" using the seam
+  when only two did). `renderFromPrompt` is renamed `renderFromMessages` and widened to accept a
+  full turn history instead of a single prompt string; all three entry points (`worker.ts`,
+  `mcp/tools.ts`, `a2a/handler.ts`) now call it exclusively — `worker.ts` no longer imports
+  `agent/providers.ts` at all. Pure internal refactor (unchanged external behavior; `keyless.test.ts`
+  covers `handleKeylessRender` end-to-end through the public `worker.fetch` and stayed green
+  unmodified).
+- `worker/README.md`, `docs/decisions/README.md`, `docs/protocols.md`, `docs/UserStory.md`,
+  `docs/plans/017-agent-native-discovery.md`: **doc accuracy pass** — `worker/README.md` now
+  documents the keyless `POST /agent/render` route (previously undocumented despite shipping live
+  since PR #219) including its required env vars/bindings, and no longer lists "keyless mode" as
+  wholesale deferred (only the browser UI half is); the ADR index now lists ADR-0005;
+  `docs/protocols.md` no longer claims the `dataModelUpdate` data-model channel is unused (it has
+  been, since 0.4.0); `docs/UserStory.md` no longer cites a nonexistent `pages.yml` workflow file
+  (the real one is `gh-pages.yml`); `docs/plans/017`'s remaining-work table no longer lists 11
+  already-shipped rows as open.
+
 ## [0.5.0] - 2026-08-25
 
 ### Added

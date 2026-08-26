@@ -139,8 +139,8 @@ installed renderer, not the spec:
   `{ literalBoolean }` (or `{ path }`). A bare `{ literal }` is non-standard: the runtime resolver
   tolerates it for some fields, but the message **schema rejects it** on typed bindings (e.g.
   `Slider.value`, `CheckBox.value`) — always use the typed key.
-- **Not used:** the data-model channel (`dataModelUpdate` / `path` / `template`) — the live agent
-  emits static, literal-only UIs for now.
+- **Used for two-way-binding seeds:** the live agent emits `dataModelUpdate` to seed `path`-bound
+  CheckBox/Slider values so they're interactive, not frozen — see `ui/src/agent/prompts.ts`.
 
 Our zod envelope lives in `ui/src/agent/contract.ts`; examples in `ui/src/recordings/`.
 
