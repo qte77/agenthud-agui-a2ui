@@ -59,6 +59,23 @@ absent → the route 403s every request), `AI` (Workers AI binding, free tier), 
 absent → rate limit skipped in dev/test). See `worker/src/router.ts`'s `Env` interface for the
 full doc comment on each.
 
+## Trial tier — real model, hard-capped, no key (US-13)
+
+`POST /agent/trial-render` lets a visitor try 2-3 **real** (non-`:free`) model renders, spending
+the owner's held OpenRouter key, before being pushed to BYOK. Unlike the $0 keyless tier above,
+this needs a hard, unbypassable cap — backed by a Durable Object (`TrialQuotaDO`), not a sliding
+`RateLimit` binding (see [ADR-0006](../docs/decisions/0006-trial-key-quota.md) for why KV and a
+second rate-limit binding were both verified unsuitable). Origin-locked + Turnstile-gated exactly
+like `/agent/render`; body: `{ messages: [{role,content}...], turnstileToken }`; response adds a
+`remaining` count. A failed render is refunded (doesn't cost the visitor a use); on failure this
+route returns an honest error, not a stub (unlike the $0 tier, masking a paid failure would be
+dishonest about what happened).
+
+Env vars/bindings beyond the base relay + keyless tier: `TRIAL_DO` (Durable Object binding →
+`TrialQuotaDO`, required — absent → 503), `TRIAL_MODEL` (OpenRouter model id, defaults to a modest
+capable model in code), `TRIAL_DAILY_CAP` (shared daily cap across all visitors, defaults to 200 in
+code). Reuses `OPENROUTER_KEY`/`TURNSTILE_SECRET` — no new secrets.
+
 ## Deploy
 
 ```bash

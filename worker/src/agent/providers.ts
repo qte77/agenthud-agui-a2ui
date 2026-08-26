@@ -12,7 +12,7 @@
 import { RENDER_UI_TOOL } from "./prompts";
 import { callRenderModel, toResult, type ModelResult, type ORResponse } from "./model";
 
-const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
+export const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 // Defaults are tuning knobs (overridable via env) — a wrong pick is non-fatal (the chain falls
 // through to the next id/tier, then the stub). Carried from ldnmxx (verified 2026-07-08); REFRESH

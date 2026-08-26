@@ -54,6 +54,18 @@ namespace_id = "1002"
   limit = 10
   period = 60
 
+# Trial tier (spend-bearing, `/agent/trial-render`): a hard per-visitor + shared-daily cap, not a
+# sliding window (the RateLimit binding above tops out at a 60s period — useless for "3 uses ever"
+# or "N/day"). TrialQuotaDO is exported from worker.ts (wrangler resolves class_name against the
+# main script's exports). See ADR-0006.
+[[durable_objects.bindings]]
+name = "TRIAL_DO"
+class_name = "TrialQuotaDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["TrialQuotaDO"]
+
 # Production (`wrangler deploy`) sets no vars, so CORS echoes ONLY https://qte77.github.io.
 # The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
 # localhost origins, for headless/local E2E. For local `wrangler dev`, put
@@ -69,3 +81,8 @@ ALLOW_LOCALHOST = "true"
 # RATE_LIMITER above); the handler skips it when absent, leaving local/E2E runs unthrottled.
 [env.dev.ai]
 binding = "AI"
+
+# Mirror the trial DO binding too (bindings aren't inherited; migrations ARE — declared once above).
+[[env.dev.durable_objects.bindings]]
+name = "TRIAL_DO"
+class_name = "TrialQuotaDO"

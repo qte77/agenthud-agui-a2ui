@@ -8,6 +8,9 @@ interface ImportMetaEnv {
   readonly VITE_BYOK_MODEL?: string;
   // Dev override for the edge-proxy base (e.g. a local `wrangler dev` worker that allows localhost).
   readonly VITE_PROXY_BASE?: string;
+  // Turnstile site key (public, NOT secret — safe in the prod bundle unlike the vars above) for the
+  // trial tier (US-13 / ADR-0006). Read unconditionally (not DEV-gated) since it must ship in prod.
+  readonly VITE_TURNSTILE_SITE_KEY?: string;
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv;

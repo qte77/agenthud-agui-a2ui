@@ -14,6 +14,13 @@ export const PROXY_BASE =
     ? import.meta.env.VITE_PROXY_BASE
     : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
 
+// Turnstile site key (public, NOT secret — safe to ship in the prod bundle, unlike the worker-only
+// TURNSTILE_SECRET) for the trial tier's proof-of-human widget (US-13 / ADR-0006). Read from
+// VITE_TURNSTILE_SITE_KEY, set at BUILD time (CI env, not gitignored ui/.env — this must reach the
+// production bundle, unlike the DEV-only overrides above). Empty until provisioned — the trial UI
+// shows "not configured" rather than mounting a broken widget.
+export const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY ?? "";
+
 // OpenAI-compatible BYOK endpoints offered in the Live connection dropdown. The CORS-friendly ones
 // work in-browser as-is; Google has no browser CORS, so it routes through the edge
 // proxy (US-6 / ADR-0001 — see worker/README.md). `editable` reveals the freeform URL field (Custom).
