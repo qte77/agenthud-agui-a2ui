@@ -1,10 +1,15 @@
 import { resolveUpstream, corsHeaders, isAllowedOrigin, type Env } from "./router";
 import { renderFromMessages } from "./agent/render";
+import { renderTrial } from "./agent/trial";
 import type { ChatMessage } from "./agent/model";
 import { verifyTurnstile } from "./turnstile";
 import { agentCardResponse } from "./wellknown/agent-card";
 import { mcpFetch } from "./mcp/server";
 import { a2aFetch } from "./a2a/handler";
+import { TrialQuotaDO } from "./trial/quota";
+
+// wrangler's durable_objects binding resolves class_name against the main script's exports.
+export { TrialQuotaDO };
 
 type Cors = Record<string, string>;
 
@@ -14,6 +19,15 @@ const MAX_BODY_BYTES = 1_048_576;
 // Tighter cap for the keyless render endpoint: the system prompt lives server-side and turn history
 // is compact summaries, so 64 KiB is generous while shrinking the abuse surface.
 const MAX_RENDER_BODY_BYTES = 65_536;
+
+// Trial tier (spend-bearing): permanent per-visitor cap, shared daily circuit-breaker default, and
+// a modest/cheap-but-capable default model (bounds cost per trial; overridable via TRIAL_MODEL).
+const TRIAL_PER_VISITOR_CAP = 3;
+const DEFAULT_TRIAL_DAILY_CAP = 200;
+const DEFAULT_TRIAL_MODEL = "openai/gpt-5.4-mini";
+// A name outside cf-connecting-ip's format space (no dots/colons), so it can never collide with a
+// real visitor IP used as the per-visitor DO name.
+const DAILY_QUOTA_NAME = "__global_daily__";
 
 // Deterministic fallback UI — "the demo can never break". Returned (200) when every free provider
 // fails, so the browser always gets a valid, self-contained batch instead of an error.
@@ -70,17 +84,14 @@ function sanitizeMessages(raw: unknown): ChatMessage[] {
   return out;
 }
 
-// Keyless "Free (no key)" render (US-6 keyless): run free models server-side so a visitor needs no
-// key. Inherits the shared gates (CORS/OPTIONS/POST/origin/RATE_LIMITER) from the caller; adds a
-// tight per-IP limit, Turnstile proof-of-human, a small body cap, and a $0 `:free`-only chain.
-// Never breaks: provider exhaustion → deterministic stub. The key rides only in the upstream header.
-async function handleKeylessRender(request: Request, env: Env, cors: Cors): Promise<Response> {
-  if (env.FREE_RATE_LIMITER) {
-    const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
-    const { success } = await env.FREE_RATE_LIMITER.limit({ key: ip });
-    if (!success) return Response.json({ error: "Rate limit exceeded" }, { status: 429, headers: cors });
-  }
-
+// Shared by both server-funded render endpoints (keyless + trial): read+parse the body, then
+// require a verified Turnstile token before any model spend. Returns the parsed body + caller ip,
+// or a Response to return as-is (413/400/403).
+async function readAndVerifyRenderBody(
+  request: Request,
+  env: Env,
+  cors: Cors,
+): Promise<Response | { parsed: { messages?: unknown; turnstileToken?: unknown }; ip: string | undefined }> {
   const raw = await readCappedBody(request, cors, MAX_RENDER_BODY_BYTES);
   if (raw instanceof Response) return raw; // 413
 
@@ -97,9 +108,75 @@ async function handleKeylessRender(request: Request, env: Env, cors: Cors): Prom
   if (!env.TURNSTILE_SECRET || !(await verifyTurnstile(token, env.TURNSTILE_SECRET, ip))) {
     return Response.json({ error: "Turnstile verification failed" }, { status: 403, headers: cors });
   }
+  return { parsed, ip };
+}
 
-  const batch = await renderFromMessages(env, sanitizeMessages(parsed.messages));
+// Keyless "Free (no key)" render (US-6 keyless): run free models server-side so a visitor needs no
+// key. Inherits the shared gates (CORS/OPTIONS/POST/origin/RATE_LIMITER) from the caller; adds a
+// tight per-IP limit, Turnstile proof-of-human, a small body cap, and a $0 `:free`-only chain.
+// Never breaks: provider exhaustion → deterministic stub. The key rides only in the upstream header.
+async function handleKeylessRender(request: Request, env: Env, cors: Cors): Promise<Response> {
+  if (env.FREE_RATE_LIMITER) {
+    const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
+    const { success } = await env.FREE_RATE_LIMITER.limit({ key: ip });
+    if (!success) return Response.json({ error: "Rate limit exceeded" }, { status: 429, headers: cors });
+  }
+
+  const body = await readAndVerifyRenderBody(request, env, cors);
+  if (body instanceof Response) return body;
+
+  const batch = await renderFromMessages(env, sanitizeMessages(body.parsed.messages));
   return Response.json({ a2uiMessages: batch ?? STUB_BATCH }, { headers: cors });
+}
+
+// Trial-key render: 2-3 real (non-`:free`) model calls per visitor, no BYOK — spends the owner's
+// held OpenRouter key, so unlike the $0 keyless tier above it needs a HARD cap (TrialQuotaDO; a
+// sliding-window RateLimit binding tops out at a 60s period, useless for "3 uses, ever" or "N/day"),
+// gated by the SAME Turnstile proof-of-human, keyed by visitor IP. A render failure does not
+// consume the visitor's use (refunded) — and unlike the free tier, a failure returns an honest
+// error rather than the deterministic stub, since masking a paid-trial failure would be dishonest.
+//
+// Ordering matters: Turnstile verification runs BEFORE either quota check. Turnstile is free to
+// verify (no model spend) and filters non-human traffic — checking the shared daily quota first
+// would let an attacker with no valid token exhaust it by spamming requests, denying the trial to
+// real visitors for free (the attacker spends nothing, since no model call is ever reached).
+async function handleTrialRender(request: Request, env: Env, cors: Cors): Promise<Response> {
+  if (!env.TRIAL_DO) {
+    return Response.json({ error: "Trial tier not configured" }, { status: 503, headers: cors });
+  }
+
+  const body = await readAndVerifyRenderBody(request, env, cors);
+  if (body instanceof Response) return body;
+  const { parsed, ip } = body;
+
+  const dailyCap = Number(env.TRIAL_DAILY_CAP ?? DEFAULT_TRIAL_DAILY_CAP);
+  const daily = await env.TRIAL_DO.getByName(DAILY_QUOTA_NAME).tryConsume(dailyCap, true);
+  if (!daily.allowed) {
+    return Response.json(
+      { error: "Daily trial limit reached — please try again tomorrow." },
+      { status: 429, headers: cors },
+    );
+  }
+
+  const visitorQuota = env.TRIAL_DO.getByName(ip ?? "unknown");
+  const visitor = await visitorQuota.tryConsume(TRIAL_PER_VISITOR_CAP);
+  if (!visitor.allowed) {
+    return Response.json(
+      { error: "Trial limit reached — bring your own key to continue.", remaining: 0 },
+      { status: 403, headers: cors },
+    );
+  }
+
+  const model = env.TRIAL_MODEL ?? DEFAULT_TRIAL_MODEL;
+  const batch = await renderTrial(env, sanitizeMessages(parsed.messages), model);
+  if (!batch) {
+    await visitorQuota.refund();
+    return Response.json(
+      { error: "The trial model didn't produce a UI — please try again.", remaining: visitor.remaining + 1 },
+      { status: 502, headers: cors },
+    );
+  }
+  return Response.json({ a2uiMessages: batch, remaining: visitor.remaining }, { headers: cors });
 }
 
 // Forward only what the upstream needs (the visitor's key + content type + body) and stream the
@@ -240,6 +317,10 @@ export default {
     // Keyless free-inference tier — the worker runs free models server-side (no visitor key).
     // Inherits every gate above; adds Turnstile + a tighter per-IP limit inside the handler.
     if (pathname === "/agent/render") return handleKeylessRender(request, env, cors);
+
+    // Trial tier — a real (non-`:free`) model, hard-capped per visitor + a shared daily circuit
+    // breaker. Inherits every gate above; adds Turnstile + the Durable Object quota inside the handler.
+    if (pathname === "/agent/trial-render") return handleTrialRender(request, env, cors);
 
     const upstream = resolveUpstream(pathname);
     if (!upstream) return new Response("Unknown provider", { status: 404, headers: cors });
