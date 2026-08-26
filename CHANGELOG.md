@@ -16,8 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   see [ADR-0006](docs/decisions/0006-trial-key-quota.md)), plus a shared daily circuit-breaker.
   Turnstile-gated exactly like the existing keyless tier, checked before either quota to prevent a
   no-token requester from exhausting the shared daily cap for free. A failed render is refunded
-  (doesn't cost the visitor a use) and returns an honest error rather than a stub. Worker-side only
-  in this release — the browser "Try 2-3 free prompts" UI affordance is not yet wired.
+  (doesn't cost the visitor a use) and returns an honest error rather than a stub. Browser side:
+  `ui/src/agent/{trialRender,useTrialRender}.ts`, wired into `LiveDashboard.tsx` as a distinct "Try
+  2-3 free prompts" affordance — separate from the still-deferred $0 `:free`-tier BYOK entry. Built
+  end-to-end but **dormant in production** until a real Turnstile site key is provisioned and set as
+  `VITE_TURNSTILE_SITE_KEY` in the deploy build env (see `ui/.env.example`).
 
 ### Fixed
 
