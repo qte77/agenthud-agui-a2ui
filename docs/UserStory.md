@@ -94,7 +94,7 @@ As a **visitor to qte77.github.io/agenthud-agui-a2ui**, I want to see an AI agen
 **Acceptance criteria:**
 
 - [x] `npm run build` produces a deployable `dist/` with correct base path `/agenthud-agui-a2ui/`
-- [x] GitHub Actions workflow (`.github/workflows/pages.yml`) builds and deploys on push to main
+- [x] GitHub Actions workflow (`.github/workflows/gh-pages.yml`) builds and deploys on push to main
 - [ ] Site loads and replay works at the published URL
 
 **Status:** Done (deploy workflow in place; a `ci.yml` gate runs typecheck/lint/test/build on PRs)

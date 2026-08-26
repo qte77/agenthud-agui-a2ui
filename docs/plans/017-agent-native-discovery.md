@@ -145,29 +145,27 @@ So the work has **three homes** (owner chose "Both" + an honest real A2A endpoin
   `ai-catalog.json` + `agent-skills/index.json` + `mcp/server-card.json` (thin pointers to the Worker);
   robots AI-crawler tiers + Content-Signal + schemamap; JSON-LD breadth; `/auth.md`; api-catalog;
   agent-friendly 404. **Verify GH-Pages header limits with `curl -I` first** (Link-header checks may be capped).
-- **Phase 1.5 (cheap Worker wins, THIS repo, next):** consistent JSON error envelope on all worker.ts
-  error paths (405/403 currently plain text) — ora `json-error-responses` 4.1 pts; `WWW-Authenticate`
-  hint; document the keyless free tier as the "sandbox". OpenAPI spec (`/openapi.json`) = Phase 2, M.
+- **Phase 1.5 (cheap Worker wins, THIS repo):** JSON error envelope shipped (PR #259 — 405/403 on the
+  BYOK relay + agent-native routes; only the `/<provider>` 404 stays plain text); `WWW-Authenticate`
+  hint and the keyless-tier "sandbox" doc note remain open (the latter now partly covered by
+  `worker/README.md`'s new "Keyless free-inference render" section). OpenAPI spec (`/openapi.json`)
+  = Phase 2, M.
 - **Track 3 (`qte77/qte77` hub):** estate baseline template — pending `estate-strategy` scout.
+
+## Shipped (Track 1 + Track 2)
+
+Rows 1-11 of the original table are done: the agent-native MCP/A2A/card endpoints on the Worker
+(Track 1) shipped in PR #257 (closes #255) — verified live per `docs/agent-readiness.md`. Track 2
+origin-root discovery files shipped in the separate `qte77/qte77.github.io` repo, per
+`docs/agent-readiness.md`'s own record (PR #55 there).
 
 ## Remaining-work table (SINGLE source of open work)
 
 | # | Item | Track | Gate | Done-when |
 |---|------|-------|------|-----------|
-| 1 | `contract.validateBatch` + isValidBatch delegates | 1 | agent | contract.test.ts green |
-| 2 | `mcp/tools.ts` (render_ui, validate_a2ui_batch) | 1 | agent | mcp-tools.test.ts green |
-| 3 | `mcp/server.ts` via createMcpHandler | 1 | agent | wrangler-dev MCP handshake ok |
-| 4 | `a2a/handler.ts` message/send → completed Task | 1 | agent | a2a.test.ts green + curl message/send |
-| 5 | `wellknown/agent-card.ts` (interfaces→/a2a) | 1 | agent | agent-card.test.ts green + curl card |
-| 6 | `worker.ts` 3 routes (origin-bypass, FREE limiter) | 1 | agent | by-effect curls pass |
-| 7 | `wrangler.toml` nodejs_compat; drop `agents` dep | 1 | agent | typecheck + wrangler-dev boot |
-| 8 | Docs (README/protocols/CHANGELOG/ADR-0005/UserStory) | 1 | agent | links resolve; docs lint |
-| 9 | CI gate: typecheck && lint && test + `npm audit` | 1 | agent | green; no NEW vulns |
-| 10 | PR feat/017 opened; squash-merge on green | 1 | owner | human/`--admin` merge (GPG gotcha) |
-| 11 | Track 2 origin-root discovery files | 2 | agent | ora rescan score ↑ from 45 |
-| 12 | Phase 1.5 cheap Worker wins (JSON errors, WWW-Auth, sandbox doc) | 1→next | agent | ora rescan; own PR |
+| 12 | Phase 1.5 remainder: `WWW-Authenticate` hint on 401/403; keyless-tier sandbox doc | 1→next | agent | ora rescan; own PR |
 | 13 | Track 3 estate baseline in `qte77/qte77` | 3 | owner | per estate-strategy scout |
-| 14 | Dependabot: squash #254/#247/#244/#230; close #250/#248; rebase #253/#251 after feat/017; #228 CI-fix | x | owner | 0 stale dependabot branches |
+| 14 | Dependabot: squash #254/#247/#244/#230; close #250/#248; #228 CI-fix | x | owner | 0 stale dependabot branches |
 
 ## Verification (end-to-end)
 - **Track 1 local:** `cd worker && npm run typecheck && npm run lint && npm test` (RED→GREEN); then

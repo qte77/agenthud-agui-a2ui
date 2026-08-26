@@ -18,9 +18,11 @@ New ADR: copy the most recent file, increment the number, and fill in
 | [0002][adr-0002] | Edge proxy platform: Cloudflare Workers | Accepted |
 | [0003][adr-0003] | Live-agent catalog instruction | Accepted |
 | [0004][adr-0004] | Self-contained replay snapshots | Accepted |
+| [0005][adr-0005] | Agent-native endpoints | Accepted |
 
 [madr]: https://adr.github.io/madr/
 [adr-0001]: 0001-agent-runtime-stack.md
 [adr-0002]: 0002-edge-proxy-platform.md
 [adr-0003]: 0003-live-catalog-instruction.md
 [adr-0004]: 0004-self-contained-replay-snapshots.md
+[adr-0005]: 0005-agent-native-endpoints.md
