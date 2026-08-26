@@ -35,7 +35,7 @@ export const ENDPOINTS: Endpoint[] = [
   {
     label: "OpenRouter",
     baseURL: "https://openrouter.ai/api/v1",
-    // verified 2026-07-04
+    // verified 2026-08-26 (checked against OpenRouter's live /v1/models — no deprecation flags)
     models: [
       "anthropic/claude-sonnet-5",
       "anthropic/claude-haiku-4.5",
@@ -48,13 +48,15 @@ export const ENDPOINTS: Endpoint[] = [
   {
     label: "Groq",
     baseURL: "https://api.groq.com/openai/v1",
-    // verified 2026-07-04 (llama-3.3-70b-versatile deprecates 2026-08-16)
+    // verified 2026-08-26 (the 07-04 note said llama-3.3-70b-versatile deprecates 08-16 — that
+    // date has passed and Groq's own docs still list it as an active production model; re-check
+    // periodically rather than trusting a single past deprecation notice)
     models: ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.3-70b-versatile"],
   },
   {
     label: "Together",
     baseURL: "https://api.together.ai/v1",
-    // verified 2026-07-04
+    // verified 2026-08-26
     models: [
       "meta-llama/Llama-3.3-70B-Instruct-Turbo",
       "Qwen/Qwen3.5-9B",
@@ -64,7 +66,7 @@ export const ENDPOINTS: Endpoint[] = [
   {
     label: "Fireworks",
     baseURL: "https://api.fireworks.ai/inference/v1",
-    // verified 2026-07-04
+    // verified 2026-08-26
     models: [
       "accounts/fireworks/models/deepseek-v4-pro",
       "accounts/fireworks/models/llama-v3p3-70b-instruct",
@@ -74,13 +76,15 @@ export const ENDPOINTS: Endpoint[] = [
   {
     label: "DeepSeek",
     baseURL: "https://api.deepseek.com",
-    // verified 2026-07-04 (deepseek-chat/deepseek-reasoner retire 2026-07-24 → use v4 ids)
+    // verified 2026-08-26 (deepseek-chat/deepseek-reasoner have retired — confirmed absent from
+    // current pricing docs; v4-pro/v4-flash are DeepSeek's current recommended ids)
     models: ["deepseek-v4-pro", "deepseek-v4-flash"],
   },
   {
     label: "Google (via proxy)",
     baseURL: `${PROXY_BASE}/google`,
-    // verified 2026-07-04
+    // verified 2026-08-26 (all 3 still active; gemini-3.5-flash is now labeled "legacy" by Google
+    // with gemini-3.7-flash as the newer alternative — not swapped yet, still fully functional)
     models: ["gemini-3.5-flash", "gemini-2.5-pro", "gemini-3.1-flash-lite"],
   },
   { label: "Custom…", baseURL: "", editable: true },
