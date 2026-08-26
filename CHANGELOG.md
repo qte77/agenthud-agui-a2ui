@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `worker/src/trial/`, `worker/src/agent/trial.ts`, `worker/src/worker.ts`: **trial tier — try 2-3
+  real (non-`:free`) model renders with no key** (US-13). `POST /agent/trial-render` spends the
+  owner's held OpenRouter key, hard-capped per visitor via a new `TrialQuotaDO` Durable Object
+  (first DO usage in this repo — a sliding-window `RateLimit` binding can't express "3 uses, ever";
+  KV's eventual consistency made it unsuitable too, both verified against current Cloudflare docs —
+  see [ADR-0006](docs/decisions/0006-trial-key-quota.md)), plus a shared daily circuit-breaker.
+  Turnstile-gated exactly like the existing keyless tier, checked before either quota to prevent a
+  no-token requester from exhausting the shared daily cap for free. A failed render is refunded
+  (doesn't cost the visitor a use) and returns an honest error rather than a stub. Worker-side only
+  in this release — the browser "Try 2-3 free prompts" UI affordance is not yet wired.
+
 ### Fixed
 
 - `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/src/mcp/tools.ts`,

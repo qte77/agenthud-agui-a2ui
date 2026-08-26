@@ -75,6 +75,15 @@ origin allowlist** (programmatic agents send no `Origin`) and share the `FREE_RA
 no visitor key. Details in [`worker/README.md`][worker-readme] · [ADR-0005][adr-0005]; protocol
 reference in [protocols.md](protocols.md).
 
+## Trial tier (real model, hard-capped, no key)
+
+`POST /agent/trial-render` spends the owner's own held key against a real (non-`:free`) model, so
+unlike every other route on this Worker it needs **state**, not just a stateless gate — a first for
+this architecture. A `TrialQuotaDO` Durable Object (one instance per visitor IP, one shared instance
+for a daily circuit-breaker) enforces a hard cap that a sliding-window `RateLimit` binding and KV
+were both verified unsuitable for (see [ADR-0006][adr-0006]). Turnstile-gated, origin-locked exactly
+like the keyless tier. Details in [`worker/README.md`][worker-readme] · [ADR-0006][adr-0006].
+
 ## The ours / theirs line
 
 - **Ours:** the GitHub Pages static app **and** the worker *source* (`worker/`), plus
@@ -96,4 +105,5 @@ sending an allowlisted `Origin`.
 
 [adr-0002]: decisions/0002-edge-proxy-platform.md
 [adr-0005]: decisions/0005-agent-native-endpoints.md
+[adr-0006]: decisions/0006-trial-key-quota.md
 [worker-readme]: ../worker/README.md
