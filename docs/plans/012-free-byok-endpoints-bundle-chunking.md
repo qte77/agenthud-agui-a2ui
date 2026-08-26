@@ -2,12 +2,28 @@
 title: Plan 012 — Free-tier BYOK endpoints (#187) + vendor bundle chunking (#121)
 description: Two small, independent config/build PRs. #187 adds OpenRouter `:free` models + a CORS-verified Cerebras endpoint to the BYOK dropdown; #121 splits react/@a2ui into vendor chunks to clear the >500 kB Vite warning without breaking the AI-SDK code-split. Carries a full source map (config.ts, vite.config.ts), verified free-model ids, the Cerebras CORS probe, and the code-split marker check — so the next session doesn't re-gather context.
 date: 2026-07-08
-status: planned
-issues: [187, 121]
+status: open
+issues: [187]
 handoff: handoffs/012-free-byok-endpoints-bundle-chunking.md
 ---
 
 # Plan 012 — Free-tier BYOK endpoints (#187) + vendor chunking (#121)
+
+## Reconciled 2026-08-26 (audit)
+
+**#121 (vendor chunking) is DONE** — `ui/vite.config.ts`'s `rolldownOptions.codeSplitting.groups`
+ships the react/a2ui split described below; CHANGELOG 0.5.0 "Closes #121"; issue #121 closed on
+GitHub. No further action.
+
+**#187 (free-tier BYOK endpoints + Cerebras) is OPEN and NOT implemented**, despite GitHub showing
+it closed (`stateReason: COMPLETED`, closed 2026-07-08T23:07:32Z). That timestamp exactly matches
+PR #207's merge — but PR #207 was titled `docs(plan/handoff-012): ...` and only added THIS plan +
+its handoff; it never touched `ui/src/config.ts`. A `Closes #187` reference in that PR's body
+auto-closed the issue for scaffolding the plan, not for doing the work. Verified directly against
+`ui/src/config.ts` (2026-08-26): the OpenRouter preset still has zero `:free` ids, and there is no
+Cerebras entry. **The design below (free ids + Cerebras) is still accurate and still unbuilt** — the
+verified-2026-07-08 external data (OpenRouter free-model scan, Cerebras CORS probe) should be
+RE-VERIFIED before implementing, since ~7 weeks have passed and ids/CORS posture can drift.
 
 Two independent PRs, each its own branch off `main`, gates green, squash-merge (**user runs the merge** —
 the auto-mode classifier blocks agent-authored PR merges). Neither is TDD-shaped: #187 is config data
@@ -120,9 +136,12 @@ the split, split further (or fallback: add `chunkSizeWarningLimit: 600`).
   reference it), with a `verified` date per the #165 convention. #187 adds no env var/CLI; #121 changes none.
 
 **Issues:**
-- **#187** and **#121** — close via their PR bodies (`Closes #187` / `Closes #121`).
+- **#121** — already closed (shipped, see Reconciled note above).
+- **#187** — GitHub shows it closed, but the work described below is unbuilt (see Reconciled note).
+  Don't reference `Closes #187` in a docs-only PR again — only the PR that actually adds the
+  `:free` ids + Cerebras entry should close it, and it may need reopening first (flagged to owner).
 - **#165** (recurring BYOK model-id refresh / drift) — keep OPEN (recurring); add a comment noting the
-  2026-07-08 refresh + the free/Cerebras additions. No new issues.
+  2026-08-26 reconciliation. No new issues.
 
 ## Verification
 
