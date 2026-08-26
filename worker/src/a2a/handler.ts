@@ -8,7 +8,7 @@
  */
 
 import type { Env } from "../router";
-import { renderFromPrompt } from "../agent/render";
+import { renderFromMessages } from "../agent/render";
 
 type Part =
   | { kind: "text"; text: string }
@@ -96,7 +96,7 @@ async function handleMessageSend(params: unknown, env: Env, id: RpcId): Promise<
   const contextId = typeof givenCtx === "string" && givenCtx ? givenCtx : crypto.randomUUID();
   const taskId = crypto.randomUUID();
 
-  const batch = await renderFromPrompt(env, prompt);
+  const batch = await renderFromMessages(env, [{ role: "user", content: prompt }]);
   return rpcResult(
     id,
     batch

@@ -1,6 +1,5 @@
 import { resolveUpstream, corsHeaders, isAllowedOrigin, type Env } from "./router";
-import { buildProviders, renderFree } from "./agent/providers";
-import { SYSTEM_PROMPT } from "./agent/prompts";
+import { renderFromMessages } from "./agent/render";
 import type { ChatMessage } from "./agent/model";
 import { verifyTurnstile } from "./turnstile";
 import { agentCardResponse } from "./wellknown/agent-card";
@@ -99,26 +98,8 @@ async function handleKeylessRender(request: Request, env: Env, cors: Cors): Prom
     return Response.json({ error: "Turnstile verification failed" }, { status: 403, headers: cors });
   }
 
-  const messages: ChatMessage[] = [
-    { role: "system", content: SYSTEM_PROMPT },
-    ...sanitizeMessages(parsed.messages),
-  ];
-  const providers = buildProviders({
-    ai: env.AI,
-    openRouterKey: env.OPENROUTER_KEY,
-    openRouterFreeModels: env.OPENROUTER_FREE_MODELS
-      ? env.OPENROUTER_FREE_MODELS.split(",").map((s) => s.trim()).filter(Boolean)
-      : undefined,
-  });
-
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 20_000);
-  try {
-    const free = await renderFree(providers, { messages, signal: ac.signal });
-    return Response.json({ a2uiMessages: free ? free.result.batch : STUB_BATCH }, { headers: cors });
-  } finally {
-    clearTimeout(timer);
-  }
+  const batch = await renderFromMessages(env, sanitizeMessages(parsed.messages));
+  return Response.json({ a2uiMessages: batch ?? STUB_BATCH }, { headers: cors });
 }
 
 // Forward only what the upstream needs (the visitor's key + content type + body) and stream the

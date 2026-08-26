@@ -8,7 +8,7 @@
 import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import type { Env } from "../router";
-import { renderFromPrompt } from "../agent/render";
+import { renderFromMessages } from "../agent/render";
 import { validateBatch } from "../agent/contract";
 
 const asText = (t: string): { type: "text"; text: string }[] => [{ type: "text", text: t }];
@@ -25,7 +25,7 @@ export const renderUiInputSchema = z.object({
  * generation failed rather than receive a placeholder.
  */
 export async function runRenderUi(env: Env, args: { prompt: string }): Promise<CallToolResult> {
-  const a2uiMessages = await renderFromPrompt(env, args.prompt);
+  const a2uiMessages = await renderFromMessages(env, [{ role: "user", content: args.prompt }]);
   if (!a2uiMessages) {
     return {
       content: asText("No free model produced a valid A2UI batch (provider chain exhausted)."),
