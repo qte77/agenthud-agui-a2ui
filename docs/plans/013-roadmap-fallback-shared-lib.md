@@ -2,12 +2,40 @@
 title: Plan 013 — Prioritized roadmap: model fall-through chain (#210) + shared a2ui/agui library (#211) + backlog waves
 description: Cross-repo roadmap. Adopt ldnmxx-hack's first-valid-wins model fall-through into agenthud's browser BYOK path, align both repos' A2UI/AG-UI protocol surface, and spin off a shared @qte77/a2ui-agui library — sequenced against the open backlog by ROI × feasibility. Carries a self-contained source map (both repos) so the next session executes without re-mapping.
 date: 2026-07-09
-status: planned
-issues: [210, 211, 209, 206, 185, 165, 156, 132, 121, 120, 119, 102]
+status: open
+issues: [211, 185, 165, 156, 132, 120, 119, 102]
 handoff: handoffs/013-roadmap-fallback-shared-lib.md
 ---
 
 # Plan 013 — Roadmap: fall-through chain + shared a2ui/agui library + backlog
+
+## Reconciled 2026-08-26 (audit — verified against both GitHub issue state AND actual code)
+
+- **Wave 0 — DONE:** #121 (vendor chunking) and #209 (paged turn history) both shipped — closed on
+  GitHub, and independently confirmed in code this session (`vite.config.ts`'s chunk groups;
+  `Transcript.tsx`'s `usePagerIndex` ◀/▶ pager). The "README GIF de-icon (PR #208)" line item never
+  had a real PR — no PR #208 exists in this repo; treat that sub-item as never-started, not done.
+  #120 (scope vitest/globals types) is still OPEN and unverified against code this pass — not part
+  of Wave 0's "done" claim.
+- **Wave 1 — #210 DONE, #165 still open (recurring by design), #185 still open (untouched):** #210
+  (fall-through chain) shipped — closed on GitHub, confirmed live in `ui/src/agent/fallback.ts` +
+  `useLiveAgent.ts`'s `stream()` loop. #165 is deliberately kept open forever (recurring drift
+  tracking) — see the `config.ts` date-refresh work below, which IS this issue's recurring task.
+  #185 (AI SDK v7 migration) has no evidence of having started.
+- **Wave 2 — #211 still fully open.** Confirmed multiple times this session: `worker/src/agent/{prompts,contract}.ts`
+  are still hand-copied, comment-acknowledged duplicates of `ui/src/agent/{prompts,contract}.ts`.
+  This is the one wave with zero progress since 2026-07-09.
+- **Wave 3 — #206 DONE, #132/#119 still open (unverified this pass), #102 likely OBSOLETE:** #206
+  (frozen transcript dataModelUpdate) shipped — closed on GitHub, confirmed in `replaySnapshot.ts`'s
+  ValueMap→object fold. #102 ("adopt qte77/.github reusable release workflows") is still open on
+  GitHub, but this repo's ACTUAL release flow (executed successfully 2026-08-26, v0.5.0) is a
+  different, deliberately-chosen design — manual version-bump PR → automatic tag-on-merge →
+  one-click `publish-release.yaml` dispatch — documented in `.github/CONTRIBUTING.md`'s "Releasing"
+  section, explicitly rejecting changesets/release-please/semantic-release for fighting the `ui/`
+  subdir layout. #102's premise (reusable workflows from `qte77/.github`) appears superseded, not
+  merely unstarted — flagged to the owner rather than assumed.
+- **Deferred — #156 correctly still open,** exactly as this plan already marks it (Mode B remainder;
+  its own issue title confirms "Stages 1+2 shipped").
 
 Each wave is TDD-implemented in its **own** future plan-mode session (plan-mode before implementing;
 strict TDD Red-first for module logic only; strict lint/typing/sec; no tests for scripts/config/wiring).
@@ -24,13 +52,17 @@ reunifying. This plan clusters all open issues + these two initiatives by ROI ×
 
 | Wave | Items | ROI | Feasibility |
 |---|---|---|---|
-| **0 — quick wins (teed up)** | #121 vendor chunking (plan 012) · #209 paged history · README GIF de-icon (PR #208) · #120 vitest types | Low–Med / **Med-High** (#209) | **High** |
-| **1 — live-agent reliability (core)** | #185 AI SDK v7 → **#210 fall-through chain** (+ #165 model-list refresh) | **High** | Med |
-| **2 — shared a2ui/agui library** | **#211** align validators/prompts/registry → extract `@qte77/a2ui-agui` → migrate both repos | Med-High (strategic) | Med-Low |
-| **3 — fidelity & hygiene** | #206 dataModelUpdate · #132 config naming · #119 coverage thresholds · #102 reusable release workflows | Low–Med | Med |
-| **Deferred** | #156 Mode B speculative pre-render | Med | Low (YAGNI) |
+| **0 — quick wins (teed up)** | ~~#121 vendor chunking~~ ✅ · ~~#209 paged history~~ ✅ · ~~README GIF de-icon~~ (never had a real PR — drop) · #120 vitest types (open) | Low–Med / **Med-High** (#209) | **High** |
+| **1 — live-agent reliability (core)** | #185 AI SDK v7 (open, untouched) → ~~**#210 fall-through chain**~~ ✅ (+ #165 model-list refresh — recurring, see config.ts date-refresh) | **High** | Med |
+| **2 — shared a2ui/agui library** | **#211** align validators/prompts/registry → extract `@qte77/a2ui-agui` → migrate both repos — **still fully open, zero progress** | Med-High (strategic) | Med-Low |
+| **3 — fidelity & hygiene** | ~~#206 dataModelUpdate~~ ✅ · #132 config naming (open) · #119 coverage thresholds (open) · #102 reusable release workflows (open on GitHub, likely superseded by the adopted manual-bump/auto-tag flow — flag to owner) | Low–Med | Med |
+| **Deferred** | #156 Mode B speculative pre-render (correctly still open/deferred) | Med | Low (YAGNI) |
 
-Recommended order: Wave 0 (contained; #209 is UX the user wants) → Wave 1 (biggest ROI; de-risks the demo) → Wave 2.
+Recommended order (2026-08-26): Waves 0 and 1's core items (#121/#209/#210) are done — only #120,
+#185, and the recurring #165 remain in those two waves. **Wave 2 (#211) is the one with zero
+progress** and is now the natural next architectural item, if picked up. Wave 3 is mostly done
+(#206 shipped); #102 needs an owner decision (close as superseded, or actually adopt the reusable
+workflows) rather than more agent work.
 
 ---
 
