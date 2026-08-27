@@ -20,6 +20,7 @@ New ADR: copy the most recent file, increment the number, and fill in
 | [0004][adr-0004] | Self-contained replay snapshots | Accepted |
 | [0005][adr-0005] | Agent-native endpoints | Accepted |
 | [0006][adr-0006] | Trial-key quota via Durable Objects | Accepted |
+| [0007][adr-0007] | Shared render_ui prompt/contract package | Accepted |
 
 [madr]: https://adr.github.io/madr/
 [adr-0001]: 0001-agent-runtime-stack.md
@@ -28,3 +29,4 @@ New ADR: copy the most recent file, increment the number, and fill in
 [adr-0004]: 0004-self-contained-replay-snapshots.md
 [adr-0005]: 0005-agent-native-endpoints.md
 [adr-0006]: 0006-trial-key-quota.md
+[adr-0007]: 0007-shared-render-ui-package.md

@@ -22,6 +22,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   end-to-end but **dormant in production** until a real Turnstile site key is provisioned and set as
   `VITE_TURNSTILE_SITE_KEY` in the deploy build env (see `ui/.env.example`).
 
+### Changed
+
+- New `shared/` package (`@agenthud/shared`, first cross-package dependency in this repo, added via
+  `file:../shared` in both `worker/package.json` and `ui/package.json`): unifies the `SYSTEM_PROMPT`
+  / `RENDER_UI_TOOL_DESCRIPTION` text (byte-identical strings independently duplicated between
+  `worker/src/agent/prompts.ts` and `ui/src/agent/prompts.ts`) and the cycle-detection graph
+  primitive (near-identical duplicated logic in both `contract.ts` files) — closes #211. Each side's
+  own validation SCOPE stays deliberately un-shared (worker's dependency-free `validateBatch`; ui's
+  richer zod `A2UIMessageBatchSchema` with Card-shape/envelope/Recording checks). `shared/` ships
+  with **zero runtime dependencies by design** — a first attempt at also deriving worker's tool
+  schema from a shared zod schema measured a +80 KiB gzip worker-bundle regression (a `file:`
+  package's own zod install gets bundled as a second physical copy via wrangler's symlink
+  resolution, instead of deduping) — see
+  [ADR-0007](docs/decisions/0007-shared-render-ui-package.md).
+
 ### Fixed
 
 - `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/src/mcp/tools.ts`,
