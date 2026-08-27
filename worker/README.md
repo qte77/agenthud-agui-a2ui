@@ -76,6 +76,16 @@ Env vars/bindings beyond the base relay + keyless tier: `TRIAL_DO` (Durable Obje
 capable model in code), `TRIAL_DAILY_CAP` (shared daily cap across all visitors, defaults to 200 in
 code). Reuses `OPENROUTER_KEY`/`TURNSTILE_SECRET` — no new secrets.
 
+## Shared code (`@agenthud/shared`)
+
+`agent/prompts.ts`'s `SYSTEM_PROMPT`/`RENDER_UI_TOOL_DESCRIPTION` and `agent/contract.ts`'s
+graph/cycle-detection primitive come from `../shared` (a `file:` dependency — see
+[ADR-0007](../docs/decisions/0007-shared-render-ui-package.md)), the same source `ui/`'s equivalent
+files consume. Edit prompt text or the cycle-detection algorithm in `shared/src/renderUi.ts`, not
+here. **Keep `shared/` dependency-free** — a shared zod schema was tried and reverted after
+measuring a +80 KiB gzip worker-bundle regression (see the ADR); if a future need genuinely requires
+a dependency there, that regression needs re-verifying, not assuming it's fixed.
+
 ## Deploy
 
 ```bash
