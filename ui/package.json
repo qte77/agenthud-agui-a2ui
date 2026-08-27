@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@a2ui/react": "^0.10.2",
+    "@agenthud/shared": "file:../shared",
     "@ag-ui/core": "0.0.58",
     "@ai-sdk/openai": "^3.0.97",
     "@fontsource/inter": "^5.3.0",

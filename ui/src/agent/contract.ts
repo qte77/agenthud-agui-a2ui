@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { buildGraph, hasCycle, type A2UIComponentLike } from "@agenthud/shared";
 
 /*
  * Validated contracts for internal + external data (frontend side).
@@ -81,67 +82,25 @@ export const A2UIMessageSchema = z.union([
 // A circular component reference (a → … → a) would make the renderer recurse forever and freeze
 // the tab — and the downstream try/catch only catches *thrown* errors, not a hang. Detect cycles
 // at the contract boundary so a malformed batch is rejected like any other contract violation,
-// before it reaches @a2ui.
-
-/** Child ids a component references, via the catalog's container/ref fields (other props stay open). */
-function extractChildIds(component: Record<string, unknown>): string[] {
-  const props = Object.values(component)[0];
-  if (props === null || typeof props !== "object") return [];
-  const p = props as Record<string, unknown>;
-  const ids: string[] = [];
-  if (typeof p.child === "string") ids.push(p.child); // Card, Button
-  const explicit = (p.children as { explicitList?: unknown } | undefined)?.explicitList;
-  if (Array.isArray(explicit)) {
-    for (const id of explicit) if (typeof id === "string") ids.push(id); // Row, Column, List
-  }
-  if (Array.isArray(p.tabItems)) {
-    for (const item of p.tabItems) {
-      const child = (item as { child?: unknown } | undefined)?.child;
-      if (typeof child === "string") ids.push(child); // Tabs
-    }
-  }
-  return ids;
-}
+// before it reaches @a2ui. The graph/cycle primitive comes from @agenthud/shared (#211) —
+// extractChildIds/hasCycle were identical duplicated logic between here and
+// worker/src/agent/contract.ts; only the message-walk below (zod-typed A2UIMessage[], surfaceUpdate
+// only — this file doesn't need beginRendering.root tracking) stays here.
 
 /** Build an `id → child-ids` graph across every surfaceUpdate message in the batch. */
 function buildComponentGraph(messages: A2UIMessage[]): Map<string, string[]> {
-  const graph = new Map<string, string[]>();
+  const components: A2UIComponentLike[] = [];
   for (const msg of messages) {
     if (!("surfaceUpdate" in msg)) continue;
-    for (const comp of msg.surfaceUpdate.components) {
-      graph.set(comp.id, extractChildIds(comp.component));
-    }
+    for (const comp of msg.surfaceUpdate.components) components.push(comp);
   }
-  return graph;
-}
-
-/** True if the reference graph contains a cycle. DAGs (a child shared by two parents) pass. */
-function hasComponentCycle(graph: Map<string, string[]>): boolean {
-  const GRAY = 1;
-  const BLACK = 2;
-  const state = new Map<string, number>();
-
-  const visit = (id: string): boolean => {
-    state.set(id, GRAY);
-    for (const next of graph.get(id) ?? []) {
-      const seen = state.get(next);
-      if (seen === GRAY) return true; // back edge → cycle
-      if (seen !== BLACK && visit(next)) return true;
-    }
-    state.set(id, BLACK);
-    return false;
-  };
-
-  for (const id of graph.keys()) {
-    if (state.get(id) === undefined && visit(id)) return true;
-  }
-  return false;
+  return buildGraph(components);
 }
 
 /** The `render_ui` tool payload / `event.a2uiMessages` — the agent → UI contract. */
 export const A2UIMessageBatchSchema = z
   .array(A2UIMessageSchema)
-  .refine((messages) => !hasComponentCycle(buildComponentGraph(messages)), {
+  .refine((messages) => !hasCycle(buildComponentGraph(messages)), {
     message: "circular component reference — the component tree must be acyclic",
   });
 
