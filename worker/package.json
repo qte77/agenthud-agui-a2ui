@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@agenthud/shared": "file:../shared",
     "@modelcontextprotocol/server": "^2.0.0",
     "zod": "^4.4.0"
   },

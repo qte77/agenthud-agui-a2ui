@@ -1,0 +1,23 @@
+{
+  "name": "@agenthud/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared render_ui prompt + contract primitives between worker/ and ui/ (#211).",
+  "exports": {
+    ".": "./src/renderUi.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "eslint-plugin-sonarjs": "^4.2.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.67.0",
+    "vitest": "^4.1.11"
+  }
+}
