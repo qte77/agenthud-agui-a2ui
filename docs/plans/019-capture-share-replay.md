@@ -61,7 +61,7 @@ Wiring points
 
 Agent angle (Phase 3; gated on arc 017 — now LIVE)
 - Worker `POST /a2a` `message/send` → completed Task; batch at `result.artifacts[0].parts[0].data.a2uiMessages`.
-  Base URL `https://agenthud-proxy.cloudflare-driveway392.workers.dev`.
+  Base URL `https://agenthud-proxy.<account>.workers.dev (now agenthud-api.abizz.dev)`.
 
 ## Phases
 

@@ -1,18 +1,18 @@
 # BYOK pass-through CORS proxy (US-6). Holds no secret — forwards the visitor's key.
-# Deploy: `wrangler deploy`, then set PROXY_BASE in ui/src/config.ts to the
-# resulting https://agenthud-proxy.<your-subdomain>.workers.dev URL. See README.md.
+# Served at https://agenthud-api.abizz.dev, a Custom Domain attached to this Worker in the Cloudflare
+# dashboard (Worker > Domains); ui/src/config.ts's PROXY_BASE points at it. See README.md.
 name = "agenthud-proxy"
 main = "src/worker.ts"
 # Pinned to the date the LOCAL `wrangler dev` runtime (workerd) supports — "today" can exceed the
 # installed wrangler's binary and break `wrangler dev`. Bump alongside wrangler upgrades.
 compatibility_date = "2026-06-24"
-# nodejs_compat: the MCP server SDK (@modelcontextprotocol/server) pulls in Node built-ins. Mirrored
-# under [env.dev] below so the dev deploy (agenthud-proxy-dev) gets it too.
+# nodejs_compat: the MCP server SDK (@modelcontextprotocol/server) pulls in Node built-ins.
 compatibility_flags = ["nodejs_compat"]
 
-# Declare workers.dev routing so a clean `wrangler deploy` is deterministic (this was the manual
-# go-live gotcha). preview_urls off keeps the public surface to the single canonical hostname.
-workers_dev = true
+# No *.workers.dev URL and no preview URLs: they expose the Cloudflare account name, and the custom
+# domain above is the only public hostname. Both must be set here — a dashboard-only switch-off is
+# undone by the next `wrangler deploy`.
+workers_dev = false
 preview_urls = false
 
 # Logs + traces on for debugging + spotting abuse (low-traffic proxy -> sample everything).
@@ -67,22 +67,5 @@ tag = "v1"
 new_sqlite_classes = ["TrialQuotaDO"]
 
 # Production (`wrangler deploy`) sets no vars, so CORS echoes ONLY https://qte77.github.io.
-# The dev deploy (`wrangler deploy --env dev` -> agenthud-proxy-dev) additionally allows
-# localhost origins, for headless/local E2E. For local `wrangler dev`, put
-# ALLOW_LOCALHOST="true" in a gitignored worker/.dev.vars instead.
-[env.dev]
-compatibility_flags = ["nodejs_compat"]
-
-[env.dev.vars]
-ALLOW_LOCALHOST = "true"
-
-# Named envs don't inherit bindings — mirror the AI binding so the dev deploy (agenthud-proxy-dev,
-# used for headless E2E) exercises the full free chain. FREE_RATE_LIMITER stays prod-only (like
-# RATE_LIMITER above); the handler skips it when absent, leaving local/E2E runs unthrottled.
-[env.dev.ai]
-binding = "AI"
-
-# Mirror the trial DO binding too (bindings aren't inherited; migrations ARE — declared once above).
-[[env.dev.durable_objects.bindings]]
-name = "TRIAL_DO"
-class_name = "TrialQuotaDO"
+# For local/headless E2E, run `wrangler dev` with ALLOW_LOCALHOST="true" in a gitignored
+# worker/.dev.vars (see README.md "Local dev"). There is no deployed dev Worker.

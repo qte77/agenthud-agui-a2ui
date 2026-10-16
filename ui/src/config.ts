@@ -12,7 +12,7 @@ export const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
 export const PROXY_BASE =
   import.meta.env.DEV && import.meta.env.VITE_PROXY_BASE
     ? import.meta.env.VITE_PROXY_BASE
-    : "https://agenthud-proxy.cloudflare-driveway392.workers.dev";
+    : "https://agenthud-api.abizz.dev";
 
 // Turnstile site key (public, NOT secret — safe to ship in the prod bundle, unlike the worker-only
 // TURNSTILE_SECRET) for the trial tier's proof-of-human widget (US-13 / ADR-0006). Read from

@@ -92,12 +92,13 @@ a dependency there, that regression needs re-verifying, not assuming it's fixed.
 cd worker
 npm ci
 npm test                       # router allowlist + CORS unit tests
-npx wrangler deploy --env=""   # top-level (production); use --env dev for the localhost-allowed dev worker
+npx wrangler deploy            # production
 ```
 
-Then set `PROXY_BASE` in [`ui/src/config.ts`](../ui/src/config.ts) to the deployed
-`https://agenthud-proxy.<your-subdomain>.workers.dev` URL — `config.ts` is the single source of
-truth for that URL, and the **Google (via proxy)** dropdown entry points at it.
+The Worker is served at `https://agenthud-api.abizz.dev`, a Custom Domain attached in the Cloudflare
+dashboard (Worker → **Domains**). `workers_dev` and `preview_urls` are off in `wrangler.toml`.
+[`ui/src/config.ts`](../ui/src/config.ts)'s `PROXY_BASE` is the single source of truth for that
+URL, and the **Google (via proxy)** dropdown entry points at it.
 
 ## Local dev
 
@@ -118,8 +119,7 @@ Now "Google (via proxy)" resolves to the local worker. Notes:
   wrangler upgrades, not blindly to "today".
 - **Restart `npm run dev` after editing `ui/.env`** — Vite reads env at startup, not via HMR.
 - Non-browser callers (curl, CI) need no localhost entry: send `Origin: https://qte77.github.io` and
-  the `isAllowedOrigin` gate passes (CORS is browser-only). Or deploy the dev env
-  (`wrangler deploy --env dev`).
+  the `isAllowedOrigin` gate passes (CORS is browser-only).
 
 ## Deferred
 

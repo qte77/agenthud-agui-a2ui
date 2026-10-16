@@ -22,7 +22,7 @@ export interface RateLimit {
 /** Worker bindings + vars (wrangler `[vars]` / `[env.<name>.vars]` / local `.dev.vars`). */
 export interface Env {
   /** "true" adds localhost dev origins to the CORS allowlist. Set it only in dev
-   *  (`[env.dev.vars]` or a gitignored `.dev.vars`) — NEVER in the production deploy,
+   *  (a gitignored `.dev.vars`) — NEVER in the production deploy,
    *  so prod echoes only the gh-pages origin. */
   ALLOW_LOCALHOST?: string;
   /** Per-IP rate limiter (abuse lock). Absent in local dev / tests → rate-limit skipped. */

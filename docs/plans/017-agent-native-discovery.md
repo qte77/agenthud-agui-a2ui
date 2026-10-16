@@ -20,7 +20,7 @@ Execution, Agent-to-Agent, Identity & Auth). Parallel signal: the **ora.ai / ora
 scout this session): `qte77.github.io` is a **user site** served from a *different* repo
 (`qte77/qte77.github.io`, Jekyll; checked out at `/workspaces/qte77/qte77.github.io`). agenthud deploys
 to the **subpath** `qte77.github.io/agenthud-agui-a2ui/` (`ui/vite.config.ts:16`), and its Worker
-(`agenthud-proxy.cloudflare-driveway392.workers.dev`) is a **third origin**. Because `robots.txt` and
+(`agenthud-proxy.<account>.workers.dev (now agenthud-api.abizz.dev)`) is a **third origin**. Because `robots.txt` and
 `/.well-known/*` are only honored at the **origin root**, discovery files placed in agenthud's
 `ui/public/` are invisible to crawlers/scanners that probe `qte77.github.io/…`. Live proof: the root
 `robots.txt` has no Content-Signal, `/.well-known/agent-card.json` and `/index.md` 404, and the root

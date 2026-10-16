@@ -54,7 +54,7 @@ it's row 1 of the remaining-work table.
 - `env -u GH_TOKEN -u GITHUB_TOKEN` on every git/gh; `-c commit.gpgsign=false` (no GPG key); sandbox blocks
   Bash pipes/`;`/`&&` (wrap in `bash -c '…'`); use `node -e` for fetches (no curl/polyfetch — venv deleted).
 - Phase 3 is **unblocked** now (arc 017's `/a2a` is live + verified at
-  `https://agenthud-proxy.cloudflare-driveway392.workers.dev/a2a`).
+  `https://agenthud-proxy.<account>.workers.dev (now agenthud-api.abizz.dev)/a2a`).
 
 ## Wider context (not this arc)
 Agent-readiness roadmap + ora work: `docs/agent-readiness.md` (score in its frontmatter; ordered next-steps).
