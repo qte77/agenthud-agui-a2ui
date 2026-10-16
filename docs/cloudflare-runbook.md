@@ -35,8 +35,10 @@ the rate limiter). `wrangler deploy` is the apply. Terraform/Pulumi is overkill 
 
 ## Config gotchas (learned)
 
-- **Named environments** (`[env.dev]`) **don't inherit bindings/vars** — redeclare per env. With
-  multiple envs, plain `wrangler deploy` warns; pass `--env=""` (prod) or `--env dev`.
+- **Named environments** (`[env.<name>]`) **don't inherit bindings/vars** — redeclare per env. This
+  repo has none: local/E2E testing uses `wrangler dev` + `.dev.vars` instead of a deployed dev Worker.
+- **No `workers.dev`, no preview URLs** (`workers_dev = false`, `preview_urls = false`): they expose
+  the account name. The public hostname is the Custom Domain `agenthud-api.abizz.dev`.
 - **Rate limit** (`[[ratelimits]]`): `period` must be **10 or 60** seconds; it's eventually-consistent
   and per-location (a throttle, not exact accounting). Works on `workers.dev` / free. Verify the
   binding with `wrangler deploy --dry-run` (prints `env.RATE_LIMITER (100 requests/60s)`).
@@ -63,8 +65,7 @@ The worker **holds no secret** (BYOK pass-through), so its only gates are:
 |---|---|
 | `wrangler whoami` | auth + account id |
 | `wrangler deploy --dry-run` | validate build + bindings, no deploy |
-| `wrangler deploy --env=""` | deploy production (top-level) |
-| `wrangler deploy --env dev` | deploy `agenthud-proxy-dev` (localhost allowed) |
+| `wrangler deploy` | deploy production |
 | `wrangler dev` | local server on `:8787` (loads `.dev.vars`) |
 | `wrangler tail` | stream live logs |
 
