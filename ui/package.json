@@ -17,6 +17,9 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "overrides": {
+    "@a2ui/web_core": "^0.10.2"
+  },
   "dependencies": {
     "@a2ui/react": "^0.10.2",
     "@agenthud/shared": "file:../shared",
