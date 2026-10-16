@@ -36,6 +36,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   package's own zod install gets bundled as a second physical copy via wrangler's symlink
   resolution, instead of deduping) — see
   [ADR-0007](docs/decisions/0007-shared-render-ui-package.md).
+- The proxy now serves at **`https://agenthud-api.abizz.dev`** instead of its `*.workers.dev` URL;
+  `workers_dev`/`preview_urls` are off, and the separate `agenthud-proxy-dev` deploy was removed in
+  favour of `wrangler dev` + a local `.dev.vars`. `ui/src/config.ts`'s `PROXY_BASE` updated to match
+  (#298).
 
 ### Fixed
 
@@ -59,6 +63,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   been, since 0.4.0); `docs/UserStory.md` no longer cites a nonexistent `pages.yml` workflow file
   (the real one is `gh-pages.yml`); `docs/plans/017`'s remaining-work table no longer lists 11
   already-shipped rows as open.
+
+### Security
+
+- `ui/package-lock.json`, `ui/package.json`: **`@a2ui/web_core` pinned to the patched `^0.10.2` line
+  via an npm `overrides` entry**, deduping a stray vulnerable `0.9.2` copy (installed only as a
+  type-only peer of `@a2ui/markdown-it`) onto `@a2ui/react`'s own already-patched copy — fixes
+  [GHSA-72qq-p3r5-f7wq](https://github.com/advisories/GHSA-72qq-p3r5-f7wq) (critical). `npm audit fix`
+  also cleared related `dompurify`/`markdown-it`/`browserslist`/`brace-expansion`/`source-map-js`/
+  `undici` advisories. `ui` `npm audit`: 10 vulnerabilities → 0 (#292).
+- `worker/package-lock.json`: **6 high-severity dev-tooling advisories cleared** via `npm audit fix`
+  (all transitive devDependencies pulled in by `wrangler`; no runtime/production impact) — `wrangler`
+  4.125.0 → 4.151.1, plus `miniflare`/`sharp`/`undici`/`brace-expansion`/`source-map-js` bumps within
+  existing semver ranges. `worker` `npm audit`: 6 high → 0 (#296).
 
 ## [0.5.0] - 2026-08-25
 
