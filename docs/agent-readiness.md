@@ -23,7 +23,7 @@ the **ora.ai / orank** agent-readiness scan of `qte77.github.io`.
 > (the architecture finding + playbook + gotchas below) does not go stale — edit those only on a real
 > topology/spec change.
 
-- **Arc 017 shipped, deployed, verified** — the Worker (`agenthud-proxy.cloudflare-driveway392.workers.dev`)
+- **Arc 017 shipped, deployed, verified** — the Worker (`agenthud-proxy.<account>.workers.dev (now agenthud-api.abizz.dev)`)
   serves, alongside the BYOK relay:
   - `GET /.well-known/agent-card.json` — A2A Agent Card (skills = the MCP tools; interface → `/a2a`).
   - `POST /mcp` — stateless MCP server (`createMcpHandler`): `render_ui`, `validate_a2ui_batch`.
