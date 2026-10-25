@@ -41,5 +41,18 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["tests/setup.ts"],
     globals: true,
+    // `npm run test:coverage` (CI) fails when coverage drops below these floors. autoUpdate ratchets
+    // them up (floored to whole percent) when coverage rises — commit the bumped numbers.
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      thresholds: {
+        autoUpdate: (n: number) => Math.floor(n),
+        statements: 81,
+        branches: 76,
+        functions: 75,
+        lines: 83,
+      },
+    },
   },
 });
