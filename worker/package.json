@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@agenthud/shared": "file:../shared",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5",
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^10.9.0",
     "eslint-plugin-sonarjs": "^4.2.0",
     "typescript": "~6.0.3",

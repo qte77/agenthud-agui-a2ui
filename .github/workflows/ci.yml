@@ -69,8 +69,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm test
+      - name: Test (coverage thresholds)
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build
@@ -103,5 +103,5 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm test
+      - name: Test (coverage thresholds)
+        run: npm run test:coverage
