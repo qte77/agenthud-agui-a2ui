@@ -9,5 +9,18 @@ export default defineConfig({
     alias: {
       "cloudflare:workers": "./test/stubs/cloudflare-workers.ts",
     },
+    // `npm run test:coverage` (CI) fails when coverage drops below these floors. autoUpdate ratchets
+    // them up (floored to whole percent) when coverage rises — commit the bumped numbers.
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.ts"],
+      thresholds: {
+        autoUpdate: (n: number) => Math.floor(n),
+        statements: 83,
+        branches: 74,
+        functions: 77,
+        lines: 84,
+      },
+    },
   },
 });
