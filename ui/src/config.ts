@@ -1,6 +1,7 @@
 // Single source of truth for URL + connection config: the project repo URL, the deployed edge-proxy
 // base, and the BYOK endpoint presets. Components (and buildInfo) import from here, and the docs
 // point at this file — so no URL is duplicated into a component or restated in prose.
+// What belongs here vs stays co-located: docs/architecture.md "Where config lives".
 
 // Project repo — used by the header GitHub links, the footer, and the build-version badge.
 export const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";

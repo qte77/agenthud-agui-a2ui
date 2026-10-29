@@ -47,6 +47,25 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
 > workers.dev subdomain) is defined in [`ui/src/config.ts`](../ui/src/config.ts) — the single
 > source of truth for the URL.
 
+## Where config lives
+
+**Rule:** a constant goes in [`ui/src/config.ts`](../ui/src/config.ts) when it has more than one
+consumer **or** docs/ops need to find it (URLs, deploy targets, build-time keys, provider presets).
+A constant with one consumer that nobody outside that module needs stays next to its consumer —
+don't centralize just because it looks like config.
+
+| Constant(s) | Home | Why |
+|---|---|---|
+| `REPO_URL`, `PROXY_BASE`, `TURNSTILE_SITE_KEY`, `ENDPOINTS` | `ui/src/config.ts` | several consumers and/or deploy-facing |
+| `ISSUES_URL` | `ui/src/GitHubLinks.tsx` | one consumer, derived from `REPO_URL`; `GitHubLinks` is the header link component, not config |
+| `SETTINGS_KEY`, `BASE_DEFAULTS` / `DEFAULTS` | `ui/src/LiveDashboard.tsx` | only the Live form reads or writes them; the default base URL comes from `ENDPOINTS[0]`, not a second copy |
+| External reference links, Turnstile script URL | `ui/src/CatalogViewer.tsx`, `ui/src/agent/trialRender.ts` | one consumer each |
+| `SYSTEM_PROMPT`, `RENDER_UI_TOOL_DESCRIPTION` | `@agenthud/shared` (re-exported by `ui/src/agent/prompts.ts` and `worker/src/agent/prompts.ts`) | model-facing text shared by app and worker, not config |
+| `UPSTREAMS`, `PROD_ORIGINS` | `worker/src/router.ts` | the worker is its own deployable; only the router reads them |
+
+The worker keeps its own copy of the repo URL (`worker/src/wellknown/agent-card.ts`) on purpose: it is
+a separate package with a single consumer, so a shared import would add coupling for one string.
+
 ## A2UI render pipeline (model → components)
 
 The final box above expands to the translation that turns a model reply into rendered widgets:

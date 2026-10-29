@@ -17,8 +17,9 @@ import { ENDPOINTS, TURNSTILE_SITE_KEY } from "./config";
 // (never written to storage, so it's gone on reload/close/reopen), per US-7.
 const SETTINGS_KEY = "agenthud-byok";
 
+// Default connection = the first ENDPOINTS preset, so the URL isn't restated here.
 const BASE_DEFAULTS: LiveSettings = {
-  baseURL: "https://openrouter.ai/api/v1",
+  baseURL: ENDPOINTS[0]!.baseURL,
   apiKey: "",
   model: "",
 };
