@@ -44,7 +44,7 @@ strict TDD Red-first for module logic only; strict lint/typing/sec; no tests for
 
 Two forces converge: (1) a live-agent **reliability** gap we hit this session — 401/429 and one silent
 empty-render — which ldnmxx-hack already solved worker-side with a first-valid-wins fall-through chain;
-(2) ldnmxx was built **from** agenthud ("reuse, don't rebuild: base = agenthud") and keeps a
+(2) ldnmxx-hack was built **from** agenthud ("reuse, don't rebuild: base = agenthud") and keeps a
 **dependency-free `shared/` dir**, so the two repos' A2UI/AG-UI protocol surface has diverged and wants
 reunifying. This plan clusters all open issues + these two initiatives by ROI × feasibility into waves.
 
@@ -90,7 +90,7 @@ workflows) rather than more agent work.
 
 **Portable (already zod-only / DOM-free → shared-lib core):**
 
-| Piece | agenthud | ldnmxx | Reconcile |
+| Piece | agenthud | ldnmxx-hack | Reconcile |
 |---|---|---|---|
 | Contract + validator | `contract.ts` `A2UIMessageBatchSchema` (zod, cycle-check, `dataModelUpdate`/Image) | `shared/renderTool.ts` `isSelfContainedBatch` (dep-free, no cycle, begin/surfaceUpdate-only) | canonical **zod** + thin dep-free validator for worker/edge; converge contract breadth |
 | render_ui tool | `prompts.ts` `RENDER_UI_TOOL_DESCRIPTION` + `liveAgent.ts` `renderUiInput` (zod) | `shared/renderTool.ts` `RENDER_UI_TOOL` (shallow JSON-schema) | one tool schema+description |
@@ -99,7 +99,7 @@ workflows) rather than more agent work.
 | Provider registry + combinator | `config.ts` `ENDPOINTS` | `providers.ts` `buildProviders`/`renderFree`/`DEFAULT_*` | one data registry + runtime-agnostic `renderFree` |
 | Injection guard | — (none) | `shared/guard.ts` `detectInjection`/`PATTERNS` | **adopt** browser-side too |
 
-**Stays per-repo (env drivers):** agenthud `useLiveAgent.ts` (React + `@a2ui/react` `useA2UIActions`/`processMessages`), `runLiveAgent`/`buildRenderUiTool` (`ai`/`@ai-sdk` — runtime-agnostic but npm-coupled), `config.ts` `PROXY_BASE` (Vite `import.meta.env`); ldnmxx `workersAiProvider` (`ai.run` binding), `Env`/secrets, Arize trace, CORS proxy.
+**Stays per-repo (env drivers):** agenthud `useLiveAgent.ts` (React + `@a2ui/react` `useA2UIActions`/`processMessages`), `runLiveAgent`/`buildRenderUiTool` (`ai`/`@ai-sdk` — runtime-agnostic but npm-coupled), `config.ts` `PROXY_BASE` (Vite `import.meta.env`); ldnmxx-hack `workersAiProvider` (`ai.run` binding), `Env`/secrets, Arize trace, CORS proxy.
 **Packaging decision (open):** npm package `@qte77/a2ui-agui` vs monorepo; zod-core vs dep-free-core. Do this **after** #210.
 
 ## 🗺️ Source map — Wave 0: #209 paged turn-history
@@ -112,7 +112,7 @@ workflows) rather than more agent work.
 ## Verification (per wave)
 
 - Code waves: `cd ui && npm run typecheck && lint && test` green (new-module tests Red-first); `npm run build` (+ code-split marker check for #121); live E2E via patchright (polyfetch venv, `ui/.env` prefill) for #210/#209.
-- #210: assert first-valid-wins + fall-through-on-trigger + winner-in-history via mocked `runLiveAgent` (mirror ldnmxx tests); live: force a 429/bad-model and confirm fall-through + EventStream note.
+- #210: assert first-valid-wins + fall-through-on-trigger + winner-in-history via mocked `runLiveAgent` (mirror ldnmxx-hack tests); live: force a 429/bad-model and confirm fall-through + EventStream note.
 - Sec: BYOK keys stay client-side (never in transcript/log/lib data); worker holds no secret; validate at the `A2UIMessageBatchSchema` seam.
 
 ## Constraints / workflow

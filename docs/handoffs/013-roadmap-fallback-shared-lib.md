@@ -4,7 +4,7 @@ status: planned
 issues: [210, 211, 209, 206, 185, 165, 156, 132, 121, 120, 119, 102]
 plan: plans/013-roadmap-fallback-shared-lib.md
 title: Handoff 013 — Roadmap: fall-through chain + shared a2ui/agui library + backlog waves
-description: Prioritized cross-repo roadmap. #210 = adopt ldnmxx's first-valid-wins model fall-through into agenthud's browser BYOK; #211 = extract a shared @qte77/a2ui-agui library after aligning both repos' protocol surface. Plan 013 carries the full two-repo source map — execute wave-by-wave, plan-mode + TDD each.
+description: Prioritized cross-repo roadmap. #210 = adopt ldnmxx-hack's first-valid-wins model fall-through into agenthud's browser BYOK; #211 = extract a shared @qte77/a2ui-agui library after aligning both repos' protocol surface. Plan 013 carries the full two-repo source map — execute wave-by-wave, plan-mode + TDD each.
 ---
 
 # Handoff 013 — Roadmap: fall-through chain + shared a2ui/agui library + backlog
@@ -38,7 +38,7 @@ a2ui/agui library). Source analysis lives in `/workspaces/temp/docs/a2ui-model-f
   keep the **winner's** summary in `messagesRef` (no double-append). Reuse `A2UIMessageBatchSchema` +
   the `a2uiComponentCount` gate — don't add a parallel validator.
 - **#211:** packaging (npm vs monorepo) · zod-core vs dep-free-core · reconcile agenthud's cycle-checked,
-  broader zod schema with ldnmxx's dep-free `isSelfContainedBatch` (no cycle, begin/surfaceUpdate-only).
+  broader zod schema with ldnmxx-hack's dep-free `isSelfContainedBatch` (no cycle, begin/surfaceUpdate-only).
 
 ## Discipline (standing working agreement)
 
