@@ -126,8 +126,9 @@ Cheapest origin-root wins first (one PR in `qte77/qte77.github.io` → merge →
 batch (PR here → `wrangler deploy`), then in-page, then external. **Tick each item in the PR that ships
 it.**
 
-1. [ ] **Fix llms.txt dead links** — drop the raw `/mcp` POST URL (it 404s on a GET probe); repoint the
+1. [x] **Fix llms.txt dead links** — drop the raw `/mcp` POST URL (it 404s on a GET probe); repoint the
    GitHub-blob links to published/raw content. (origin) — *quick, and it's an active `-2pt` failure.*
+   *Done 2026-09-01 in qte77/qte77.github.io#58 (merged); not rescanned since.*
 2. [ ] **`/auth.md`** (WorkOS sections: Discover · Pick a method · Register · Claim · Use · Errors ·
    Revocation) **+ `/.well-known/oauth-protected-resource`** JSON. (origin) — *the Auth goal is the
    lowest-scoring; biggest single cluster left that's static.*
