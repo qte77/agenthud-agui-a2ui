@@ -52,7 +52,7 @@ reunifying. This plan clusters all open issues + these two initiatives by ROI ×
 
 | Wave | Items | ROI | Feasibility |
 |---|---|---|---|
-| **0 — quick wins (teed up)** | ~~#121 vendor chunking~~ ✅ · ~~#209 paged history~~ ✅ · ~~README GIF de-icon~~ (never had a real PR — drop) · #120 vitest types (open) | Low–Med / **Med-High** (#209) | **High** |
+| **0 — quick wins (teed up)** | ~~#121 vendor chunking~~ ✅ · ~~#209 paged history~~ ✅ · ~~README GIF de-icon~~ (never had a real PR — drop) · ~~#120 vitest types~~ ✅ (`tsconfig.test.json`) | Low–Med / **Med-High** (#209) | **High** |
 | **1 — live-agent reliability (core)** | #185 AI SDK v7 (open, untouched) → ~~**#210 fall-through chain**~~ ✅ (+ #165 model-list refresh — recurring, see config.ts date-refresh) | **High** | Med |
 | **2 — shared a2ui/agui library** | **#211** align validators/prompts/registry → extract `@qte77/a2ui-agui` → migrate both repos — **still fully open, zero progress** | Med-High (strategic) | Med-Low |
 | **3 — fidelity & hygiene** | ~~#206 dataModelUpdate~~ ✅ · #132 config naming (open) · #119 coverage thresholds (open) · #102 reusable release workflows (open on GitHub, likely superseded by the adopted manual-bump/auto-tag flow — flag to owner) | Low–Med | Med |

@@ -20,8 +20,9 @@ ui/
 
 - **Why:** mirrors the `ui/` package layout used across qte77 repos (e.g. `qte77/paperverse`),
   keeping `src/` free of test files and all test code in one place.
-- **Config:** `ui/tsconfig.app.json` includes both `src` and `tests` so test type errors are
-  caught; `ui/vite.config.ts` sets `setupFiles: ["tests/setup.ts"]`. Tests never reach `dist/`
+- **Config:** `ui/tsconfig.app.json` covers `src` only; `ui/tsconfig.test.json` covers `tests`
+  and is the only project with `vitest/globals` types, so `describe`/`expect`/`vi` are a type error
+  in source files while test type errors are still caught by `tsc -b`. `ui/vite.config.ts` sets `setupFiles: ["tests/setup.ts"]`. Tests never reach `dist/`
   — `tsc -b` is `noEmit` and Vite bundles only *imported* files.
 
 ## Vitest is layout-agnostic
