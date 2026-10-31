@@ -148,7 +148,7 @@ it.**
 
 ## Estate pattern
 
-Bank these as a reusable **baseline** in `qte77/__repo-baseline` (L2), generated via
+Bank these as a reusable **baseline** in a private repo-baseline template (L2), generated via
 `qte77/gha-llms-txt-action`, with an estate-wide skills index from `qte77/gha-repo-index`; backport the
 Worker pattern to `sortmy.london` (ldnmxx-hack); consolidate the shared A2UI contract + reusable MCP tool
 factories into `@qte77/a2ui-agui-kit` (arc 018).

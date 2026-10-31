@@ -45,7 +45,7 @@ Browser "Free (no key)" mode                      Worker  POST /agent/render
                                                       7. return {a2uiMessages} | deterministic stub | error JSON
 ```
 
-One-shot JSON (not ldnmxx's SSE) — the render is atomic anyway (`SurfaceSkeleton` covers the wait), and
+One-shot JSON (not ldnmxx-hack's SSE) — the render is atomic anyway (`SurfaceSkeleton` covers the wait), and
 `applyA2UIEvent` re-validates any batch regardless of source, so turn-memory/snapshot/#209 pager/transcript
 all work **unchanged**. The worker owns the multi-provider fall-through, so the browser's `candidateModels`
 loop is bypassed in keyless mode.
@@ -53,7 +53,7 @@ loop is bypassed in keyless mode.
 ## Security must-haves (all in the launch)
 
 1. **Free-ids-only, enforced in code** (primary, $0 ceiling): reject any model id not ending `:free`
-   (Workers AI is inherently free); **ignore** any client-supplied model. ldnmxx has this by list-convention
+   (Workers AI is inherently free); **ignore** any client-supplied model. ldnmxx-hack has this by list-convention
    only — we add an `assertFreeId` guard.
 2. **Turnstile**: widget on the page (Free mode only), server-side `siteverify` before any model call.
 3. **Tight per-IP limit** for `/agent/render`: a **second** `[[ratelimits]]` namespace (`FREE_RATE_LIMITER`,
@@ -128,7 +128,7 @@ choreography JSON, card builders/stub source (`worker/src/a2ui/cards.ts` — age
 **Reuse from ui/src (lift the dep-free cycle-check into the worker — this is #211's smallest step):**
 - `ui/src/agent/contract.ts` — `A2UIMessageBatchSchema` (:142-146); **dep-free plain-TS** `extractChildIds`
   (:87-104), `buildComponentGraph` (:107-116), `hasComponentCycle` (:119-139) → copy into
-  `worker/src/agent/contract.ts` as the worker validator (self-contained + acyclic; stronger than ldnmxx's
+  `worker/src/agent/contract.ts` as the worker validator (self-contained + acyclic; stronger than ldnmxx-hack's
   `isSelfContainedBatch`). Schemas at :23-72.
 - `ui/src/agent/prompts.ts` — `SYSTEM_PROMPT` (:18-46, ~3.5 KB) + `RENDER_UI_TOOL_DESCRIPTION` (:14-16) →
   copy into `worker/src/agent/prompts.ts` (worker OWNS the prompt — never trust a client-sent system prompt
@@ -204,7 +204,7 @@ set +a; wrangler deploy --cwd worker`. Deploy recipe + token auth already in `wo
   grep the key never appears in any response/log path.
 - **Endpoint (pre-UI):** `curl -X POST …/agent/render` — valid mock token → batch; bad/absent token → 403;
   non-`:free` model → rejected; oversized body → 413; spoofed Origin + no token → 403.
-- **E2E (patchright, after deploy — dev on :5174, note the stale ldnmxx server may hold :5173):** Free mode →
+- **E2E (patchright, after deploy — dev on :5174, note the stale ldnmxx-hack server may hold :5173):** Free mode →
   Turnstile solves → Run → `.a2ui-surface .qte-card` renders, 0 console errors, **key absent from network/DOM**;
   force provider failure → deterministic stub, not a crash.
 

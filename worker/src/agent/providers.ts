@@ -15,7 +15,7 @@ import { callRenderModel, toResult, type ModelResult, type ORResponse } from "./
 export const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 // Defaults are tuning knobs (overridable via env) — a wrong pick is non-fatal (the chain falls
-// through to the next id/tier, then the stub). Carried from ldnmxx (verified 2026-07-08); REFRESH
+// through to the next id/tier, then the stub). Carried from ldnmxx-hack (verified 2026-07-08); REFRESH
 // against OpenRouter's live `:free` + tool-capable list at deploy time.
 export const DEFAULT_WORKERS_AI_MODEL = "@cf/openai/gpt-oss-120b";
 export const DEFAULT_OPENROUTER_FREE_MODELS = [

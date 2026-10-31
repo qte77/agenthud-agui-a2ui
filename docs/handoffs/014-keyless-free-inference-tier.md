@@ -22,7 +22,7 @@ reverses the long-deferred US-6 "keyless" decision on purpose, with hardening th
 
 ## Do this — in order (each its own branch + PR; user merges)
 
-1. **PR1 `feat/worker-keyless-freechain` (worker; TDD-heavy).** Port ldnmxx's pure kernel into `worker/src/`
+1. **PR1 `feat/worker-keyless-freechain` (worker; TDD-heavy).** Port ldnmxx-hack's pure kernel into `worker/src/`
    (`model.ts`, `providers.ts`, a dep-free `contract.ts` validator lifted from `ui/src/agent/contract.ts:87-139`,
    `prompts.ts` copied, `turnstile.ts`) + a `/agent/render` branch in `worker.ts` inserted **after the
    rate-limit gate (:86), before `resolveUpstream` (:88)**. Extend `Env` (router.ts) + `wrangler.toml`
@@ -43,12 +43,12 @@ reverses the long-deferred US-6 "keyless" decision on purpose, with hardening th
 - **Option B, not A** (the KISS key-injecting proxy was offered and declined) — the worker owns the chain.
 - **Providers:** Workers AI first (truly $0, spares OpenRouter quota) → OpenRouter `:free`. **Drop GitHub
   Models** (retired 2026-07-30, just removed in #165 — do NOT re-add).
-- **One-shot JSON** response (not ldnmxx's SSE) — render is atomic; browser synthesizes the events.
+- **One-shot JSON** response (not ldnmxx-hack's SSE) — render is atomic; browser synthesizes the events.
 - **Worker owns the system prompt** (copied from `ui/src/agent/prompts.ts`) — never trust a client-sent prompt.
 - **Free-ids-only enforced in code** (`assertFreeId`, reject non-`:free` + ignore client model) = the $0 lock.
 - **Turnstile in the launch** (siteverify server-side) — the accepted answer to the Origin-spoof abuse gap.
 - **Dep-free validator lifted into the worker = #211's smallest step** (agenthud's cycle-check is stronger
-  than ldnmxx's `isSelfContainedBatch`).
+  than ldnmxx-hack's `isSelfContainedBatch`).
 
 ## Sub-decisions to make DURING implementation (small)
 
@@ -72,7 +72,7 @@ branch per PR; conventional commits; push + PR with `env -u GH_TOKEN -u GITHUB_T
 - **`worker/.env`** holds the Cloudflare deploy token + account id (auth works when loaded from the worker
   cwd). Run the local binary `worker/node_modules/.bin/wrangler` (or `--cwd worker`), **not `npx`** (RTK hook
   mangles it).
-- **Workers AI `.bind()` gotcha** (ldnmxx providers.ts:77-81): a detached `env.AI.run` throws — bind it.
+- **Workers AI `.bind()` gotcha** (ldnmxx-hack providers.ts:77-81): a detached `env.AI.run` throws — bind it.
 - Sandbox: no pipes / `grep` / compound bash; use Read/node. gh needs `env -u GH_TOKEN -u GITHUB_TOKEN`.
 
 ## Verification
