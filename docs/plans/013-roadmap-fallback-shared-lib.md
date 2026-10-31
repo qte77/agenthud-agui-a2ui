@@ -55,7 +55,7 @@ reunifying. This plan clusters all open issues + these two initiatives by ROI ×
 | **0 — quick wins (teed up)** | ~~#121 vendor chunking~~ ✅ · ~~#209 paged history~~ ✅ · ~~README GIF de-icon~~ (never had a real PR — drop) · ~~#120 vitest types~~ ✅ (`tsconfig.test.json`) | Low–Med / **Med-High** (#209) | **High** |
 | **1 — live-agent reliability (core)** | #185 AI SDK v7 (open, untouched) → ~~**#210 fall-through chain**~~ ✅ (+ #165 model-list refresh — recurring, see config.ts date-refresh) | **High** | Med |
 | **2 — shared a2ui/agui library** | **#211** align validators/prompts/registry → extract `@qte77/a2ui-agui` → migrate both repos — **still fully open, zero progress** | Med-High (strategic) | Med-Low |
-| **3 — fidelity & hygiene** | ~~#206 dataModelUpdate~~ ✅ · #132 config naming (open) · #119 coverage thresholds (open) · #102 reusable release workflows (open on GitHub, likely superseded by the adopted manual-bump/auto-tag flow — flag to owner) | Low–Med | Med |
+| **3 — fidelity & hygiene** | ~~#206 dataModelUpdate~~ ✅ · ~~#132 config naming~~ ✅ (architecture.md "Where config lives") · #119 coverage thresholds (open) · #102 reusable release workflows (open on GitHub, likely superseded by the adopted manual-bump/auto-tag flow — flag to owner) | Low–Med | Med |
 | **Deferred** | #156 Mode B speculative pre-render (correctly still open/deferred) | Med | Low (YAGNI) |
 
 Recommended order (2026-08-26): Waves 0 and 1's core items (#121/#209/#210) are done — only #120,
