@@ -76,6 +76,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (all transitive devDependencies pulled in by `wrangler`; no runtime/production impact) — `wrangler`
   4.125.0 → 4.151.1, plus `miniflare`/`sharp`/`undici`/`brace-expansion`/`source-map-js` bumps within
   existing semver ranges. `worker` `npm audit`: 6 high → 0 (#296).
+- `ui/package.json`, `ui/package-lock.json`: **forced the nested `zod` copies under `@a2ui/react`,
+  `@a2ui/web_core` and `@ag-ui/core` onto the already-patched top-level `zod` via a new npm
+  `overrides` entry (`"zod": "$zod"`)** — those three transitive copies were pinned at `3.25.76`,
+  below [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) (high; first patched
+  `4.6.6`); no `zod` 3.x release fixes it, and the latest `@a2ui/react`/`@a2ui/web_core` (`0.15.0`)
+  still declare `zod` `^3.25.76`, so no upstream release clears this either. `npm ls zod` now resolves
+  a single `4.6.7` copy everywhere (clears Dependabot alert #106).
 
 ## [0.5.0] - 2026-08-25
 
