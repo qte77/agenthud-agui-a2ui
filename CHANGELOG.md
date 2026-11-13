@@ -85,6 +85,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `4.6.6`); no `zod` 3.x release fixes it, and the latest `@a2ui/react`/`@a2ui/web_core` (`0.15.0`)
   still declare `zod` `^3.25.76`, so no upstream release clears this either. `npm ls zod` now resolves
   a single `4.6.7` copy everywhere (clears Dependabot alert #106).
+- `shared/package.json`, `shared/package-lock.json`: **`vite` forced to `8.2.4` via a new npm
+  `overrides` entry** (transitive, pulled in only by `vitest`'s own `^6.0.0 || ^7.0.0 || ^8.0.0`
+  range — no direct dependency to bump). Fixes
+  [GHSA-587h-7wmj-h5pm](https://github.com/advisories/GHSA-587h-7wmj-h5pm) (high) and five other
+  `vite` advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, GHSA-vfpm-58rq-9qcg,
+  GHSA-r825-w8mm-5pxw, GHSA-698v-4r3x-3vcv) in `shared/package-lock.json` (Dependabot alerts
+  #89/#100/#98/#96/#91/#87). `minimatch` and `@vitest/mocker` (moderate, also open in
+  `shared/`/`ui/`/`worker/`) are left for a follow-up — both need a devDependency major bump
+  rather than a same-range update.
 
 ## [0.5.0] - 2026-08-25
 
