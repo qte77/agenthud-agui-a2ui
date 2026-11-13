@@ -19,7 +19,8 @@
     "test:watch": "vitest"
   },
   "overrides": {
-    "@a2ui/web_core": "^0.10.2"
+    "@a2ui/web_core": "^0.10.2",
+    "zod": "$zod"
   },
   "dependencies": {
     "@a2ui/react": "^0.10.2",
