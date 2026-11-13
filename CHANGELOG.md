@@ -66,6 +66,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Security
 
+- worker: bump `wrangler` to ^4.161.0, which pulls `undici` 7.30.1 (via `miniflare`) and closes
+  GHSA-2m5v-pch6-74hx and the other open `undici` alerts in `worker/package-lock.json`.
 - `ui/package-lock.json`, `ui/package.json`: **`@a2ui/web_core` pinned to the patched `^0.10.2` line
   via an npm `overrides` entry**, deduping a stray vulnerable `0.9.2` copy (installed only as a
   type-only peer of `@a2ui/markdown-it`) onto `@a2ui/react`'s own already-patched copy — fixes
