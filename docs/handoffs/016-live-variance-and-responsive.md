@@ -38,7 +38,7 @@ ADR-0003 escalation. Prefer looking for a framing/seam bug before blaming the mo
 
 ## How to handle it (the loop)
 - Strict TDD for module logic only; layout / prompt / config changes are verified by effect.
-- Topical branch off fresh `origin/main`; `env -u GH_TOKEN -u GITHUB_TOKEN gh …`; gates green →
+- Topical branch off fresh `origin/main`; authenticate git/gh as this machine requires; gates green →
   squash-merge → delete branch; then progress report + docs/issues audit.
 - **Sign every commit:** `git -c commit.gpgsign=true commit -S …`. The repo-local
   `commit.gpgsign=false` otherwise yields an unsigned commit and the merge fails with an unhelpful

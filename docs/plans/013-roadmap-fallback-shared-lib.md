@@ -117,6 +117,6 @@ workflows) rather than more agent work.
 
 ## Constraints / workflow
 
-KISS/DRY/YAGNI/AHA; new branch per topic; conventional commits; squash-merge on green CI (unset
-`GH_TOKEN`/`GITHUB_TOKEN`); plan-mode before implementing each wave; the user KISS-challenges scope via
+KISS/DRY/YAGNI/AHA; new branch per topic; conventional commits; squash-merge on green CI; plan-mode
+before implementing each wave; the user KISS-challenges scope via
 AskUserQuestion.

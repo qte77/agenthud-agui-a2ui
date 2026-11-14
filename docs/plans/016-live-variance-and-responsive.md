@@ -76,7 +76,7 @@ root cause behind the whole of arc 015's "variance".
 ## Working agreement (unchanged from 015)
 - **Strict TDD for module logic only** — failing behavior test FIRST. Prompt / recording / config /
   layout changes are verified **by effect** (E2E / render), never a unit test.
-- Topical branch off fresh `origin/main`; `unset GH_TOKEN GITHUB_TOKEN` for gh; gates
+- Topical branch off fresh `origin/main`; authenticate git/gh as this machine requires; gates
   (`npm --prefix ui run typecheck && … lint && … test`) green → squash-merge → delete branch.
 - **Commits must be signed** — the ruleset requires it and a repo-local `commit.gpgsign=false`
   silently produces unsigned commits: use `git -c commit.gpgsign=true commit -S`. The resulting

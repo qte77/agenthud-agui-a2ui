@@ -193,7 +193,7 @@ New/changed `worker/src/`:
 
 `wrangler secret put OPENROUTER_KEY` + `TURNSTILE_SECRET` (prod **and** `--env dev`); create the Turnstile
 widget (`turnstile-spin` skill → site key into `ui/.env`/CI, secret into the worker); `set -a; . worker/.env;
-set +a; wrangler deploy --cwd worker`. Deploy recipe + token auth already in `worker/.env`.
+set +a; wrangler deploy --cwd worker`. Deploy credentials are set up per the deploy docs.
 
 ## Verification
 
@@ -211,7 +211,7 @@ set +a; wrangler deploy --cwd worker`. Deploy recipe + token auth already in `wo
 ## Constraints / workflow
 
 Branch per PR off `main`; **strict TDD Red-first** for the pure kernel + event-synth (user checks Red);
-**no unit tests** for wiring/config/UI/wrangler. KISS/DRY/YAGNI. Conventional commits; push + PR with
-`env -u GH_TOKEN -u GITHUB_TOKEN`; **user merges** (agent PR-merge blocked). Deploy is a separate
+**no unit tests** for wiring/config/UI/wrangler. KISS/DRY/YAGNI. Conventional commits; push + PR
+authenticated as this machine requires; **user merges** (merging is an owner gate). Deploy is a separate
 authenticated step the user runs. Relationship to #211: the worker's dep-free validator + copied prompt are
 the seams #211 will later unify into `@qte77/a2ui-agui`.

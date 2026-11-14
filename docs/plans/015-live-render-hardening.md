@@ -8,6 +8,8 @@ handoff: handoffs/015-live-render-hardening.md
 successor: plans/016-live-variance-and-responsive.md
 ---
 
+> **Closed plan, kept as a record.** Commands in it are one machine's history, not procedure; for current steps see the repo's CONTRIBUTING and the newest plan.
+>
 > **Closed 2026-07-25.** Open thread #1 was verified by effect and resolved — see
 > "E2E outcome" below. The remainder moved to [plan 016][p016].
 

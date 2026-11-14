@@ -24,6 +24,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `docs/plans/`, `docs/handoffs/` (012–017, 019): neutralized operator-specific wording in the older
+  plan/handoff docs — merge-bypass flags, signing-bypass flags, and token-env-unset recipes rewritten
+  to describe the gate/requirement instead of the exact command, and closed plan/handoff 015 (which
+  already carried its own closure note) got the standard "closed plan, kept as a record" banner. Part
+  of the estate-wide clean-up tracked in `ai-agents-research` plan 0013, row O4.
 - New `shared/` package (`@agenthud/shared`, first cross-package dependency in this repo, added via
   `file:../shared` in both `worker/package.json` and `ui/package.json`): unifies the `SYSTEM_PROMPT`
   / `RENDER_UI_TOOL_DESCRIPTION` text (byte-identical strings independently duplicated between
