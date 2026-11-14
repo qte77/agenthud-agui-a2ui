@@ -72,6 +72,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `@vitest/coverage-v8` npm-group bump (PR #327) — `@vitest/coverage-v8@5.1.0` requires its exact
   `vitest@5.1.0` peer, which the group bump didn't move, breaking `npm ci` with `ERESOLVE`. No test
   or config changes needed; typecheck, lint, test and coverage (thresholds unchanged) all pass.
+- `ui/package.json`, `ui/package-lock.json`: **`vitest` moved to `^5.1.0`** for the same reason in
+  the ui npm-group bump (PR #328, 16 updates incl. `@ag-ui/core` 1.0.4 and `jsdom` 31). No test or
+  config changes needed; typecheck, lint, 177 tests with coverage (thresholds unchanged) and build pass.
 
 ### Security
 
