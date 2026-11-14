@@ -63,6 +63,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   been, since 0.4.0); `docs/UserStory.md` no longer cites a nonexistent `pages.yml` workflow file
   (the real one is `gh-pages.yml`); `docs/plans/017`'s remaining-work table no longer lists 11
   already-shipped rows as open.
+- `worker/package.json`, `worker/package-lock.json`: **`vitest` moved to `^5.1.0`** alongside the
+  `@vitest/coverage-v8` npm-group bump (PR #327) — `@vitest/coverage-v8@5.1.0` requires its exact
+  `vitest@5.1.0` peer, which the group bump didn't move, breaking `npm ci` with `ERESOLVE`. No test
+  or config changes needed; typecheck, lint, test and coverage (thresholds unchanged) all pass.
 
 ### Security
 
