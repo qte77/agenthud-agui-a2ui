@@ -37,8 +37,8 @@ Also cleared this session: **Dependabot backlog 9 → 3** (merged #244/#247/#230
 
 ## What's next (in order)
 
-1. **Open the PR** for `feat/017` (if not already), CI green → **owner squash-merge** (this repo's
-   convention is human merge; the GPG gotcha below may force `--admin`). This is the only Phase-1 gate.
+1. **Open the PR** for `feat/017` (if not already); merge once CI passes — this repo's
+   convention is human merge. This is the only Phase-1 gate.
 2. **After merge:** rebase/sweep dependabot **#253 / #251** (they touch `worker/package.json`).
 3. **Track 2 — origin-root discovery** (repo `qte77/qte77.github.io`, checked out at
    `/workspaces/qte77/qte77.github.io`). Per the `ora-readiness` scout: highest ROI is the Phase-1
@@ -75,8 +75,8 @@ npm run deploy --prefix worker -- --dry-run --outdir /tmp/wr   # bundle check (n
 
 ## Watch-outs (verified this session)
 
-- `env -u GH_TOKEN -u GITHUB_TOKEN` on **every** git/gh call (else 401).
-- `-c commit.gpgsign=false` on commits (no GPG secret key here); owner signs/`--admin`-merges the PR.
+- Authenticate git/gh as this machine requires on **every** call (else 401).
+- Commit per the repo's signing policy (no GPG secret key here); merging is an owner gate.
 - `/workspaces` disk runs tight (~400 MB free) — no stray `npm install`/large clones; `agents` was
   pruned to reclaim space.
 - Sandbox blocks Bash pipes / `;` / `&&` — one simple command per call; use `gh --json … --jq`.

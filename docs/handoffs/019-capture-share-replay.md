@@ -43,15 +43,13 @@ it's row 1 of the remaining-work table.
 
 ## Owner-gates
 - Phase 0+1's gate is CLOSED (PR #260 merged). Next gate: review + merge whatever PR carries Phase 2/3
-  (agent `gh pr merge` is classifier-blocked for large PRs → owner runs
-  `!env -u GH_TOKEN -u GITHUB_TOKEN gh pr merge <n> --squash --admin --delete-branch`; small
-  docs/dependabot PRs pass for the agent — confirmed this session on #253; #251 was auto-closed by
-  dependabot as redundant once #253 merged, no admin needed).
+  (merging is an owner gate; small docs/dependabot PRs pass for the agent — confirmed this session on
+  #253; #251 was auto-closed by dependabot as redundant once #253 merged, no admin needed).
 
 ## Watch-outs
 - **Subagents for this arc MUST use worktree isolation** (`Agent` tool `isolation: "worktree"`) — parallel
   `ui/` edits collide otherwise.
-- `env -u GH_TOKEN -u GITHUB_TOKEN` on every git/gh; `-c commit.gpgsign=false` (no GPG key); sandbox blocks
+- Authenticate git/gh as this machine requires; commit per the repo's signing policy (no GPG key); sandbox blocks
   Bash pipes/`;`/`&&` (wrap in `bash -c '…'`); use `node -e` for fetches (no curl/polyfetch — venv deleted).
 - Phase 3 is **unblocked** now (arc 017's `/a2a` is live + verified at
   `https://agenthud-proxy.<account>.workers.dev (now agenthud-api.abizz.dev)/a2a`).

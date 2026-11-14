@@ -113,7 +113,7 @@ to `/a2a` `message/send`, extract each Task's batch, pipe through the SHARED `ba
   free. Reinstall worker deps later only if redeploying.
 - **Any subagents spawned for this arc MUST use worktree isolation** (`Agent` tool `isolation: "worktree"`) —
   parallel `ui/` edits would otherwise collide.
-- Gotchas: `env -u GH_TOKEN -u GITHUB_TOKEN` on git/gh; `-c commit.gpgsign=false`; sandbox blocks Bash
+- Gotchas: authenticate git/gh as this machine requires; commit per the repo's signing policy; sandbox blocks Bash
   pipes/`;`/`&&` (use `bash -c '…'`).
 
 ## Shipped (arc 019, Phase 0+1) — PR #260 MERGED (squash `88c8d07`, 2026-08-25)

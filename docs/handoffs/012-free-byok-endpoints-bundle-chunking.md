@@ -37,14 +37,14 @@ AGENTS.md). Approach + exact edits are in plan 012 §"#187 changes" and §"#121 
   §Verification): `streamText`/`createOpenAI` must appear ONLY in `LiveDashboard-*.js`. Mandatory.
 - **#187 — forced `tool_choice` is the gotcha.** `render_ui` uses `toolChoice:{type:"tool"}` +
   `stepCountIs(1)`. Not every free model honors forced tool_choice. **Smoke-test each pick live**
-  (patchright + the OpenRouter key in `ui/.env`) and **drop any that fail** — don't ship a model that
+  (patchright + the key already set up per the testing docs) and **drop any that fail** — don't ship a model that
   reproduces the 401-class dead end. Cerebras render is optional (needs a Cerebras free key; endpoint +
   CORS are already verified).
 
 ## Guardrails
 
-- Branch off `main`; push/PR with `env -u GH_TOKEN -u GITHUB_TOKEN`.
-- **Do not merge** — the auto-mode classifier blocks agent PR merges; open the PR, report, the human
+- Branch off `main`; push/PR authenticated as this machine requires.
+- **Do not merge** — merging is an owner gate; open the PR, report, the human
   merges. (Note: PRs #204/#205 for #195 may still be awaiting merge; 012's PRs are independent of them.)
 - Model ids drift — keep the `verified 2026-07-08` dates; confirm Cerebras ids vs its docs at build time.
 
