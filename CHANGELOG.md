@@ -94,6 +94,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   #89/#100/#98/#96/#91/#87). `minimatch` and `@vitest/mocker` (moderate, also open in
   `shared/`/`ui/`/`worker/`) are left for a follow-up — both need a devDependency major bump
   rather than a same-range update.
+- `shared/`, `ui/`, `worker/` `package.json` and lockfiles: **that follow-up** (#331). `minimatch`
+  forced to `11.0.1` via npm `overrides` in all three packages
+  ([GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249), Dependabot alerts
+  #118-#120), and `vitest` / `@vitest/coverage-v8` raised to `^4.1.12` in `ui/` and `worker/`
+  (resolved within range in `shared/`), which brings `@vitest/mocker` to `4.1.12`
+  ([GHSA-xp26-3454-mjgp](https://github.com/advisories/GHSA-xp26-3454-mjgp),
+  [GHSA-qxg6-89mg-rqv8](https://github.com/advisories/GHSA-qxg6-89mg-rqv8), alerts #101-#105, #107).
 
 ## [0.5.0] - 2026-08-25
 
