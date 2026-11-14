@@ -26,7 +26,7 @@ verified-2026-07-08 external data (OpenRouter free-model scan, Cerebras CORS pro
 RE-VERIFIED before implementing, since ~7 weeks have passed and ids/CORS posture can drift.
 
 Two independent PRs, each its own branch off `main`, gates green, squash-merge (**user runs the merge** —
-the auto-mode classifier blocks agent-authored PR merges). Neither is TDD-shaped: #187 is config data
+merging is an owner gate). Neither is TDD-shaped: #187 is config data
 (verify by build/E2E), #121 is build config (verify by build + the code-split marker check). No unit tests.
 
 ## Context
@@ -161,11 +161,11 @@ dev server → Live (connection prefilled) → set model to `openai/gpt-oss-120b
 → Run → assert a surface renders (forced `toolChoice` + `stepCountIs(1)` completes). **Drop any free id
 that fails forced tool_choice.** Cerebras render needs a Cerebras free key (optional — endpoint + CORS are
 already verified; note this in the PR). Patchright is driven via `uv run --directory
-/workspaces/qte77/polyfetch-scrape python <script.py>`; the existing `.env` holds an OpenRouter key.
+/workspaces/qte77/polyfetch-scrape python <script.py>`; the existing `.env` is already set up per the testing docs.
 
 ## Guardrails / workflow
 
 - Branch off `main`; `feat/187-free-byok-endpoints` and `chore/121-vendor-chunking`.
-- `git push`/`gh pr create` with **`env -u GH_TOKEN -u GITHUB_TOKEN`** (repo token workflow).
-- **Do not attempt to merge** — the classifier denies agent PR merges; open PR + report, the human merges.
+- `git push`/`gh pr create`, authenticated as this machine requires (repo token workflow).
+- **Do not attempt to merge** — merging is an owner gate; open PR + report, the human merges.
 - KISS/YAGNI: no unit tests for config/build; minimal diffs.

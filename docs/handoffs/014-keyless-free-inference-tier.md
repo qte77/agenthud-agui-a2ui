@@ -63,17 +63,17 @@ Plan-mode already done → go straight to PR1 RED. **Strict TDD Red-first for th
 only** (user checks Red); **no unit tests** for wiring/config/UI/wrangler (verify by build + curl + E2E).
 Strict lint (complexity ≤12, `exactOptionalPropertyTypes`) + **sec**: the key lives only in the upstream
 `authorization` header — never in a response/transcript/error/`console.*` (observability logs 100%). New
-branch per PR; conventional commits; push + PR with `env -u GH_TOKEN -u GITHUB_TOKEN`; **user merges**.
+branch per PR; conventional commits; push + PR authenticated as this machine requires; **user merges**.
 
 ## Env gotchas
 
 - **Dev server is on :5174** — a stale ldnmxx-hack dev server may hold :5173 (its app is "Founder's
   Copilot / Groundwork", NOT agenthud). Check `npm --prefix ui run dev` output for the real port.
-- **`worker/.env`** holds the Cloudflare deploy token + account id (auth works when loaded from the worker
+- Deploy credentials are set up per the deploy docs (auth works when loaded from the worker
   cwd). Run the local binary `worker/node_modules/.bin/wrangler` (or `--cwd worker`), **not `npx`** (RTK hook
   mangles it).
 - **Workers AI `.bind()` gotcha** (ldnmxx-hack providers.ts:77-81): a detached `env.AI.run` throws — bind it.
-- Sandbox: no pipes / `grep` / compound bash; use Read/node. gh needs `env -u GH_TOKEN -u GITHUB_TOKEN`.
+- Sandbox: no pipes / `grep` / compound bash; use Read/node. gh needs to authenticate as this machine requires.
 
 ## Verification
 
