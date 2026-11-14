@@ -8,6 +8,8 @@ title: Handoff 015 — Live-path render hardening + re-baseline
 description: Onboards the next (unattended) session to the verified-working live A2UI render path, the code map, open threads, and the working agreement.
 ---
 
+> **Closed plan, kept as a record.** Commands in it are one machine's history, not procedure; for current steps see the repo's CONTRIBUTING and the newest plan.
+
 # Handoff 015 — Live-path render hardening + re-baseline
 
 > **Closed 2026-07-25 — superseded by [handoff 016][h016].** Its open thread #1 turned out to be a

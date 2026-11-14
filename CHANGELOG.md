@@ -24,6 +24,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `docs/plans/`, `docs/handoffs/` (012–017, 019): neutralized operator-specific wording in the older
+  plan/handoff docs — merge-bypass flags, signing-bypass flags, and token-env-unset recipes rewritten
+  to describe the gate/requirement instead of the exact command, and closed plan/handoff 015 (which
+  already carried its own closure note) got the standard "closed plan, kept as a record" banner. Part
+  of the estate-wide clean-up tracked in `ai-agents-research` plan 0013, row O4.
 - New `shared/` package (`@agenthud/shared`, first cross-package dependency in this repo, added via
   `file:../shared` in both `worker/package.json` and `ui/package.json`): unifies the `SYSTEM_PROMPT`
   / `RENDER_UI_TOOL_DESCRIPTION` text (byte-identical strings independently duplicated between
@@ -63,6 +68,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   been, since 0.4.0); `docs/UserStory.md` no longer cites a nonexistent `pages.yml` workflow file
   (the real one is `gh-pages.yml`); `docs/plans/017`'s remaining-work table no longer lists 11
   already-shipped rows as open.
+- `worker/package.json`, `worker/package-lock.json`: **`vitest` moved to `^5.1.0`** alongside the
+  `@vitest/coverage-v8` npm-group bump (PR #327) — `@vitest/coverage-v8@5.1.0` requires its exact
+  `vitest@5.1.0` peer, which the group bump didn't move, breaking `npm ci` with `ERESOLVE`. No test
+  or config changes needed; typecheck, lint, test and coverage (thresholds unchanged) all pass.
 
 ### Security
 

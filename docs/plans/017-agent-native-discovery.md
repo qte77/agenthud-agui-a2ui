@@ -173,5 +173,5 @@ origin-root discovery files shipped in the separate `qte77/qte77.github.io` repo
 - **Deployed (Phase C):** re-run curls vs the live Worker; **polyfetch** for the deployed UI
   (console/DOM/aria/screenshots) per its USING.md.
 - **Track 2:** `POST https://ora.ai/api/scan {"url":"qte77.github.io"}` → `GET .../api/score/...`; expect ↑.
-- **Gotchas:** `env -u GH_TOKEN -u GITHUB_TOKEN` on every git/gh; `-c commit.gpgsign=false` (no secret
-  key); `/workspaces` disk ~400 MB free — no big installs; sandbox blocks Bash pipes/compound.
+- **Gotchas:** authenticate git/gh as this machine requires; commit per the repo's signing policy
+  (no secret key); `/workspaces` disk ~400 MB free — no big installs; sandbox blocks Bash pipes/compound.

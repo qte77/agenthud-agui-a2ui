@@ -48,7 +48,7 @@ a2ui/agui library). Source analysis lives in `/workspaces/temp/docs/a2ui-model-f
 - **Strict lint** (complexity ≤12, `no-unnecessary-condition`) + typing (`exactOptionalPropertyTypes`)
   + **sec** (BYOK keys stay client-side — never in transcript/log/shared-lib data; worker holds no
   secret; validate at the schema seam).
-- New branch per topic; conventional commits; squash-merge on green CI (unset `GH_TOKEN`/`GITHUB_TOKEN`).
+- New branch per topic; conventional commits; squash-merge on green CI.
   The user KISS-challenges scope via AskUserQuestion — reconcile there.
 
 ## Verification
