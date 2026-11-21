@@ -54,7 +54,8 @@ AGENT LOGIC  — LLM + orchestration (Vercel AI SDK / Google ADK / LangGraph …
 
 ## A2A — Agent2Agent
 
-- **What / who:** Google (Apr 2025); Linux Foundation (Jun 2025). Spec v0.3.0. Apache-2.0.
+- **What / who:** Google (Apr 2025); Linux Foundation (Jun 2025). Spec v1.0.0 (this Worker also
+  answers v0.3 callers). Apache-2.0.
 - **Reasoning:** agents in different frameworks/vendors could not discover or delegate to
   one another safely without custom glue.
 - **Goals:** cross-vendor discovery + secure asynchronous task delegation (minutes→days).
@@ -66,7 +67,7 @@ AGENT LOGIC  — LLM + orchestration (Vercel AI SDK / Google ADK / LangGraph …
 - **Example** — a task response:
 
   ```json
-  {"jsonrpc":"2.0","id":1,"result":{"id":"225d…","status":{"state":"submitted"},"kind":"task"}}
+  {"jsonrpc":"2.0","id":1,"result":{"task":{"id":"225d…","status":{"state":"TASK_STATE_SUBMITTED"}}}}
   ```
 
 - **Relation:** agent↔agent; complements MCP. IBM's ACP merged into A2A (Aug 2025). Can
@@ -169,7 +170,7 @@ A live **BYOK** agent (shipped) adds the **agent-logic** layer (Vercel AI SDK) e
 same AG-UI events a real agent would — the replay engine and a live SSE stream share one
 event schema. **MCP** and **A2A** are now wired at the edge: the Worker serves an **A2A Agent
 Card** (`/.well-known/agent-card.json`), a stateless **MCP** server (`/mcp` — `render_ui` +
-`validate_a2ui_batch`), and a minimal **A2A** JSON-RPC endpoint (`/a2a` — `message/send`), all
+`validate_a2ui_batch`), and a minimal **A2A** JSON-RPC endpoint (`/a2a` — `SendMessage`, plus v0.3 `message/send`), all
 wrapping the keyless render chain. See [ADR-0001][adr-0001] · [ADR-0005][adr-0005] ·
 [`worker/README.md`][worker-readme].
 

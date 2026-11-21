@@ -1,9 +1,14 @@
 /*
  * Static A2A Agent Card served at GET /.well-known/agent-card.json (public discovery document —
- * origin/rate bypass, wildcard CORS). Skills map 1:1 to the MCP tools; `url` / `supportedInterfaces`
- * point at the live `/a2a` JSON-RPC endpoint on this same Worker origin (both the a2a-js `url` +
- * `preferredTransport` form and the proto `supportedInterfaces` form are emitted for validator
- * compatibility). `documentationUrl` points at the human demo on GitHub Pages.
+ * origin/rate bypass, wildcard CORS). Skills map 1:1 to the MCP tools. `documentationUrl` points at
+ * the human demo on GitHub Pages.
+ *
+ * #278: the A2A v1.0 card form (a2aproject/A2A `specification/a2a.proto`, tag v1.0.0). The endpoint
+ * and its protocol version sit on each `supportedInterfaces` entry, and the first entry is the
+ * preferred one. The same `/a2a` JSON-RPC endpoint is listed twice: protocol 1.0 (`SendMessage`)
+ * first, then 0.3 (`message/send`, kept for existing callers). The v0.3 top-level `url`,
+ * `preferredTransport` and `protocolVersion` fields are not emitted: a strict proto-JSON parser
+ * rejects unknown fields, so a v0.3-only client that reads them no longer discovers the endpoint.
  */
 
 export interface AgentSkill {
@@ -15,17 +20,15 @@ export interface AgentSkill {
 }
 
 export interface AgentInterface {
-  transport: string;
   url: string;
+  protocolBinding: string;
+  protocolVersion: string;
 }
 
 export interface AgentCard {
-  protocolVersion: string;
   name: string;
   description: string;
   version: string;
-  url: string;
-  preferredTransport: string;
   supportedInterfaces: AgentInterface[];
   documentationUrl: string;
   provider: { organization: string; url: string };
@@ -42,15 +45,15 @@ const REPO_URL = "https://github.com/qte77/agenthud-agui-a2ui";
 export function buildAgentCard(selfOrigin: string): AgentCard {
   const a2a = `${selfOrigin}/a2a`;
   return {
-    protocolVersion: "0.3.0",
     name: "agenthud",
     description:
       "Renders live A2UI interfaces from natural-language prompts and replays AG-UI event streams. " +
       "Ask it to draw a UI and it returns an A2UI component batch.",
     version: "1.0.0",
-    url: a2a,
-    preferredTransport: "JSONRPC",
-    supportedInterfaces: [{ transport: "JSONRPC", url: a2a }],
+    supportedInterfaces: [
+      { url: a2a, protocolBinding: "JSONRPC", protocolVersion: "1.0" },
+      { url: a2a, protocolBinding: "JSONRPC", protocolVersion: "0.3" },
+    ],
     documentationUrl: DEMO_URL,
     provider: { organization: "qte77", url: REPO_URL },
     capabilities: { streaming: false, pushNotifications: false },

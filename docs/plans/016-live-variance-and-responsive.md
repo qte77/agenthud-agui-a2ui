@@ -3,7 +3,7 @@ title: Plan 016 — Live variance residue + responsive shell
 description: Code/file/source map for the remainder migrated out of arc 015 — narrow-viewport shell layout, residual multi-call model variance, and the reusable live-E2E harness.
 date: 2026-07-25
 status: open
-issues: [240, 129]
+issues: [129]
 predecessor: plans/015-live-render-hardening.md
 handoff: handoffs/016-live-variance-and-responsive.md
 ---
@@ -22,7 +22,12 @@ deploy are green again (PR #235). The two remaining failures are **not** render-
 
 ## Backlog (ordered, each with its done-when)
 
-### 1. Responsive shell — #240 (agent-runnable, highest user impact)
+### ~~1. Responsive shell — #240~~ (done: stale since #240 closed 2026-11-02)
+
+Struck 2026-11-21 (#278 PR): `ui/src/DashboardShell.tsx` on main stacks the aside below `md:` and
+uses `md:w-96` from that breakpoint up, and #240 is closed. The original item is kept below for the
+record.
+
 The A2UI surface collapses to a ~10px sliver at 390px: `ui/src/DashboardShell.tsx` renders
 `<aside className="w-96 …">` — 384px fixed at every breakpoint. Render is clean; there is simply no
 room to paint. Desktop 1280/1440 unaffected.

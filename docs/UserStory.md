@@ -207,7 +207,7 @@ protocols,
   skills, capabilities, and its A2A interface URL
 - [x] A stateless **MCP** endpoint (`POST /mcp`) exposes `render_ui` (prompt → A2UI batch) and
   `validate_a2ui_batch` (structural check → `{valid, issues}`)
-- [x] A minimal **A2A** JSON-RPC endpoint (`POST /a2a`) — `message/send` returns a completed Task
+- [x] A minimal **A2A** JSON-RPC endpoint (`POST /a2a`) — `SendMessage` (v1.0; v0.3 `message/send` too) returns a completed task
   carrying the A2UI batch as a data artifact
 - [x] Endpoints need no visitor key (reuse the keyless free chain) and bypass the browser origin
   allowlist (agents send no `Origin`)

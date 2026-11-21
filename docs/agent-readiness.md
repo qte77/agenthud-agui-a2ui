@@ -27,7 +27,8 @@ the **ora.ai / orank** agent-readiness scan of `qte77.github.io`.
   serves, alongside the BYOK relay:
   - `GET /.well-known/agent-card.json` — A2A Agent Card (skills = the MCP tools; interface → `/a2a`).
   - `POST /mcp` — stateless MCP server (`createMcpHandler`): `render_ui`, `validate_a2ui_batch`.
-  - `POST /a2a` — minimal A2A JSON-RPC; `message/send` → a completed Task carrying the A2UI batch.
+  - `POST /a2a` — minimal A2A JSON-RPC; `SendMessage` (v1.0, since #278) or `message/send` (v0.3) → a
+    completed task carrying the A2UI batch.
   - Verified live: card `200`; MCP `tools/list` (Streamable HTTP SSE); A2A `message/send` → a rendered
     2-message batch. See [ADR-0005][adr-0005] · [`worker/README.md`][worker].
 - **Origin discovery shipped** in the **`qte77/qte77.github.io`** repo (PR #55): origin-level
@@ -158,7 +159,7 @@ factories into `@qte77/a2ui-agui-kit` (arc 018).
 ```bash
 # CLOUDFLARE_API_TOKEN (Edit Cloudflare Workers scope) in gitignored worker/.env, sourced inline:
 bash -c 'set -a; . worker/.env; set +a; npm --prefix worker run deploy'
-# verify live: node-fetch the card + an MCP tools/list + an A2A message/send (see docs history).
+# verify live: node-fetch the card + an MCP tools/list + an A2A SendMessage (see worker/README.md).
 ```
 
 ## Keeping this doc current

@@ -89,7 +89,7 @@ The final box above expands to the translation that turns a model reply into ren
 
 The same Worker also answers three **unauthenticated, agent-facing** routes that wrap the keyless
 render chain — `GET /.well-known/agent-card.json` (A2A card), `POST /mcp` (MCP: `render_ui` +
-`validate_a2ui_batch`), and `POST /a2a` (A2A `message/send` → a completed Task). These **bypass the
+`validate_a2ui_batch`), and `POST /a2a` (A2A `SendMessage`, or v0.3 `message/send` → a completed task). These **bypass the
 origin allowlist** (programmatic agents send no `Origin`) and share the `FREE_RATE_LIMITER`; they need
 no visitor key. Details in [`worker/README.md`][worker-readme] · [ADR-0005][adr-0005]; protocol
 reference in [protocols.md](protocols.md).

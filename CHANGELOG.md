@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `worker/src/a2a/handler.ts`, `worker/src/wellknown/agent-card.ts`: **A2A protocol v1.0.0** (#278).
+  `POST /a2a` answers the v1.0 `SendMessage` method: the result is `{"task": …}`, with no `kind`
+  fields, `ROLE_AGENT`, and `TASK_STATE_COMPLETED` / `TASK_STATE_FAILED`. The v0.3 `message/send`
+  method still answers in its old shape, pinned by a golden test. An `A2A-Version` header is accepted
+  and ignored. The agent card moves to the v1.0 form: `supportedInterfaces` lists `/a2a` over
+  `JSONRPC` for protocol `1.0` first, then `0.3`. **Known break:** the top-level `url`,
+  `preferredTransport` and `protocolVersion` fields are gone, so a client that only reads the
+  v0.3 card form no longer finds the endpoint there (it can still call `/a2a` with `message/send`).
+
 - `worker/src/trial/`, `worker/src/agent/trial.ts`, `worker/src/worker.ts`: **trial tier — try 2-3
   real (non-`:free`) model renders with no key** (US-13). `POST /agent/trial-render` spends the
   owner's held OpenRouter key, hard-capped per visitor via a new `TrialQuotaDO` Durable Object

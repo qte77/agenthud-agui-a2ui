@@ -237,7 +237,7 @@ function capabilityResponse(selfOrigin: string, pathname: string): Response {
       protocol: isMcp ? "MCP" : "A2A",
       transport: "JSON-RPC 2.0",
       methods: ["POST"],
-      hint: `POST a JSON-RPC 2.0 ${isMcp ? "MCP (initialize / tools/list / tools/call)" : "A2A (message/send)"} request here.`,
+      hint: `POST a JSON-RPC 2.0 ${isMcp ? "MCP (initialize / tools/list / tools/call)" : "A2A (SendMessage; v0.3 message/send)"} request here.`,
       agentCard: `${selfOrigin}/.well-known/agent-card.json`,
       openapi: "https://qte77.github.io/openapi.json",
     },
