@@ -21,7 +21,7 @@ describe("buildAgentCard", () => {
 
   // #278: the v1.0 card form (A2A a2a.proto at tag v1.0.0): the endpoint and protocol version live on
   // each AgentInterface, the first one is preferred, and the old top-level url / preferredTransport /
-  // protocolVersion fields are gone (strict proto-JSON parsers reject unknown fields).
+  // protocolVersion fields are gone (the spec's appendix A.2 lets a server emit only the current form).
   it("lists the /a2a JSON-RPC endpoint for protocol 1.0 first, then 0.3, on the same URL", () => {
     expect(card.supportedInterfaces).toEqual([
       { url: "https://worker.example/a2a", protocolBinding: "JSONRPC", protocolVersion: "1.0" },

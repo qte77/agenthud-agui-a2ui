@@ -19,10 +19,10 @@ import { a2aFetch } from "../src/a2a/handler";
 const BATCH = [{ beginRendering: { surfaceId: "main", root: "root" } }];
 const render = vi.mocked(renderFromMessages);
 
-const rpc = (method: string, params: unknown) =>
-  new Request("https://worker.example/a2a", {
+const rpc = (method: string, params: unknown, headers: Record<string, string> = {}, query = "") =>
+  new Request(`https://worker.example/a2a${query}`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...headers },
     body: JSON.stringify({ jsonrpc: "2.0", id: 7, method, params }),
   });
 
@@ -70,7 +70,10 @@ describe("v1.0 SendMessage", () => {
       task?: {
         id: string;
         contextId: string;
-        status: { state: string; message?: { role: string; parts: unknown[]; kind?: unknown } };
+        status: {
+          state: string;
+          message?: { role: string; parts: unknown[]; contextId?: string; taskId?: string; kind?: unknown };
+        };
         artifacts: { artifactId: string; name?: string; parts: unknown[] }[];
         kind?: unknown;
       };
@@ -98,14 +101,17 @@ describe("v1.0 SendMessage", () => {
   it("returns a failed task with an agent message when the render chain is exhausted", async () => {
     render.mockResolvedValue(null);
     const body: V1Result = await (await a2aFetch(rpc("SendMessage", params), {})).json();
-    const status = body.result?.task?.status;
-    expect(status?.state).toBe("TASK_STATE_FAILED");
-    expect(status?.message?.role).toBe("ROLE_AGENT");
-    expect(status?.message).not.toHaveProperty("kind");
-    expect(status?.message?.parts).toEqual([
-      { text: "No free model produced a valid A2UI batch (provider chain exhausted)." },
-    ]);
-    expect(body.result?.task?.artifacts).toEqual([]);
+    const task = body.result?.task;
+    expect(task?.status.state).toBe("TASK_STATE_FAILED");
+    expect(task?.artifacts).toEqual([]);
+    // a2a.proto: a server message about a task carries the task's contextId and taskId
+    expect(task?.status.message).toEqual({
+      messageId: `${task?.id ?? ""}-err`,
+      contextId: "ctx-9",
+      taskId: task?.id,
+      role: "ROLE_AGENT",
+      parts: [{ text: "No free model produced a valid A2UI batch (provider chain exhausted)." }],
+    });
   });
 
   it("returns JSON-RPC -32602 when the message has no text part", async () => {
@@ -114,5 +120,50 @@ describe("v1.0 SendMessage", () => {
     ).json();
     expect(body.error?.code).toBe(-32602);
     expect(render).not.toHaveBeenCalled();
+  });
+});
+
+// Spec v1.0.0 section 3.6.2: an empty A2A-Version means 0.3; an unsupported version gets
+// VersionNotSupportedError (-32009) with a google.rpc.ErrorInfo in error.data (section 9.5).
+// The protocol shape still follows the method name (section 9.4's own example pairs
+// A2A-Version 0.3 with SendMessage).
+describe("A2A-Version", () => {
+  const params = { message: { messageId: "m1", role: "ROLE_USER", parts: [{ text: "a card" }] } };
+  interface Err {
+    error?: { code: number; data?: { "@type": string; reason: string; domain: string }[] };
+  }
+
+  it.each([[{}], [{ "A2A-Version": "" }], [{ "A2A-Version": "1.0" }], [{ "A2A-Version": "0.3" }]])(
+    "answers a request with headers %j",
+    async (headers) => {
+      render.mockResolvedValue(BATCH);
+      const body: { result?: unknown } & Err = await (await a2aFetch(rpc("SendMessage", params, headers), {})).json();
+      expect(body.error).toBeUndefined();
+      expect(body.result).toBeDefined();
+    },
+  );
+
+  it.each(["2.0", "0.2", "1", "latest"])("refuses version %s with -32009 and an ErrorInfo", async (v) => {
+    const body: Err = await (await a2aFetch(rpc("SendMessage", params, { "A2A-Version": v }), {})).json();
+    expect(body.error?.code).toBe(-32009);
+    expect(body.error?.data).toEqual([
+      { "@type": "type.googleapis.com/google.rpc.ErrorInfo", reason: "VERSION_NOT_SUPPORTED", domain: "a2a-protocol.org" },
+    ]);
+    expect(render).not.toHaveBeenCalled();
+  });
+
+  it("reads the version from the A2A-Version query parameter too", async () => {
+    const body: Err = await (await a2aFetch(rpc("SendMessage", params, {}, "?A2A-Version=2.0"), {})).json();
+    expect(body.error?.code).toBe(-32009);
+  });
+});
+
+describe("message/send input", () => {
+  it("accepts a v1.0-style text part without `kind` (both part forms are read on purpose)", async () => {
+    render.mockResolvedValue(BATCH);
+    const res = await a2aFetch(rpc("message/send", { message: { parts: [{ text: "a card" }] } }), {});
+    const body: { result?: { kind?: string } } = await res.json();
+    expect(render).toHaveBeenCalledWith({}, [{ role: "user", content: "a card" }]);
+    expect(body.result?.kind).toBe("task");
   });
 });

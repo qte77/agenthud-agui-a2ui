@@ -11,8 +11,11 @@
  *   (`ROLE_AGENT`) and task state (`TASK_STATE_COMPLETED` / `TASK_STATE_FAILED`); parts are a
  *   content oneof (`{ text }`, `{ data, mediaType }`).
  * - `message/send` (v0.3, a2a-js SDK shape with `kind` discriminators): unchanged for existing callers.
- * An `A2A-Version` request header is accepted and ignored: the method name already says which
- * version the caller speaks.
+ * `A2A-Version` (header, or the query parameter of the same name; spec section 3.6): missing or
+ * empty means 0.3; 0.3 and 1.0 are served; any other value gets VersionNotSupportedError (-32009)
+ * with a google.rpc.ErrorInfo in `error.data` (section 9.5). Documented deviation: the response
+ * shape follows the method name, not the header, so a v1.0 `SendMessage` sent with no header (or
+ * with 0.3, as in the spec's own section 9.4 example) is still answered.
  */
 
 import type { Env } from "../router";
@@ -96,7 +99,7 @@ function v1Task(id: string, contextId: string, batch: unknown[] | null) {
     ? { state: "TASK_STATE_COMPLETED" }
     : {
         state: "TASK_STATE_FAILED",
-        message: { messageId: `${id}-err`, role: "ROLE_AGENT", parts: [{ text: FAILED_REASON }] },
+        message: { messageId: `${id}-err`, contextId, taskId: id, role: "ROLE_AGENT", parts: [{ text: FAILED_REASON }] },
       };
   const artifacts = batch
     ? [{ artifactId: `${id}-ui`, name: "a2ui", parts: [{ data: { a2uiMessages: batch }, mediaType: "application/json" }] }]
@@ -117,10 +120,25 @@ const SEND_METHODS = new Map<string, (id: string, contextId: string, batch: unkn
 ]);
 
 type RpcId = string | number | null;
+
+const SUPPORTED_VERSIONS = new Set(["0.3", "1.0"]);
+
+/** True when the request names an A2A version this endpoint does not serve. */
+function unsupportedVersion(request: Request): boolean {
+  const raw = request.headers.get("A2A-Version") ?? new URL(request.url).searchParams.get("A2A-Version") ?? "";
+  const v = raw.trim();
+  if (v === "") return false; // empty or missing = 0.3
+  const majorMinor = /^(\d+)\.(\d+)(?:\.\d+)?$/.exec(v);
+  return !majorMinor || !SUPPORTED_VERSIONS.has(`${majorMinor[1] ?? ""}.${majorMinor[2] ?? ""}`);
+}
 const rpcResult = (id: RpcId, result: unknown): Response =>
   Response.json({ jsonrpc: "2.0", id, result });
-const rpcError = (id: RpcId, code: number, message: string): Response =>
-  Response.json({ jsonrpc: "2.0", id, error: { code, message } });
+const rpcError = (id: RpcId, code: number, message: string, data?: unknown[]): Response =>
+  Response.json({ jsonrpc: "2.0", id, error: data ? { code, message, data } : { code, message } });
+
+const VERSION_NOT_SUPPORTED_INFO = [
+  { "@type": "type.googleapis.com/google.rpc.ErrorInfo", reason: "VERSION_NOT_SUPPORTED", domain: "a2a-protocol.org" },
+];
 
 /** Send a message: render the prompt, return a completed (or failed) task in the caller's version. */
 async function handleMessageSend(
@@ -159,6 +177,9 @@ export async function a2aFetch(request: Request, env: Env): Promise<Response> {
   const req = parsed as { id?: unknown; method?: unknown; params?: unknown };
   const id: RpcId = typeof req.id === "string" || typeof req.id === "number" ? req.id : null;
 
+  if (unsupportedVersion(request)) {
+    return rpcError(id, -32009, "Version not supported (this agent serves A2A 0.3 and 1.0)", VERSION_NOT_SUPPORTED_INFO);
+  }
   const shape = typeof req.method === "string" ? SEND_METHODS.get(req.method) : undefined;
   if (!shape) return rpcError(id, -32601, `Method not found: ${String(req.method)}`);
   return handleMessageSend(req.params, env, id, shape);

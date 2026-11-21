@@ -7,8 +7,10 @@
  * and its protocol version sit on each `supportedInterfaces` entry, and the first entry is the
  * preferred one. The same `/a2a` JSON-RPC endpoint is listed twice: protocol 1.0 (`SendMessage`)
  * first, then 0.3 (`message/send`, kept for existing callers). The v0.3 top-level `url`,
- * `preferredTransport` and `protocolVersion` fields are not emitted: a strict proto-JSON parser
- * rejects unknown fields, so a v0.3-only client that reads them no longer discovers the endpoint.
+ * `preferredTransport` and `protocolVersion` fields are not emitted: the spec's migration appendix
+ * (A.2) lets a server emit only the current form, and v1.0 clients ignore unknown fields anyway
+ * (section 5.6), so dropping them is a choice, not a requirement. A v0.3-only client that reads
+ * them no longer discovers the endpoint from the card.
  */
 
 export interface AgentSkill {
