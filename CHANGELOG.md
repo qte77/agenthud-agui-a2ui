@@ -13,7 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `TASK_STATE_COMPLETED` / `TASK_STATE_FAILED`. The v0.3 `message/send` method still answers in its old
   shape, pinned by a golden test, and now also reads text parts without `kind`. `A2A-Version` (header
   or query parameter) is checked: missing or empty means 0.3, `0.3` and `1.0` are served, and any other
-  value gets `-32009` VersionNotSupportedError.
+  value gets `-32009` VersionNotSupportedError. The agent routes' CORS preflight now allows the
+  `A2A-Version` and `A2A-Extensions` request headers.
 
 - `worker/src/trial/`, `worker/src/agent/trial.ts`, `worker/src/worker.ts`: **trial tier — try 2-3
   real (non-`:free`) model renders with no key** (US-13). `POST /agent/trial-render` spends the

@@ -15,7 +15,7 @@
  * empty means 0.3; 0.3 and 1.0 are served; any other value gets VersionNotSupportedError (-32009)
  * with a google.rpc.ErrorInfo in `error.data` (section 9.5). Documented deviation: the response
  * shape follows the method name, not the header, so a v1.0 `SendMessage` sent with no header (or
- * with 0.3, as in the spec's own section 9.4 example) is still answered.
+ * with 0.3, as in the spec's own section 9.2 example) is still answered.
  */
 
 import type { Env } from "../router";

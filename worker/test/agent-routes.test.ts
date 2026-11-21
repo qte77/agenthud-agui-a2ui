@@ -64,6 +64,9 @@ describe("agent-native probe-friendliness (CORS + capability + JSON errors)", ()
     );
     expect(res.status).toBe(204);
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    // #278: A2A clients send A2A-Version (and may send A2A-Extensions); a browser preflight must allow them
+    const allowed = (res.headers.get("access-control-allow-headers") ?? "").split(/,\s*/);
+    expect(allowed).toEqual(expect.arrayContaining(["a2a-version", "a2a-extensions"]));
   });
 
   it("POST /a2a response carries wildcard CORS", async () => {

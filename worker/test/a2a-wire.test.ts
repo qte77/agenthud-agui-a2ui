@@ -125,7 +125,7 @@ describe("v1.0 SendMessage", () => {
 
 // Spec v1.0.0 section 3.6.2: an empty A2A-Version means 0.3; an unsupported version gets
 // VersionNotSupportedError (-32009) with a google.rpc.ErrorInfo in error.data (section 9.5).
-// The protocol shape still follows the method name (section 9.4's own example pairs
+// The protocol shape still follows the method name (section 9.2's own example pairs
 // A2A-Version 0.3 with SendMessage).
 describe("A2A-Version", () => {
   const params = { message: { messageId: "m1", role: "ROLE_USER", parts: [{ text: "a card" }] } };
