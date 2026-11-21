@@ -19,9 +19,20 @@ describe("buildAgentCard", () => {
     expect(card.capabilities).toBeTruthy();
   });
 
-  it("points its A2A interface at the live /a2a endpoint", () => {
-    expect(card.url).toBe("https://worker.example/a2a");
-    expect(card.supportedInterfaces[0]?.url).toBe("https://worker.example/a2a");
+  // #278: the v1.0 card form (A2A a2a.proto at tag v1.0.0): the endpoint and protocol version live on
+  // each AgentInterface, the first one is preferred, and the old top-level url / preferredTransport /
+  // protocolVersion fields are gone (the spec's appendix A.2 lets a server emit only the current form).
+  it("lists the /a2a JSON-RPC endpoint for protocol 1.0 first, then 0.3, on the same URL", () => {
+    expect(card.supportedInterfaces).toEqual([
+      { url: "https://worker.example/a2a", protocolBinding: "JSONRPC", protocolVersion: "1.0" },
+      { url: "https://worker.example/a2a", protocolBinding: "JSONRPC", protocolVersion: "0.3" },
+    ]);
+  });
+
+  it("carries no v0.3-only top-level fields", () => {
+    expect(card).not.toHaveProperty("url");
+    expect(card).not.toHaveProperty("preferredTransport");
+    expect(card).not.toHaveProperty("protocolVersion");
   });
 
   it("gives every skill an id, name, description and tags", () => {

@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `worker/src/a2a/handler.ts`: **A2A protocol v1.0.0** (#278). `POST /a2a` answers the v1.0
+  `SendMessage` method: the result is `{"task": …}`, with no `kind` fields, `ROLE_AGENT`, and
+  `TASK_STATE_COMPLETED` / `TASK_STATE_FAILED`. The v0.3 `message/send` method still answers in its old
+  shape, pinned by a golden test, and now also reads text parts without `kind`. `A2A-Version` (header
+  or query parameter) is checked: missing or empty means 0.3, `0.3` and `1.0` are served, and any other
+  value gets `-32009` VersionNotSupportedError. The agent routes' CORS preflight now allows the
+  `A2A-Version` and `A2A-Extensions` request headers.
+
 - `worker/src/trial/`, `worker/src/agent/trial.ts`, `worker/src/worker.ts`: **trial tier — try 2-3
   real (non-`:free`) model renders with no key** (US-13). `POST /agent/trial-render` spends the
   owner's held OpenRouter key, hard-capped per visitor via a new `TrialQuotaDO` Durable Object
@@ -23,6 +31,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `VITE_TURNSTILE_SITE_KEY` in the deploy build env (see `ui/.env.example`).
 
 ### Changed
+
+- `worker/src/wellknown/agent-card.ts`: the agent card moves to the A2A v1.0 form (#278).
+  `supportedInterfaces` lists `/a2a` over `JSONRPC` for protocol `1.0` first, then `0.3`. **Breaking:**
+  the top-level `url`, `preferredTransport` and `protocolVersion` fields are removed (the spec's
+  migration appendix A.2 lets a server emit only the current form), so a client that only reads the
+  v0.3 card form no longer finds the endpoint there (it can still call `/a2a` with `message/send`).
 
 - `docs/plans/`, `docs/handoffs/` (012–017, 019): neutralized operator-specific wording in the older
   plan/handoff docs — merge-bypass flags, signing-bypass flags, and token-env-unset recipes rewritten

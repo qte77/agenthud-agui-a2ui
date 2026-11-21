@@ -3,7 +3,7 @@ title: Plan 016 — Live variance residue + responsive shell
 description: Code/file/source map for the remainder migrated out of arc 015 — narrow-viewport shell layout, residual multi-call model variance, and the reusable live-E2E harness.
 date: 2026-07-25
 status: open
-issues: [240, 129]
+issues: [129]
 predecessor: plans/015-live-render-hardening.md
 handoff: handoffs/016-live-variance-and-responsive.md
 ---
@@ -22,7 +22,12 @@ deploy are green again (PR #235). The two remaining failures are **not** render-
 
 ## Backlog (ordered, each with its done-when)
 
-### 1. Responsive shell — #240 (agent-runnable, highest user impact)
+### ~~1. Responsive shell — #240~~ (done: stale since #240 closed 2026-11-02)
+
+Struck 2026-11-21 in #337 (the #278 PR): `ui/src/DashboardShell.tsx` on main stacks the aside below `md:` and
+uses `md:w-96` from that breakpoint up, and #240 is closed. The original item is kept below for the
+record.
+
 The A2UI surface collapses to a ~10px sliver at 390px: `ui/src/DashboardShell.tsx` renders
 `<aside className="w-96 …">` — 384px fixed at every breakpoint. Render is clean; there is simply no
 room to paint. Desktop 1280/1440 unaffected.
@@ -56,7 +61,7 @@ asserts paint + zero render errors / contract violations / console errors / fail
 
 ### 4. Reconcile `gh issue list` against plans 004–015
 Carried unstarted from plan 015 §3. Open issues at close of 015: #211, #185, #165, #156, #132, #120,
-#119, #102, plus new #240.
+#119, #102, plus new #240 (closed 2026-11-02; see item 1).
 
 ## Code / file / source map (deltas since plan 015; the 015 map still holds)
 
@@ -65,7 +70,7 @@ Carried unstarted from plan 015 §3. Open issues at close of 015: #211, #185, #1
 | Batch repair | `ui/src/agent/applyA2UIEvent.ts` · `coalesceSurfaceUpdates`, `componentsBySurface` | Folds a batch's `surfaceUpdate`s per surface **before** validate + render. Runs on the replay path too (harmless — recordings are already single-update). |
 | Cross-batch repair | `ui/src/replaySnapshot.ts` · `accumulate` | The replay-side equivalent (stateful, across batches). Header comment cross-references the live one — keep both in sync. |
 | Asset fallback | `ui/src/agent/assets.ts` · `PLACEHOLDER_ASSET`, `resolveAssets` | Unknown `asset:<name>` → inline data-URI SVG. Known tokens still map to bundled URLs. |
-| Shell layout | `ui/src/DashboardShell.tsx` (aside `w-96`, `main` flex-1) | The #240 fix site. |
+| Shell layout | `ui/src/DashboardShell.tsx` (aside stacked below `md:`, `md:w-96` above; `main` flex-1) | The #240 fix site; fixed on main, #240 closed 2026-11-02. |
 | E2E harness | `/tmp/e2e_live.py` (to be promoted — item 3) | Selectors: `aside input[type=password]`, `aside select` nth(1) → `__custom__`, `aside input[placeholder^="Model id"]`, `aside summary` filtered by "Prompt" / "AG-UI Events", `main div.relative`. |
 
 **@a2ui ground truth (unchanged):** v0.8 default export.

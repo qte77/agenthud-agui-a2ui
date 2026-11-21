@@ -223,7 +223,9 @@ async function forwardToUpstream(
 const AGENT_CORS: Record<string, string> = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, OPTIONS",
-  "access-control-allow-headers": "content-type, authorization, mcp-protocol-version, mcp-session-id",
+  // a2a-version / a2a-extensions: the A2A request headers (spec v1.0.0 section 3.2), #278
+  "access-control-allow-headers":
+    "content-type, authorization, mcp-protocol-version, mcp-session-id, a2a-version, a2a-extensions",
   "access-control-max-age": "86400",
 };
 
@@ -237,7 +239,7 @@ function capabilityResponse(selfOrigin: string, pathname: string): Response {
       protocol: isMcp ? "MCP" : "A2A",
       transport: "JSON-RPC 2.0",
       methods: ["POST"],
-      hint: `POST a JSON-RPC 2.0 ${isMcp ? "MCP (initialize / tools/list / tools/call)" : "A2A (message/send)"} request here.`,
+      hint: `POST a JSON-RPC 2.0 ${isMcp ? "MCP (initialize / tools/list / tools/call)" : "A2A (SendMessage; v0.3 message/send)"} request here.`,
       agentCard: `${selfOrigin}/.well-known/agent-card.json`,
       openapi: "https://qte77.github.io/openapi.json",
     },

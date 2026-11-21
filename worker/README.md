@@ -32,16 +32,16 @@ the two execution endpoints share a tighter `FREE_RATE_LIMITER` (10/60s). See
 
 | method + path | what |
 |---|---|
-| `GET /.well-known/agent-card.json` | Static **A2A Agent Card** — name, skills, capabilities, and `supportedInterfaces` → `/a2a`. Public, wildcard CORS. |
+| `GET /.well-known/agent-card.json` | Static **A2A Agent Card** (v1.0 form) — name, skills, capabilities, and `supportedInterfaces`: `/a2a` over `JSONRPC` for protocol `1.0` (preferred, listed first) and `0.3`. No top-level `url` / `preferredTransport` / `protocolVersion`. Public, wildcard CORS. |
 | `POST /mcp` | Stateless **MCP** server (Streamable HTTP, `createMcpHandler`). Tools: `render_ui` (prompt → A2UI batch), `validate_a2ui_batch` (structural check → `{valid, issues}`). |
-| `POST /a2a` | Minimal **A2A** JSON-RPC. `message/send` renders a prompt into a synchronously-completed Task (A2UI batch as a `data` artifact); other methods → `-32601`. |
+| `POST /a2a` | Minimal **A2A** JSON-RPC. `SendMessage` (v1.0) renders a prompt into a synchronously-completed task, returned as `{"task": …}` (A2UI batch as a `data` artifact). `message/send` (v0.3) returns the same in the v0.3 shape (`kind` fields, bare Task) for existing callers. Other methods → `-32601`. `A2A-Version` (header or query parameter): missing or empty means 0.3; `0.3` and `1.0` are served; any other value → `-32009` VersionNotSupportedError. The response shape follows the method name, not the header (a documented deviation). |
 
 Quick check against a local `wrangler dev`:
 
 ```bash
 curl http://localhost:8787/.well-known/agent-card.json
-curl -X POST http://localhost:8787/a2a -H 'content-type: application/json' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"parts":[{"kind":"text","text":"a login card"}]}}}'
+curl -X POST http://localhost:8787/a2a -H 'content-type: application/json' -H 'A2A-Version: 1.0' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"SendMessage","params":{"message":{"messageId":"m1","role":"ROLE_USER","parts":[{"text":"a login card"}]}}}'
 ```
 
 ## Keyless free-inference render (browser, not agent-native)
