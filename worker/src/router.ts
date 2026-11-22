@@ -1,6 +1,7 @@
 // Fixed upstream allowlist — the first path segment is the ONLY routing key, so the
-// proxy can never be aimed at an arbitrary host (no open proxy / SSRF). BYOK pass-through:
-// this worker holds no secret; the visitor's own key is forwarded upstream unchanged.
+// proxy can never be aimed at an arbitrary host (no open proxy / SSRF). BYOK pass-through: the
+// BYOK relay uses none of the Worker's secrets; the visitor's own key is forwarded upstream
+// unchanged.
 const UPSTREAMS: Record<string, string> = {
   google: "https://generativelanguage.googleapis.com/v1beta/openai",
 };
@@ -55,7 +56,8 @@ export interface Env {
 }
 
 // Production allows ONLY the gh-pages site; localhost dev origins are added when
-// ALLOW_LOCALHOST="true". CORS is the worker's only access gate (it holds no secret).
+// ALLOW_LOCALHOST="true". CORS is the BYOK relay's only access gate (the relay uses none of the
+// Worker's secrets; the render routes also require Turnstile).
 const PROD_ORIGINS = [/^https:\/\/qte77\.github\.io$/];
 const LOCALHOST_ORIGINS = [
   /^http:\/\/localhost:\d+$/,
