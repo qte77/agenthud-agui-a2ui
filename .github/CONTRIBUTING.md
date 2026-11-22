@@ -22,7 +22,7 @@ One audience per file — reference, don't duplicate
 
 ## Development
 
-Requires Node.js 22+. The frontend lives in `ui/` — run npm from there:
+Requires Node.js 24.15+. The frontend lives in `ui/` — run npm from there:
 
 ```bash
 cd ui
