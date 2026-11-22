@@ -36,7 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   now, covering the BYOK relay, the agent-native routes, the keyless free render and the trial tier.
   It holds two secrets (`OPENROUTER_KEY`, `TURNSTILE_SECRET`), and a visitor's BYOK key is only
   forwarded, never stored. The old "BYOK proxy, holds no secret" description and the story IDs are
-  removed.
+  removed. The same claim is now limited to the BYOK relay in `worker/.env.example`,
+  `docs/architecture.md`, `docs/cloudflare-runbook.md` (which now also lists the gates on the render,
+  trial and agent routes) and the code comments in `worker/src/router.ts` and `worker/src/worker.ts`.
 - `worker/src/wellknown/agent-card.ts`: the agent card moves to the A2A v1.0 form (#278).
   `supportedInterfaces` lists `/a2a` over `JSONRPC` for protocol `1.0` first, then `0.3`. **Breaking:**
   the top-level `url`, `preferredTransport` and `protocolVersion` fields are removed (the spec's

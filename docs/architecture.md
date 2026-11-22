@@ -28,7 +28,7 @@ are called directly from the browser. Worker specifics live in [`worker/README.m
         │   agenthud-proxy.<sub>.workers.dev   (worker/ — OUR source)    │
         │     • Origin ∈ allowlist? (prod: qte77.github.io)  else 403    │
         │     • path seg → fixed upstream (no open proxy / SSRF)         │
-        │     • forward the USER's Authorization (holds no secret)       │
+        │     • BYOK relay: forward the USER's Authorization as is       │
         │     • add Access-Control-Allow-Origin on the way back          │
         └──────────────────────┬─────────────────────────────────────────┘
                                │ ② server-to-server  (no browser CORS here)
@@ -110,15 +110,17 @@ like the keyless tier. Details in [`worker/README.md`][worker-readme] · [ADR-00
 - **Theirs:** Cloudflare's edge *runtime* (executes our worker; the only thing `wrangler deploy`
   creates) and the upstream LLM APIs.
 - **The seam** is two strings: `PROXY_BASE` (app → worker, in `ui/src/config.ts`) and the
-  fixed upstream allowlist (worker → API, in `worker/src/router.ts`). **No secret crosses into
-  "theirs" that the user didn't already own** — BYOK pass-through.
+  fixed upstream allowlist (worker → API, in `worker/src/router.ts`). On the BYOK relay **no
+  secret crosses into "theirs" that the user didn't already own** — BYOK pass-through. (The
+  keyless and trial render routes call OpenRouter with the worker's own `OPENROUTER_KEY`; see
+  [`worker/README.md`][worker-readme].)
 
 ## Why CORS, and why the allowlist is the lock
 
 Google sends no browser CORS headers, so the browser refuses to call it directly;
 the worker relays server-to-server (where CORS doesn't apply) and stamps the response with
-`Access-Control-Allow-Origin`. Because the worker **holds no secret**, that **origin allowlist is its
-only access gate** — production echoes only `https://qte77.github.io`; localhost is added only in dev
+`Access-Control-Allow-Origin`. Because the BYOK relay **uses none of the worker's secrets**, that
+**origin allowlist is the relay's only access gate** — production echoes only `https://qte77.github.io`; localhost is added only in dev
 (`ALLOW_LOCALHOST`). CORS is browser-enforced, so non-browser callers (curl, CI) pass the gate by
 sending an allowlisted `Origin`.
 

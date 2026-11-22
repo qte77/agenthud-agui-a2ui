@@ -277,10 +277,11 @@ function agentNativeRoute(
   );
 }
 
-// BYOK pass-through CORS proxy (US-6). The static GitHub Pages app POSTs to
-// /<provider>/chat/completions; we forward it server-to-server (where browser CORS doesn't apply)
-// and stream the SSE response back with CORS headers. No secret is held here — the visitor's own
-// Authorization header is forwarded unchanged.
+// Worker entry. The BYOK relay: the static GitHub Pages app POSTs to /<provider>/chat/completions;
+// we forward it server-to-server (where browser CORS doesn't apply) and stream the SSE response
+// back with CORS headers. The relay uses none of the Worker's secrets — the visitor's own
+// Authorization header is forwarded unchanged. The agent-native and /agent/* routes are
+// dispatched first (see below).
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("origin");
