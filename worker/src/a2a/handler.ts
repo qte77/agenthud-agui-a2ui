@@ -121,6 +121,9 @@ const SEND_METHODS = new Map<string, (id: string, contextId: string, batch: unkn
 
 type RpcId = string | number | null;
 
+const MAX_BODY_BYTES = 1_048_576;
+const MAX_PROMPT_CHARS = 8_000;
+
 const SUPPORTED_VERSIONS = new Set(["0.3", "1.0"]);
 
 /** True when the request names an A2A version this endpoint does not serve. */
@@ -150,6 +153,7 @@ async function handleMessageSend(
   const message = (params as { message?: unknown } | null)?.message;
   const prompt = extractPromptFromMessage(message);
   if (!prompt) return rpcError(id, -32602, "Invalid params: message has no text part");
+  if (prompt.length > MAX_PROMPT_CHARS) return rpcError(id, -32602, "Invalid params: prompt too long");
 
   const givenCtx = (message as { contextId?: unknown }).contextId;
   const contextId = typeof givenCtx === "string" && givenCtx ? givenCtx : crypto.randomUUID();
@@ -157,6 +161,34 @@ async function handleMessageSend(
 
   const batch = await renderFromMessages(env, [{ role: "user", content: prompt }]);
   return rpcResult(id, shape(taskId, contextId, batch));
+}
+
+interface RpcRequest { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: unknown }
+
+/** Read the capped body and validate it is one JSON-RPC 2.0 request object; else the error Response. */
+async function readRpcRequest(request: Request): Promise<Response | { req: RpcRequest; id: RpcId }> {
+  // Capped body read: skip when the declared length is over, else verify the actual bytes.
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+    return Response.json({ error: "Request body too large" }, { status: 413 });
+  }
+  const bytes = await request.arrayBuffer();
+  if (bytes.byteLength > MAX_BODY_BYTES) {
+    return Response.json({ error: "Request body too large" }, { status: 413 });
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return rpcError(null, -32700, "Parse error");
+  }
+  // Only a single JSON-RPC 2.0 request object is served (no null, no batch array).
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return rpcError(null, -32600, "Invalid Request");
+  }
+  const req = parsed as RpcRequest;
+  const id: RpcId = typeof req.id === "string" || typeof req.id === "number" ? req.id : null;
+  if (req.jsonrpc !== "2.0") return rpcError(id, -32600, "Invalid Request");
+  return { req, id };
 }
 
 /** Stateless A2A JSON-RPC handler for POST /a2a. */
@@ -168,14 +200,11 @@ export async function a2aFetch(request: Request, env: Env): Promise<Response> {
     if (!success) return rpcError(null, -32000, "Rate limit exceeded");
   }
 
-  let parsed: unknown;
-  try {
-    parsed = await request.json();
-  } catch {
-    return rpcError(null, -32700, "Parse error");
-  }
-  const req = parsed as { id?: unknown; method?: unknown; params?: unknown };
-  const id: RpcId = typeof req.id === "string" || typeof req.id === "number" ? req.id : null;
+  const read = await readRpcRequest(request);
+  if (read instanceof Response) return read;
+  const { req, id } = read;
+  // A notification (no id member) gets no reply and starts no render (JSON-RPC 2.0 section 4.1).
+  if (!("id" in req)) return new Response(null, { status: 202 });
 
   if (unsupportedVersion(request)) {
     return rpcError(id, -32009, "Version not supported (this agent serves A2A 0.3 and 1.0)", VERSION_NOT_SUPPORTED_INFO);

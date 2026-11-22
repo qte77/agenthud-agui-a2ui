@@ -70,6 +70,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `worker/src/a2a/handler.ts`: `POST /a2a` JSON-RPC edge cases (#338). A `null` body or a batch array
+  now gets `-32600` instead of a runtime 500 or `-32601`; a missing or non-`"2.0"` `jsonrpc` member gets
+  `-32600`; a notification (no `id`) gets an empty 202 and starts no render; the body is read under the
+  same 1 MiB cap as the other POST routes (413) and the prompt is capped at 8000 characters (`-32602`).
+
 - `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/src/mcp/tools.ts`,
   `worker/src/a2a/handler.ts`: **the keyless HTTP endpoint now shares the same render seam as the
   MCP/A2A tools** — `handleKeylessRender` previously imported `buildProviders`/`renderFree` from
