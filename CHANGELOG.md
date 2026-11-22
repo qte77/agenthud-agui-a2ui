@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- CI and GitHub Pages workflows set up Node 24 instead of 22 (estate move to Node 24 only).
+- CI and GitHub Pages workflows set up Node 24 instead of 22 (estate move to Node 24 only). In the Pages workflow, `pages: write` and `id-token: write` move from the workflow level to the `deploy` job, the only job that uses them.
 - `worker/README.md`, `worker/wrangler.toml`, `worker/package.json`: the Worker is described as it is
   now, covering the BYOK relay, the agent-native routes, the keyless free render and the trial tier.
   It holds two secrets (`OPENROUTER_KEY`, `TURNSTILE_SECRET`), and a visitor's BYOK key is only
