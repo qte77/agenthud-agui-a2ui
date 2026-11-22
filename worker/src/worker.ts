@@ -6,15 +6,13 @@ import { verifyTurnstile } from "./turnstile";
 import { agentCardResponse } from "./wellknown/agent-card";
 import { mcpFetch } from "./mcp/server";
 import { a2aFetch } from "./a2a/handler";
+import { readCappedBody } from "./body";
 import { TrialQuotaDO } from "./trial/quota";
 
 // wrangler's durable_objects binding resolves class_name against the main script's exports.
 export { TrialQuotaDO };
 
 type Cors = Record<string, string>;
-
-// Forwarded-body cap — blocks cost/DoS amplification (chat payloads are far smaller than 1 MiB).
-const MAX_BODY_BYTES = 1_048_576;
 
 // Tighter cap for the keyless render endpoint: the system prompt lives server-side and turn history
 // is compact summaries, so 64 KiB is generous while shrinking the abuse surface.
@@ -53,22 +51,6 @@ const STUB_BATCH: unknown[] = [
     },
   },
 ];
-
-// Read the request body, enforcing the size cap. Returns the bytes, or a 413 Response when too
-// large. Skips reading when the declared length already exceeds the cap; otherwise verifies the
-// actual bytes (covers a missing or spoofed Content-Length).
-async function readCappedBody(
-  request: Request,
-  cors: Cors,
-  maxBytes: number = MAX_BODY_BYTES,
-): Promise<ArrayBuffer | Response> {
-  const overByHeader = Number(request.headers.get("content-length") ?? 0) > maxBytes;
-  const body = overByHeader ? null : await request.arrayBuffer();
-  if (body === null || body.byteLength > maxBytes) {
-    return Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
-  }
-  return body;
-}
 
 // Keep only well-formed user/assistant turns; DROP any client-sent system message (the worker owns
 // the system prompt on a keyless endpoint) and ignore any client-chosen model (`:free` only).

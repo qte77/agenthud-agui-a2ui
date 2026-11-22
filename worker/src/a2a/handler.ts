@@ -20,6 +20,7 @@
 
 import type { Env } from "../router";
 import { renderFromMessages } from "../agent/render";
+import { readCappedBody } from "../body";
 
 type Part =
   | { kind: "text"; text: string }
@@ -121,7 +122,6 @@ const SEND_METHODS = new Map<string, (id: string, contextId: string, batch: unkn
 
 type RpcId = string | number | null;
 
-const MAX_BODY_BYTES = 1_048_576;
 const MAX_PROMPT_CHARS = 8_000;
 
 const SUPPORTED_VERSIONS = new Set(["0.3", "1.0"]);
@@ -165,16 +165,22 @@ async function handleMessageSend(
 
 interface RpcRequest { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: unknown }
 
+/** The reply id (null when the request's id is absent) or the -32600 Response for a bad envelope. An id is
+ *  a string, a number or null (absent = notification); an object, array or boolean is invalid. */
+function validateEnvelope(req: RpcRequest): Response | RpcId {
+  const validId = req.id === undefined || req.id === null || typeof req.id === "string" || typeof req.id === "number";
+  const id: RpcId = validId ? ((req.id ?? null) as RpcId) : null;
+  if (req.jsonrpc !== "2.0" || !validId || typeof req.method !== "string") {
+    return rpcError(id, -32600, "Invalid Request");
+  }
+  return id;
+}
+
 /** Read the capped body and validate it is one JSON-RPC 2.0 request object; else the error Response. */
 async function readRpcRequest(request: Request): Promise<Response | { req: RpcRequest; id: RpcId }> {
-  // Capped body read: skip when the declared length is over, else verify the actual bytes.
-  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
-    return Response.json({ error: "Request body too large" }, { status: 413 });
-  }
-  const bytes = await request.arrayBuffer();
-  if (bytes.byteLength > MAX_BODY_BYTES) {
-    return Response.json({ error: "Request body too large" }, { status: 413 });
-  }
+  // The route's withAgentCors wrapper stamps CORS onto a 413, so no headers are passed here.
+  const bytes = await readCappedBody(request);
+  if (bytes instanceof Response) return bytes;
   let parsed: unknown;
   try {
     parsed = JSON.parse(new TextDecoder().decode(bytes));
@@ -186,8 +192,9 @@ async function readRpcRequest(request: Request): Promise<Response | { req: RpcRe
     return rpcError(null, -32600, "Invalid Request");
   }
   const req = parsed as RpcRequest;
-  const id: RpcId = typeof req.id === "string" || typeof req.id === "number" ? req.id : null;
-  if (req.jsonrpc !== "2.0") return rpcError(id, -32600, "Invalid Request");
+  const envelope = validateEnvelope(req);
+  if (envelope instanceof Response) return envelope;
+  const id = envelope;
   return { req, id };
 }
 
@@ -209,7 +216,7 @@ export async function a2aFetch(request: Request, env: Env): Promise<Response> {
   if (unsupportedVersion(request)) {
     return rpcError(id, -32009, "Version not supported (this agent serves A2A 0.3 and 1.0)", VERSION_NOT_SUPPORTED_INFO);
   }
-  const shape = typeof req.method === "string" ? SEND_METHODS.get(req.method) : undefined;
-  if (!shape) return rpcError(id, -32601, `Method not found: ${String(req.method)}`);
+  const shape = SEND_METHODS.get(req.method as string);
+  if (!shape) return rpcError(id, -32601, `Method not found: ${req.method as string}`);
   return handleMessageSend(req.params, env, id, shape);
 }
