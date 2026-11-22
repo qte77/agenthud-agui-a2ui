@@ -1,12 +1,21 @@
-# agenthud edge proxy (US-6)
+# agenthud edge Worker
 
-A tiny Cloudflare Worker that lets the static GitHub Pages app reach a **non-CORS**
-OpenAI-compatible endpoint (Google). Browsers can't call it directly —
-it sends no CORS headers — so this worker forwards the request **server-to-server**
-(where CORS doesn't apply) and streams the response back.
+A Cloudflare Worker behind the static GitHub Pages app and agent clients. It serves four groups of
+routes, each described below:
 
-**BYOK pass-through — holds no secret.** It forwards the visitor's own `Authorization`
-header upstream; the key never lives in the worker.
+- **BYOK relay** (`POST /<provider>/chat/completions`): lets the app reach a **non-CORS**
+  OpenAI-compatible endpoint (Google). Browsers can't call it directly, since it sends no CORS
+  headers, so the Worker forwards the request **server-to-server** and streams the response back.
+- **Agent-native routes** (`GET /.well-known/agent-card.json`, `POST /mcp`, `POST /a2a`): A2A agent
+  card, MCP server and A2A JSON-RPC over the keyless free render chain.
+- **Keyless free render** (`POST /agent/render`): a browser render with no visitor key, on the same
+  free chain (Cloudflare Workers AI, then OpenRouter `:free` models), Turnstile-gated.
+- **Trial tier** (`POST /agent/trial-render`): a few real-model renders on the owner's OpenRouter
+  key, hard-capped by a Durable Object, Turnstile-gated.
+
+**Secrets.** The Worker holds two: `OPENROUTER_KEY` (the free chain and the trial tier) and
+`TURNSTILE_SECRET` (proof-of-human for both render routes). A visitor's BYOK key is only forwarded:
+the relay passes their own `Authorization` header upstream and never stores the key.
 
 ## Routes
 
@@ -19,7 +28,7 @@ header upstream; the key never lives in the worker.
 The first path segment is the only routing key (no open proxy / SSRF). For the BYOK relay, only
 `POST`/`OPTIONS` from an allowlisted `Origin` are served — **production allows only
 `https://qte77.github.io`**; localhost dev origins are added only when `ALLOW_LOCALHOST="true"` (see
-Local dev). CORS is the relay's sole access gate, since it holds no secret.
+Local dev). CORS is the relay's sole access gate, since the relay uses none of the Worker's secrets.
 
 ## Agent-native routes (Discovery + Execution)
 
@@ -59,7 +68,7 @@ absent → the route 403s every request), `AI` (Workers AI binding, free tier), 
 absent → rate limit skipped in dev/test). See `worker/src/router.ts`'s `Env` interface for the
 full doc comment on each.
 
-## Trial tier — real model, hard-capped, no key (US-13)
+## Trial tier — real model, hard-capped, no key
 
 `POST /agent/trial-render` lets a visitor try 2-3 **real** (non-`:free`) model renders, spending
 the owner's held OpenRouter key, before being pushed to BYOK. Unlike the $0 keyless tier above,
@@ -125,5 +134,5 @@ Now "Google (via proxy)" resolves to the local worker. Notes:
 
 - The **browser Live UI** for the keyless tier (a "Free (no key)" endpoint entry in the BYOK
   connection picker) — the worker-side render route above ships today; only the UI wiring is
-  deferred. See US-6.
+  deferred.
 - Azure (per-resource URL) and Mammouth.

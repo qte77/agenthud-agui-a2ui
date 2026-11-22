@@ -49,7 +49,8 @@ the rate limiter). `wrangler deploy` is the apply. Terraform/Pulumi is overkill 
 
 ## Security / abuse model
 
-The worker **holds no secret** (BYOK pass-through), so its only gates are:
+The BYOK relay **uses none of the worker's secrets** (it forwards the visitor's own key), so its
+only gates are:
 
 1. **Origin allowlist** — prod echoes only `https://qte77.github.io`; `ALLOW_LOCALHOST` adds localhost
    in dev. CORS is **browser-enforced**, so non-browser callers (curl/CI) pass `isAllowedOrigin` by
@@ -58,6 +59,18 @@ The worker **holds no secret** (BYOK pass-through), so its only gates are:
 2. **Per-IP rate limit** — 100 req/60s, keyed on `CF-Connecting-IP`.
 3. **Fixed upstream allowlist** — first path segment is the only routing key (no open proxy / SSRF).
 4. **Free-tier 429 at 100k req/day** — a natural cost ceiling (no surprise bill).
+
+The worker does hold two secrets, `OPENROUTER_KEY` and `TURNSTILE_SECRET`, for its other routes
+(see the [worker README][worker-readme]). Those routes have their own gates:
+
+- **Keyless free render** (`/agent/render`) — the origin allowlist and the per-IP rate limit above,
+  plus **Turnstile** proof-of-human and the tighter `FREE_RATE_LIMITER` (10 req/60s).
+- **Trial tier** (`/agent/trial-render`) — the origin allowlist and per-IP rate limit, plus
+  **Turnstile** and a hard cap in the `TrialQuotaDO` Durable Object: a permanent per-visitor
+  (per-IP) cap and a shared daily cap (`TRIAL_DAILY_CAP`). This is the only route that spends on
+  the owner's key.
+- **Agent-native routes** (`/mcp`, `/a2a`, the agent card) — no origin allowlist (agents send no
+  `Origin`); `/mcp` and `/a2a` share `FREE_RATE_LIMITER` and run only the free chain.
 
 ## Command cheatsheet
 
