@@ -1,4 +1,6 @@
-# BYOK pass-through CORS proxy (US-6). Holds no secret — forwards the visitor's key.
+# agenthud edge Worker: BYOK CORS proxy (forwards the visitor's key, never stores it), keyless free
+# and capped trial renders, and agent-native MCP / A2A routes. Holds two secrets, OPENROUTER_KEY and
+# TURNSTILE_SECRET, set as Worker secrets (never in this file). See README.md.
 # Served at https://agenthud-api.abizz.dev, a Custom Domain attached to this Worker in the Cloudflare
 # dashboard (Worker > Domains); ui/src/config.ts's PROXY_BASE points at it. See README.md.
 name = "agenthud-proxy"

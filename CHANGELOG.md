@@ -32,6 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `worker/README.md`, `worker/wrangler.toml`, `worker/package.json`: the Worker is described as it is
+  now, covering the BYOK relay, the agent-native routes, the keyless free render and the trial tier.
+  It holds two secrets (`OPENROUTER_KEY`, `TURNSTILE_SECRET`), and a visitor's BYOK key is only
+  forwarded, never stored. The old "BYOK proxy, holds no secret" description and the story IDs are
+  removed.
 - `worker/src/wellknown/agent-card.ts`: the agent card moves to the A2A v1.0 form (#278).
   `supportedInterfaces` lists `/a2a` over `JSONRPC` for protocol `1.0` first, then `0.3`. **Breaking:**
   the top-level `url`, `preferredTransport` and `protocolVersion` fields are removed (the spec's

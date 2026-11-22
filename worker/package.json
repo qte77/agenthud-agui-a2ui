@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "BYOK pass-through CORS proxy for non-CORS OpenAI-compatible endpoints (US-6).",
+  "description": "agenthud edge Worker: BYOK CORS proxy, keyless free and capped trial renders, and agent-native MCP / A2A routes.",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
