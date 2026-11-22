@@ -306,8 +306,9 @@ export default {
       return Response.json({ error: "forbidden_origin", message: "Origin not allowed." }, { status: 403 });
     }
 
-    // Per-IP rate limit (abuse lock): the worker holds no secret, so this + the origin allowlist
-    // are the only gates. Eventually-consistent / per-location — fine for throttling.
+    // Per-IP rate limit (abuse lock): the BYOK relay uses none of the Worker's secrets, so this +
+    // the origin allowlist are its only gates (the render routes below add Turnstile).
+    // Eventually-consistent / per-location — fine for throttling.
     if (env.RATE_LIMITER) {
       const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
       const { success } = await env.RATE_LIMITER.limit({ key: ip });
