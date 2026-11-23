@@ -15,12 +15,15 @@ export async function readCappedBody(
   const tooLarge = () => Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
   if (Number(request.headers.get("content-length") ?? 0) > maxBytes) return tooLarge();
   if (!request.body) return new ArrayBuffer(0);
-  const reader: ReadableStreamDefaultReader<Uint8Array> = request.body.getReader();
+  const reader = request.body.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
   for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
+    const result: ReadableStreamReadResult<unknown> = await reader.read();
+    if (result.done) break;
+    const value = result.value;
+    // Reason: the runtime types the body stream loosely; request bodies always yield bytes
+    if (!(value instanceof Uint8Array)) throw new TypeError("request body chunk is not bytes");
     total += value.byteLength;
     if (total > maxBytes) {
       await reader.cancel();
