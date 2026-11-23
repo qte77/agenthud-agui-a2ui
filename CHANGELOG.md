@@ -70,6 +70,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `worker/src/body.ts`, `worker/src/mcp/server.ts`: **the shared 1 MiB body cap now covers
+  `POST /mcp` and chunked bodies.** `readCappedBody` reads the body stream chunk by chunk and cancels
+  it once the bytes pass the cap, so a body without a usable `Content-Length` is no longer buffered
+  in full before the check. `POST /mcp` reads its body through the same cap (413 when over) and hands
+  the capped bytes to the MCP handler. Found by the review of the A2A validation fix. Test:
+  `worker/test/body.test.ts`.
+
 - `worker/src/a2a/handler.ts`: `POST /a2a` JSON-RPC edge cases (#338). A `null` body or a batch array
   now gets `-32600` instead of a runtime 500 or `-32601`; a missing or non-`"2.0"` `jsonrpc` member gets
   `-32600`; a notification (no `id`) gets an empty 202 and starts no render; the body is read under the
