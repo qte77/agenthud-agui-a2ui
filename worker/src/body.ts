@@ -15,7 +15,7 @@ export async function readCappedBody(
   const tooLarge = () => Response.json({ error: "Request body too large" }, { status: 413, headers: cors });
   if (Number(request.headers.get("content-length") ?? 0) > maxBytes) return tooLarge();
   if (!request.body) return new ArrayBuffer(0);
-  const reader = request.body.getReader();
+  const reader: ReadableStreamDefaultReader<Uint8Array> = request.body.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
   for (;;) {

@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readCappedBody, MAX_BODY_BYTES } from "../src/body";
 import { mcpFetch } from "../src/mcp/server";
-import type { Env } from "../src/router";
 
 const CHUNK = 64 * 1024;
 
@@ -57,19 +56,19 @@ describe("POST /mcp body cap", () => {
     });
 
   it("rejects an oversized body with 413 (declared length)", async () => {
-    const res = await mcpFetch(post("{}", { "content-length": String(2 * MAX_BODY_BYTES) }), {} as Env);
+    const res = await mcpFetch(post("{}", { "content-length": String(2 * MAX_BODY_BYTES) }), {});
     expect(res.status).toBe(413);
   });
 
   it("rejects an oversized body with 413 (actual bytes)", async () => {
     const big = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list", params: { pad: "a".repeat(MAX_BODY_BYTES) } });
-    const res = await mcpFetch(post(big), {} as Env);
+    const res = await mcpFetch(post(big), {});
     expect(res.status).toBe(413);
   });
 
   it("hands a small request on to the MCP handler with its body intact", async () => {
     const init = { jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "t", version: "0" } } };
-    const res = await mcpFetch(post(JSON.stringify(init)), {} as Env);
+    const res = await mcpFetch(post(JSON.stringify(init)), {});
     expect(res.status).toBe(200);
     expect(await res.text()).toContain('"serverInfo"');
   });
