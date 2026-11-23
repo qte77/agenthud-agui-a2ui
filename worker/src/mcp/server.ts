@@ -7,6 +7,7 @@
 
 import { createMcpHandler, McpServer } from "@modelcontextprotocol/server";
 import type { Env } from "../router";
+import { readCappedBody } from "../body";
 import {
   runRenderUi,
   runValidateBatch,
@@ -52,5 +53,8 @@ export async function mcpFetch(request: Request, env: Env): Promise<Response> {
     const { success } = await env.FREE_RATE_LIMITER.limit({ key: ip });
     if (!success) return Response.json({ error: "rate_limited", message: "Rate limit exceeded" }, { status: 429 });
   }
-  return createMcpHandler(() => buildMcpServer(env)).fetch(request);
+  // Same body cap as the other POST routes; the MCP handler then reads the capped bytes.
+  const bytes = await readCappedBody(request);
+  if (bytes instanceof Response) return bytes;
+  return createMcpHandler(() => buildMcpServer(env)).fetch(new Request(request, { body: bytes }));
 }
