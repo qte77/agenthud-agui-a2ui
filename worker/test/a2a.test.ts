@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { extractPromptFromMessage, buildCompletedTask, a2aFetch } from "../src/a2a/handler";
 
 describe("extractPromptFromMessage", () => {
@@ -78,11 +78,47 @@ describe("a2aFetch JSON-RPC edge cases (#338)", () => {
     expect(await errCode(await a2aFetch(post(body), {}))).toBe(-32600);
   });
 
+  // A render reaches the Workers AI binding; a stub that counts calls proves whether one happened.
+  const countingEnv = () => {
+    const run = vi.fn(() => Promise.reject(new Error("render attempted")));
+    return { env: { AI: { run } } as unknown as Parameters<typeof a2aFetch>[1], run };
+  };
+  const sendBody = (extra: Record<string, unknown>) =>
+    JSON.stringify({ jsonrpc: "2.0", method: "SendMessage", params: { message: { parts: [{ text: "hi" }] } }, ...extra });
+
   it("sends no reply and renders nothing for a notification (no id)", async () => {
-    const body = JSON.stringify({ jsonrpc: "2.0", method: "SendMessage", params: { message: { parts: [{ text: "hi" }] } } });
-    const res = await a2aFetch(post(body), {});
+    const { env, run } = countingEnv();
+    const res = await a2aFetch(post(sendBody({})), env);
     expect(res.status).toBe(202);
     expect(await res.text()).toBe("");
+    expect(run).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["object", {}],
+    ["array", [1]],
+    ["boolean", true],
+  ])("rejects an %s id with -32600 and id null, before any render", async (_n, id) => {
+    const { env, run } = countingEnv();
+    const res = await a2aFetch(post(sendBody({ id })), env);
+    const out = await res.json<{ id: unknown; error?: { code?: number } }>();
+    expect(out.error?.code).toBe(-32600);
+    expect(out.id).toBeNull();
+    expect(run).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["missing", {}],
+    ["number", { method: 5 }],
+    ["object", { method: {} }],
+  ])("rejects a %s method with -32600, not -32601", async (_n, extra) => {
+    const body = JSON.stringify({ jsonrpc: "2.0", id: 1, params: {}, ...extra });
+    expect(await errCode(await a2aFetch(post(body), {}))).toBe(-32600);
+  });
+
+  it("still answers an unknown string method with -32601", async () => {
+    const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "nope" });
+    expect(await errCode(await a2aFetch(post(body), {}))).toBe(-32601);
   });
 
   it("rejects an oversized body with 413 (declared length)", async () => {

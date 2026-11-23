@@ -75,6 +75,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `-32600`; a notification (no `id`) gets an empty 202 and starts no render; the body is read under the
   same 1 MiB cap as the other POST routes (413) and the prompt is capped at 8000 characters (`-32602`).
 
+- `worker/src/a2a/handler.ts`, `worker/src/body.ts`: `POST /a2a` follow-up to #344. An `id` that is
+  not a string, a number or null (an object, array or boolean) gets `-32600` with `id: null` before any
+  render, and a missing or non-string `method` gets `-32600` instead of `-32601` "Method not found:
+  undefined". The 1 MiB body cap now comes from one shared `readCappedBody` / `MAX_BODY_BYTES` module
+  (#338) instead of a copy in the A2A handler.
+
 - `worker/src/agent/render.ts`, `worker/src/worker.ts`, `worker/src/mcp/tools.ts`,
   `worker/src/a2a/handler.ts`: **the keyless HTTP endpoint now shares the same render seam as the
   MCP/A2A tools** — `handleKeylessRender` previously imported `buildProviders`/`renderFree` from
